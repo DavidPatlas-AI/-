@@ -35,3 +35,4 @@ for filename in os.listdir():
         # העברת גרסאות ישנות
         if not moved and any(word in filename.lower() for word in ['old', 'backup', 'copy', 'v1', 'ישנה']):
             shutil.move(filename, os.path.join(archive_folder, filename))
+            
