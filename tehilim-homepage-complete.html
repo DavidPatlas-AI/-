@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>תהילים בקדושה - שמירת קדושת שם ה' בתרגום רוסי</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap');
+    
+    :root {
+      --color-sky: #e6f3ff;
+      --color-parchment: #f7f2e4;
+      --color-gold: #d4af37;
+      --color-text: #1a2639;
+      --color-accent: #4a6fa5;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Assistant', sans-serif;
+      background: var(--color-sky);
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.3;
+      background: linear-gradient(120deg, #ffffff, var(--color-sky));
+    }
+    
+    .floating-letter {
+      position: absolute;
+      font-family: serif;
+      color: var(--color-accent);
+      opacity: 0.1;
+      animation: float 15s infinite ease-in-out;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.1; }
+      80% { opacity: 0.1; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+    
+    header {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: var(--color-accent);
+    }
+    
+    .logo img {
+      height: 40px;
+      margin-left: 10px;
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav li {
+      margin: 0 15px;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: var(--color-text);
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    
+    nav a:hover {
+      color: var(--color-gold);
+    }
+    
+    .hero {
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .divine-name-animation {
+      margin-bottom: 30px;
+    }
+    
+    .divine-letter {
+      display: inline-block;
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--color-gold);
+      opacity: 0;
+      animation: appear 4s forwards;
+    }
+    
+    @keyframes appear {
+      0% { opacity: 0; transform: translateY(20px); }
+      20% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .divine-letter:nth-child(1) { animation-delay: 0.5s; }
+    .divine-letter:nth-child(2) { animation-delay: 1s; }
+    .divine-letter:nth-child(3) { animation-delay: 1.5s; }
+    .divine-letter:nth-child(4) { animation-delay: 2s; }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--color-text);
+    }
+    
+    .subtitle {
+      font-size: 1.3rem;
+      max-width: 800px;
+      margin-bottom: 2rem;
+      color: var(--color-accent);
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      padding: 15px 30px;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .btn-primary {
+      background-color: var(--color-accent);
+      color: white;
+      box-shadow: 0 4px 6px rgba(74, 111, 165, 0.2);
+    }
+    
+    .btn-primary:hover {
+      background-color: #3a5a8c;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background-color: white;
+      color: var(--color-accent);
+      border: 2px solid var(--color-accent);
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--color-parchment);
+      transform: translateY(-2px);
+    }
+    
+    .features {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding: 4rem 2rem;
+      background-color: var(--color-parchment);
+    }
+    
+    .feature-card {
+      flex: 1;
+      min-width: 300px;
+      max-width: 400px;
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--color-gold);
+      margin-bottom: 1rem;
+    }
+    
+    .feature-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--color-text);
+    }
+    
+    .divine-bubbles {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 100px;
+      pointer-events: none;
+    }
+    
+    .bubble {
+      position: absolute;
+      background: rgba(212, 175, 55, 0.1);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      color: var(--color-gold);
+      animation: bubble 8s ease-in forwards;
+    }
+    
+    @keyframes bubble {
+      0% { transform: translateY(0) scale(1); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+    }
+    
+    footer {
+      background: white;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 1rem 0;
+    }
+    
+    .footer-links a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+    
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+  
+  <!-- Floating Hebrew letters background animation -->
+  <div id="floating-letters"></div>
+  
+  <header>
+    <div class="logo">
+      <img src="/api/placeholder/40/40" alt="לוגו תהילים בקדושה">
+      <span>תהילים בקדושה</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#">דף הבית</a></li>
+        <li><a href="#">פרקי תהילים</a></li>
+        <li><a href="#">בוט תיקון שם ה'</a></li>
+        <li><a href="#">הצטרף לקהילה</a></li>
+        <li><a href="#">תרומה</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <section class="hero">
+    <div class="divine-name-animation">
+      <span class="divine-letter">י</span>
+      <span class="divine-letter">-</span>
+      <span class="divine-letter">ה</span>
+      <span class="divine-letter">-</span>
+      <span class="divine-letter">ו</span>
+      <span class="divine-letter">-</span>
+      <span class="divine-letter">ה</span>
+    </div>
+    
+    <h1>תהילים ברוסית - עם שם ה' כתוב כהלכה</h1>
+    <p class="subtitle">פלטפורמה המאפשרת לכל אדם לקרוא תהילים בתרגום מדויק ובקדושה, תוך שמירה על כבוד שם ה'</p>
+    
+    <div class="cta-buttons">
+      <a href="#" class="btn btn-primary">התחל לקרוא תהילים</a>
+      <a href="#" class="btn btn-secondary">תקן טקסט שלך</a>
+    </div>
+  </section>
+  
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon">📖</div>
+      <h3 class="feature-title">תהילים ברוסית עם שם ה' מתוקן</h3>
+      <p>כל 150 פרקי תהילים בתרגום מדויק לרוסית, כאשר שם ה' מופיע בצורה הלכתית ומכובדת.</p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <h3 class="feature-title">בוט תיקון שם ה'</h3>
+      <p>הדביקו טקסט רוסי עם שם ה' שגוי, וקבלו אותו מתוקן במיידית. פתרון פשוט למתרגמים ולקוראים.</p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">👨‍👩‍👧‍👦</div>
+      <h3 class="feature-title">קהילה תומכת</h3>
+      <p>הצטרפו לקהילה של אנשים השומרים על קדושת שם ה'. שלחו טקסטים לבדיקה, שאלו שאלות, ותרמו לפרויקט.</p>
+    </div>
+  </section>
+  
+  <div class="divine-bubbles" id="bubbles-container"></div>
+  
+  <footer>
+    <p>כדי שכל אדם, בכל שפה, יוכל לקרוא תהילים כמו שצריך – עם שם ה׳ כפי שראוי.</p>
+    <div class="footer-links">
+      <a href="#">אודות</a>
+      <a href="#">שאל את הרב</a>
+      <a href="#">צור קשר</a>
+      <a href="#">תרומה</a>
+    </div>
+    <p>&copy; 2025 תהילים בקדושה - כל הזכויות שמורות</p>
+  </footer>
+  
+  <script>
+    // Creating floating Hebrew letters in background
+    function createFloatingLetters() {
+      const container = document.getElementById('floating-letters');
+      const letters = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ', 'ק', 'ר', 'ש', 'ת'];
+      
+      for (let i = 0; i < 30; i++) {
+        const letter = document.createElement('div');
+        letter.classList.add('floating-letter');
+        letter.textContent = letters[Math.floor(Math.random() * letters.length)];
+        
+        // Random positioning
+        letter.style.left = `${Math.random() * 100}%`;
+        letter.style.top = `${Math.random() * 100}%`;
+        letter.style.fontSize = `${Math.random() * 20 + 10}px`;
+        
+        // Random animation duration and delay
+        const duration = Math.random() * 10 + 10;
+        const delay = Math.random() * 10;
+        letter.style.animationDuration = `${duration}s`;
+        letter.style.animationDelay = `${delay}s`;
+        
+        container.appendChild(letter);
+      }
+    }
+    
+    // Create divine name bubbles animation
+    function createBubbles() {
+      const container = document.getElementById('bubbles-container');
+      
+      // Create a new bubble every 3 seconds
+      setInterval(() => {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        
+        const size = Math.random() * 40 + 30;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        
+        // Place at random horizontal position
+        bubble.style.left = `${Math.random() * 100}%`;
+        
+        // Set content to divine name
+        bubble.textContent = 'ה\'';
+        
+        // Random animation duration
+        const duration = Math.random() * 3 + 5;
+        bubble.style.animationDuration = `${duration}s`;
+        
+        container.appendChild(bubble);
+        
+        // Remove bubble after animation completes
+        setTimeout(() => {
+          bubble.remove();
+        }, duration * 1000);
+      }, 3000);
+    }
+    
+    // Initialize animations
+    document.addEventListener('DOMContentLoaded', () => {
+      createFloatingLetters();
+      createBubbles();
+    });
+  </script>
+</body>
+</html>

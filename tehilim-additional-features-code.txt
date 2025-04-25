@@ -1,0 +1,662 @@
+/**
+ * פיצ'רים נוספים וקוד מתקדם - תהילים בקדושה
+ * 
+ * מסמך זה מציג תכונות מתקדמות שניתן להוסיף לאפליקציה
+ * כולל דוגמאות קוד ליישום
+ */
+
+// ===================================================
+// 1. מנוע זיהוי והמלצות מבוסס AI
+// ===================================================
+
+/**
+ * מנוע זיהוי מתקדם של שם ה' בטקסטים רוסיים
+ * שמשתמש בלמידת מכונה לזיהוי שמות גם בהקשרים מורכבים
+ */
+class DivineLearningModel {
+  constructor() {
+    this.model = null;
+    this.vocabulary = new Set();
+    this.threshold = 0.85; // סף ביטחון לזיהוי
+  }
+  
+  /**
+   * טעינת המודל המאומן
+   */
+  async loadModel() {
+    try {
+      // ביישום אמיתי: טעינה של מודל TensorFlow.js או שימוש בשירות API
+      console.log('Loading divine name detection model...');
+      this.model = {
+        predict: (text) => this._mockPredict(text)
+      };
+      
+      // טעינת אוצר המילים של שמות ה' וצורותיהם
+      await this.loadVocabulary();
+      
+      return true;
+    } catch (error) {
+      console.error('Error loading model:', error);
+      return false;
+    }
+  }
+  
+  /**
+   * טעינת אוצר מילים מורחב של שמות ה' ומושגים קשורים
+   */
+  async loadVocabulary() {
+    // בסיס שמות ה' ברוסית (גרסה פשוטה, בפועל יהיה הרבה יותר מורחב)
+    const basicNames = [
+      'Господь', 'Бог', 'Всевышний', 'Иегова', 'ЙХВХ', 'Яхве', 'Адонай',
+      'Элохим', 'Саваоф', 'Шаддай', 'Вседержитель', 'Всемогущий', 'Творец'
+    ];
+    
+    // הוספת הטיות שונות
+    for (const name of basicNames) {
+      this.vocabulary.add(name);
+      this.vocabulary.add(name.toLowerCase());
+      
+      // הוספת הטיות נפוצות (במקרה אמיתי יהיה מורכב יותר)
+      const inflections = [
+        name + 'а', name + 'у', name + 'ом', name + 'е',   // הטיות רוסיות בסיסיות
+        name + 'ом', name + 'ами', name + 'ах'            // יחסות נוספות
+      ];
+      
+      inflections.forEach(word => this.vocabulary.add(word));
+    }
+    
+    console.log(`Vocabulary loaded with ${this.vocabulary.size} terms`);
+  }
+  
+  /**
+   * זיהוי שמות ה' בטקסט
+   * @param {string} text - הטקסט לניתוח
+   * @returns {Array} מערך של שמות שזוהו עם מיקומים
+   */
+  async detectDivineNames(text) {
+    if (!this.model) {
+      await this.loadModel();
+    }
+    
+    const results = [];
+    
+    // 1. זיהוי בסיסי מבוסס מילון
+    const words = text.split(/\s+/);
+    words.forEach((word, index) => {
+      // ניקוי סימני פיסוק
+      const cleanWord = word.replace(/[.,!?;:()"'-]/g, '');
+      
+      if (this.vocabulary.has(cleanWord)) {
+        const start = text.indexOf(word);
+        results.push({
+          word: cleanWord,
+          start,
+          end: start + word.length,
+          confidence: 1.0,
+          method: 'vocabulary'
+        });
+      }
+    });
+    
+    // 2. זיהוי מתקדם מבוסס מודל
+    const modelPredictions = await this.model.predict(text);
+    
+    // סינון תוצאות לפי סף ביטחון ואיחוד עם תוצאות קודמות
+    modelPredictions
+      .filter(pred => pred.confidence >= this.threshold)
+      .forEach(pred => {
+        // הימנעות מכפילויות
+        if (!results.some(r => Math.abs(r.start - pred.start) < 5)) {
+          results.push({
+            ...pred,
+            method: 'model'
+          });
+        }
+      });
+    
+    return results.sort((a, b) => a.start - b.start);
+  }
+  
+  /**
+   * פונקציית חיזוי בסיסית למטרות הדגמה
+   * (במימוש אמיתי זה יהיה מודל מאומן אמיתי)
+   */
+  _mockPredict(text) {
+    const results = [];
+    
+    // חיפוש דפוסים מורכבים יותר
+    // לדוגמה: "Г-дь", "Г-сподь", "Б-г"
+    const patterns = [
+      { regex: /Г-дь/g, replacement: 'Господь' },
+      { regex: /Г-сподь/g, replacement: 'Господь' },
+      { regex: /Б-г/g, replacement: 'Бог' }
+    ];
+    
+    patterns.forEach(pattern => {
+      let match;
+      while ((match = pattern.regex.exec(text)) !== null) {
+        results.push({
+          word: pattern.replacement,
+          start: match.index,
+          end: match.index + match[0].length,
+          confidence: 0.95
+        });
+      }
+    });
+    
+    // חיפוש מופעים בהקשר של פסוקים
+    const contextPatterns = [
+      'сказал', 'говорит', 'заповедал', 'благословил', 'повелел'
+    ];
+    
+    contextPatterns.forEach(verb => {
+      const regex = new RegExp(`(\\w+)\\s+${verb}`, 'g');
+      let match;
+      
+      while ((match = regex.exec(text)) !== null) {
+        const potentialName = match[1];
+        
+        // בדיקה שזה לא כבר שם מוכר וגם לא מילה שכיחה אחרת
+        if (!this.vocabulary.has(potentialName) && 
+            !['он', 'она', 'я', 'ты', 'мы', 'вы', 'они'].includes(potentialName.toLowerCase())) {
+          
+          results.push({
+            word: potentialName,
+            start: match.index,
+            end: match.index + potentialName.length,
+            confidence: 0.87,
+            context: `${potentialName} ${verb}`
+          });
+        }
+      }
+    });
+    
+    return Promise.resolve(results);
+  }
+}
+
+// ===================================================
+// 2. מערכת המלצות אישית
+// ===================================================
+
+/**
+ * מערכת המלצות לפרקי תהילים ותפילות רלוונטיות
+ * בהתאם להיסטוריית הקריאה והעדפות המשתמש
+ */
+class RecommendationEngine {
+  constructor(userManager, chapterManager) {
+    this.userManager = userManager;
+    this.chapterManager = chapterManager;
+    this.userPreferences = new Map(); // מטמון העדפות משתמשים
+    this.similarityMatrix = new Map(); // מטריצת דמיון בין פרקים
+  }
+  
+  /**
+   * אתחול מטריצת הדמיון בין פרקים
+   * (ביישום אמיתי יהיה מורכב יותר ומבוסס למידת מכונה)
+   */
+  async initializeSimilarityMatrix() {
+    // הגדרת קבוצות נושא
+    const themeGroups = {
+      'praise': [8, 19, 23, 33, 34, 92, 100, 103, 104, 145, 146, 147, 148, 149, 150],
+      'distress': [3, 4, 5, 7, 10, 13, 17, 22, 25, 31, 40, 42, 43, 54, 56, 57, 69, 70, 71, 77],
+      'trust': [11, 16, 23, 27, 62, 63, 91, 121, 125, 131],
+      'wisdom': [1, 15, 19, 37, 49, 73, 111, 112, 119, 127, 128, 133],
+      'kingship': [2, 18, 20, 21, 45, 72, 89, 101, 110, 132, 144],
+      'history': [78, 105, 106, 135, 136],
+      'penitential': [6, 32, 38, 51, 102, 130, 143]
+    };
+    
+    // עבור כל פרק, חישוב הדמיון לפרקים אחרים
+    for (let i = 1; i <= 150; i++) {
+      const similarChapters = new Map();
+      
+      // חיפוש הנושאים שהפרק הנוכחי שייך אליהם
+      const currentThemes = Object.entries(themeGroups)
+        .filter(([theme, chapters]) => chapters.includes(i))
+        .map(([theme]) => theme);
+      
+      // חישוב דמיון לפרקים אחרים לפי שיתוף נושאים
+      for (let j = 1; j <= 150; j++) {
+        if (i === j) continue;
+        
+        // הנושאים של הפרק השני
+        const otherThemes = Object.entries(themeGroups)
+          .filter(([theme, chapters]) => chapters.includes(j))
+          .map(([theme]) => theme);
+        
+        // מספר הנושאים המשותפים
+        const commonThemes = currentThemes.filter(theme => otherThemes.includes(theme));
+        
+        // חישוב דמיון כאחוז הנושאים המשותפים
+        const similarity = commonThemes.length / 
+          Math.max(1, Math.max(currentThemes.length, otherThemes.length));
+        
+        if (similarity > 0.2) { // שמירה רק של דמיון משמעותי
+          similarChapters.set(j, similarity);
+        }
+      }
+      
+      // מיון לפי דמיון ושמירת 10 הדומים ביותר
+      const sortedSimilar = [...similarChapters.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      
+      this.similarityMatrix.set(i, new Map(sortedSimilar));
+    }
+    
+    console.log('Similarity matrix initialized');
+  }
+  
+  /**
+   * העדכון פרופיל העדפות משתמש
+   * @param {string} userId - מזהה המשתמש
+   */
+  async updateUserPreferences(userId) {
+    try {
+      // טעינת היסטוריית הקריאה
+      const readHistory = await this.userManager.getUserReadHistory(userId);
+      
+      // חישוב תדירות קריאה לפי נושאים
+      const themeFrequency = {
+        'praise': 0,
+        'distress': 0,
+        'trust': 0,
+        'wisdom': 0,
+        'kingship': 0,
+        'history': 0,
+        'penitential': 0
+      };
+      
+      // הגדרה של פרק לנושאים
+      const chapterToThemes = {
+        1: ['wisdom'], 2: ['kingship'], 3: ['distress'], 
+        // יותר מידי לפרט את כולם כאן, אך בפועל יהיה מיפוי מלא
+        23: ['praise', 'trust'], 
+        51: ['penitential'],
+        119: ['wisdom'],
+        150: ['praise']
+      };
+      
+      // עדכון תדירות לפי היסטוריית קריאה
+      readHistory.forEach(item => {
+        const chapter = item.chapterId;
+        const themes = chapterToThemes[chapter] || [];
+        
+        // הוספת משקל מבוסס זמן - קריאות אחרונות מקבלות משקל גבוה יותר
+        const daysAgo = Math.floor((Date.now() - new Date(item.timestamp).getTime()) / (1000 * 60 * 60 * 24));
+        const weight = Math.max(0.1, 1 - (daysAgo / 30)); // דעיכה על פני חודש
+        
+        themes.forEach(theme => {
+          themeFrequency[theme] = (themeFrequency[theme] || 0) + weight;
+        });
+      });
+      
+      // נירמול לאחוזים
+      const total = Object.values(themeFrequency).reduce((sum, val) => sum + val, 0);
+      if (total > 0) {
+        Object.keys(themeFrequency).forEach(theme => {
+          themeFrequency[theme] /= total;
+        });
+      }
+      
+      // שמירת הפרופיל
+      this.userPreferences.set(userId, {
+        themePreferences: themeFrequency,
+        lastUpdated: new Date(),
+        readHistory: readHistory.map(item => item.chapterId)
+      });
+      
+      return themeFrequency;
+    } catch (error) {
+      console.error(`Error updating user preferences for ${userId}:`, error);
+      return null;
+    }
+  }
+  
+  /**
+   * קבלת המלצות מותאמות אישית
+   * @param {string} userId - מזהה המשתמש
+   * @param {number} limit - מספר ההמלצות לקבל
+   * @returns {Promise<Array>} רשימת המלצות
+   */
+  async getPersonalizedRecommendations(userId, limit = 5) {
+    try {
+      // וידוא שיש לנו העדפות מעודכנות
+      if (!this.userPreferences.has(userId) || 
+          Date.now() - this.userPreferences.get(userId).lastUpdated > 24 * 60 * 60 * 1000) {
+        await this.updateUserPreferences(userId);
+      }
+      
+      // בדיקה שמטריצת הדמיון טעונה
+      if (this.similarityMatrix.size === 0) {
+        await this.initializeSimilarityMatrix();
+      }
+      
+      const userPrefs = this.userPreferences.get(userId);
+      if (!userPrefs) {
+        throw new Error(`No preferences found for user ${userId}`);
+      }
+      
+      // הפרקים שכבר נקראו
+      const readChapters = new Set(userPrefs.readHistory || []);
+      
+      // חישוב ציון לכל פרק על בסיס העדפות הנושא
+      const chapterScores = new Map();
+      
+      // הגדרה של פרק לנושאים (חלקי, במימוש מלא יהיה מיפוי מלא)
+      const chapterToThemes = {
+        1: ['wisdom'], 2: ['kingship'], 3: ['distress'], 
+        23: ['praise', 'trust'], 
+        51: ['penitential'],
+        119: ['wisdom'],
+        150: ['praise']
+        // וכו'
+      };
+      
+      // חישוב ציון בסיסי לכל פרק לפי העדפות נושא
+      for (let i = 1; i <= 150; i++) {
+        if (readChapters.has(i)) continue; // דילוג על פרקים שכבר נקראו
+        
+        const themes = chapterToThemes[i] || [];
+        let score = 0;
+        
+        // חישוב ציון לפי העדפות נושא
+        themes.forEach(theme => {
+          score += userPrefs.themePreferences[theme] || 0;
+        });
+        
+        // חישוב המלצות גם לפי דמיון לפרקים אהובים
+        const recentFavorites = userPrefs.readHistory.slice(-5);
+        recentFavorites.forEach(favoriteChapter => {
+          const similarityScore = this.similarityMatrix.get(favoriteChapter)?.get(i) || 0;
+          score += similarityScore * 0.5; // משקל מופחת לדמיון
+        });
+        
+        if (score > 0) {
+          chapterScores.set(i, score);
+        }
+      }
+      
+      // מיון ובחירת ההמלצות הטובות ביותר
+      const recommendations = [...chapterScores.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit)
+        .map(([chapterId, score]) => ({ chapterId, score }));
+      
+      // טעינת פרטי הפרקים המומלצים
+      const detailedRecommendations = await Promise.all(
+        recommendations.map(async rec => {
+          const chapter = await this.chapterManager.loadChapter(rec.chapterId);
+          return {
+            ...rec,
+            title: chapter.title,
+            verseCount: chapter.verses.length,
+            themes: chapterToThemes[rec.chapterId] || []
+          };
+        })
+      );
+      
+      return detailedRecommendations;
+    } catch (error) {
+      console.error(`Error getting recommendations for user ${userId}:`, error);
+      
+      // במקרה של שגיאה, החזרת המלצות ברירת מחדל
+      return [
+        { chapterId: 23, title: "מזמור לדוד" },
+        { chapterId: 121, title: "שיר למעלות" },
+        { chapterId: 150, title: "הללויה" }
+      ];
+    }
+  }
+}
+
+// ===================================================
+// 3. מנוע קריאה מתקדם עם ניקוד וטעמים
+// ===================================================
+
+/**
+ * מנוע קריאה מתקדם עם תמיכה בניקוד וטעמים
+ */
+class AdvancedTextRenderer {
+  constructor() {
+    this.hebrewFontFamily = 'Frank Ruhl Libre, SBL Hebrew, serif';
+    this.russianFontFamily = 'Times New Roman, serif';
+    this.colorSchemes = {
+      default: {
+        text: '#212529',
+        divineName: '#B45309',
+        accent: '#4361EE',
+        background: '#FFFFFF'
+      },
+      night: {
+        text: '#E2E8F0',
+        divineName: '#F6CF56',
+        accent: '#93C5FD',
+        background: '#1A202C'
+      },
+      sepia: {
+        text: '#4B3621',
+        divineName: '#8B4513',
+        accent: '#654321',
+        background: '#F5F0DC'
+      }
+    };
+  }
+  
+  /**
+   * הכנת טקסט עם ניקוד וטעמים לתצוגה
+   * @param {string} text - הטקסט המקורי
+   * @param {Object} options - אפשרויות עיצוב
+   * @returns {string} קוד HTML לתצוגה
+   */
+  renderHebrewWithNikud(text, options = {}) {
+    const {
+      fontSize = 20,
+      showNikud = true,
+      showTaamim = false,
+      colorScheme = 'default',
+      divineNameStyle = 'ה׳',
+      lineHeight = 1.8
+    } = options;
+    
+    // בחירת סכמת צבעים
+    const colors = this.colorSchemes[colorScheme] || this.colorSchemes.default;
+    
+    // עיבוד הטקסט והחלפת שם ה'
+    let processedText = text;
+    
+    // החלפת שם ה' בסגנון הרצוי
+    processedText = processedText.replace(/יהוה|ה\'|י-ה-ו-ה|השם|יי|אדנ-י/g, 
+      `<span class="divine-name" style="color: ${colors.divineName}; font-weight: 700;">${divineNameStyle}</span>`);
+    
+    // הסתרת ניקוד וטעמים אם צריך
+    if (!showNikud) {
+      // הסרת כל הניקוד (Unicode range for Hebrew points)
+      processedText = processedText.replace(/[\u05B0-\u05BC\u05C1-\u05C2\u05C4-\u05C7]/g, '');
+    }
+    
+    if (!showTaamim) {
+      // הסרת כל הטעמים (Unicode range for Hebrew cantillation marks)
+      processedText = processedText.replace(/[\u0591-\u05AF]/g, '');
+    }
+    
+    // יצירת סגנון CSS למכל
+    const containerStyle = `
+      font-family: ${this.hebrewFontFamily};
+      font-size: ${fontSize}px;
+      line-height: ${lineHeight};
+      color: ${colors.text};
+      background-color: ${colors.background};
+      padding: 16px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      direction: rtl;
+      text-align: right;
+    `;
+    
+    // יצירת HTML מוכן
+    return `<div class="hebrew-text" style="${containerStyle}">${processedText}</div>`;
+  }
+  
+  /**
+   * הכנת טקסט רוסי עם שם ה' מתוקן לתצוגה
+   * @param {string} text - הטקסט המקורי
+   * @param {Object} options - אפשרויות עיצוב
+   * @returns {string} קוד HTML לתצוגה
+   */
+  renderRussianWithDivineNames(text, options = {}) {
+    const {
+      fontSize = 18,
+      colorScheme = 'default',
+      divineNameStyle = 'ה׳',
+      lineHeight = 1.6
+    } = options;
+    
+    // בחירת סכמת צבעים
+    const colors = this.colorSchemes[colorScheme] || this.colorSchemes.default;
+    
+    // החלפת שמות ה' ידועים
+    const divineNameRegex = /Господь|Бог|Всевышний|Иегова|ЙХВХ|Яхве|Адонай|Элохим|Саваоф|Шаддай/g;
+    const processedText = text.replace(divineNameRegex, 
+      `<span class="divine-name" style="color: ${colors.divineName}; font-weight: 700;">${divineNameStyle}</span>`);
+    
+    // יצירת סגנון CSS למכל
+    const containerStyle = `
+      font-family: ${this.russianFontFamily};
+      font-size: ${fontSize}px;
+      line-height: ${lineHeight};
+      color: ${colors.text};
+      background-color: ${colors.background};
+      padding: 16px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      direction: ltr;
+      text-align: left;
+    `;
+    
+    // יצירת HTML מוכן
+    return `<div class="russian-text" style="${containerStyle}">${processedText}</div>`;
+  }
+  
+  /**
+   * תצוגה דו-לשונית של פסוק
+   * @param {Object} verse - אובייקט הפסוק עם טקסט עברי ורוסי
+   * @param {Object} options - אפשרויות עיצוב
+   * @returns {string} קוד HTML לתצוגה
+   */
+  renderBilingualVerse(verse, options = {}) {
+    const {
+      layout = 'stacked',  // 'stacked' או 'side-by-side'
+      verseNumber = true,
+      verseNumberStyle = 'circle' // 'circle', 'square', או 'simple'
+    } = options;
+    
+    // רינדור הטקסטים
+    const hebrewHtml = this.renderHebrewWithNikud(verse.hebrewText, options);
+    const russianHtml = this.renderRussianWithDivineNames(verse.russianText, options);
+    
+    // סגנון למספר פסוק
+    let verseNumberHtml = '';
+    if (verseNumber) {
+      const verseNumberClass = `verse-number ${verseNumberStyle}`;
+      const colors = this.colorSchemes[options.colorScheme || 'default'];
+      
+      const verseNumberStyle = `
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        ${verseNumberStyle === 'circle' ? 'border-radius: 50%;' : 
+          verseNumberStyle === 'square' ? 'border-radius: 4px;' : ''}
+        background-color: ${colors.accent};
+        color: white;
+        font-weight: 700;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+        margin: 0 0 0 8px;
+      `;
+      
+      verseNumberHtml = `<span class="${verseNumberClass}" style="${verseNumberStyle}">${verse.number}</span>`;
+    }
+    
+    // שילוב הכל ביחד לפי הלייאאוט
+    if (layout === 'side-by-side') {
+      return `
+        <div class="bilingual-verse" style="display: flex; gap: 20px; margin-bottom: 20px;">
+          <div class="verse-container" style="flex: 1;">${verseNumberHtml}${hebrewHtml}</div>
+          <div class="verse-container" style="flex: 1;">${russianHtml}</div>
+        </div>
+      `;
+    } else {
+      return `
+        <div class="bilingual-verse" style="margin-bottom: 20px;">
+          <div class="verse-container">${verseNumberHtml}${hebrewHtml}</div>
+          <div class="verse-container" style="margin-top: 8px;">${russianHtml}</div>
+        </div>
+      `;
+    }
+  }
+}
+
+// ===================================================
+// 4. יכולות סנכרון וגיבוי
+// ===================================================
+
+/**
+ * מערכת סנכרון וגיבוי נתוני משתמש
+ */
+class UserDataSync {
+  constructor(dataService) {
+    this.dataService = dataService;
+    this.syncQueue = [];
+    this.isSyncing = false;
+    this.lastSyncTime = null;
+    this.localStorageKey = 'tehilim_user_data';
+  }
+  
+  /**
+   * אתחול מערכת הסנכרון
+   * @param {string} userId - מזהה המשתמש
+   */
+  async initialize(userId) {
+    this.userId = userId;
+    
+    // טעינת היסטוריית סנכרון מקומית
+    this.loadLocalSyncHistory();
+    
+    // הגדרת טיימר לסנכרון אוטומטי
+    setInterval(() => this.performSync(), 5 * 60 * 1000); // כל 5 דקות
+    
+    // ניסיון ראשוני לסנכרון
+    await this.performSync();
+    
+    // הקשבה לאירועי מקוון/לא מקוון
+    window.addEventListener('online', () => this.handleOnlineStatus(true));
+    window.addEventListener('offline', () => this.handleOnlineStatus(false));
+    
+    // הקשבה לסגירת החלון כדי לנסות סנכרון אחרון
+    window.addEventListener('beforeunload', () => this.performSync());
+    
+    console.log('User data sync initialized for user', userId);
+  }
+  
+  /**
+   * הוספת פעולה לתור הסנכרון
+   * @param {string} type - סוג הפעולה
+   * @param {Object} data - נתוני הפעולה
+   */
+  queueAction(type, data) {
+    const action = {
+      id: this._generateId(),
+      type,
+      data,
+      timestamp: new Date().toISOString(),
+      userId: this.userId,
+      status: 'pending'
+    };
+    
+    this.syncQueue.push(action);
+    this.saveLocalSyncQueue();
+    
+    // ניס

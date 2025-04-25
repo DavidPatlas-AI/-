@@ -1,0 +1,22 @@
+
+.bilingual-mode .hebrew-text {
+  display: block;
+}
+.bilingual-mode .russian-text {
+  display: block;
+}
+.accessibility-panel {
+  position: fixed;
+  bottom: 80px;
+  left: 16px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.accessibility-panel button {
+  display: block;
+  margin-bottom: 6px;
+  padding: 6px 10px;
+}

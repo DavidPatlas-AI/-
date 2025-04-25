@@ -1,0 +1,10 @@
+
+.highlighted {
+  background-color: #fff3cd;
+  transition: background-color 0.3s ease;
+}
+
+.high-contrast {
+  background-color: #000 !important;
+  color: #fff !important;
+}

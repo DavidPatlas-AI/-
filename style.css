@@ -1,0 +1,26 @@
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  color: #212529;
+  padding: 20px;
+  direction: rtl;
+}
+h1 {
+  color: #3f37c9;
+}
+.verse {
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.hebrew {
+  font-weight: bold;
+  font-size: 18px;
+}
+.russian {
+  color: #6c757d;
+  font-size: 16px;
+}

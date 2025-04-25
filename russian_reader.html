@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>Чтение Псалмов</title>
+  <style>
+    body {
+      font-family: 'Times New Roman', serif;
+      direction: ltr;
+      text-align: left;
+      background-color: #f9f9f9;
+      padding: 20px;
+      line-height: 1.8;
+      font-size: 18px;
+    }
+    .divine-name {
+      color: #B45309;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Псалом (пример)</h1>
+  <div id="text-container">
+    Зачитано: <span class="divine-name">ה׳</span> - Творец мира, благословен будь Ты.
+  </div>
+  <script>
+    // קריאה לדוגמה מתוך IndexedDB (אם קיים)
+    const request = indexedDB.open('TehilimDB', 1);
+
+    request.onsuccess = function(event) {
+      const db = event.target.result;
+      const tx = db.transaction('texts', 'readonly');
+      const store = tx.objectStore('texts');
+      const getRequest = store.get('sample');
+
+      getRequest.onsuccess = function() {
+        const result = getRequest.result;
+        if (result) {
+          document.getElementById('text-container').innerHTML = result.text;
+        }
+      };
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>הגדרות - תהילים בקדושה</title>
+  <style>
+    /* בסיס */
+    @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+    }
+    
+    body {
+      font-family: 'Heebo', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    /* כותרת */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .back-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 18px;
+      background-color: transparent;
+      border: none;
+    }
+    
+    /* תוכן */
+    .container {
+      padding: var(--content-padding);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* קטגוריות */
+    .settings-section {
+      margin-bottom: 24px;
+    }
+    
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    /* פריטי הגדרות */
+    .settings-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .settings-item {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .settings-item:last-child {
+      border-bottom: none;
+    }
+    
+    .item-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--primary);
+      margin-left: 12px;
+    }
+    
+    .item-content {
+      flex: 1;
+    }
+    
+    .item-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .item-description {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+    
+    .item-control {
+      margin-right: 12px;
+    }
+    
+    /* טוגל סוויץ' */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+    
+    /* בחירה */
+    .select-value {
+      color: var(--primary);
+      font-weight: 500;
+    }
+    
+    /* כפתור מלא */
+    .full-button {
+      width: 100%;
+      padding: 14px;
+      background-color: transparent;
+      text-align: right;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+      border: none;
+      cursor: pointer;
+    }
+    
+    /* כפתור לוגאאוט */
+    .logout-button {
+      width: 100%;
+      height: 48px;
+      border-radius: var(--radius);
+      background-color: #f8d7da;
+      color: #842029;
+      border: none;
+      font-weight: 600;
+      font-size: 16px;
+      margin-top: 24px;
+    }
+    
+    /* גרסה */
+    .version-info {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--text-light);
+      font-size: 13px;
+    }
+    
+    /* ניווט תחתון */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <!-- כותרת -->
+  <header class="header">
+    <button class="back-button">←</button>
+    <div class="header-title">הגדרות</div>
+    <div style="width: 36px;"></div>
+  </header>
+  
+  <!-- תוכן -->
+  <div class="container">
+    <!-- הגדרות תצוגה -->
+    <div class="settings-section">
+      <div class="section-title">הגדרות תצוגה</div>
+      
+      <div class="settings-card">
+        <div class="settings-item">
+          <div class="item-icon">🌙</div>
+          <div class="item-content">
+            <div class="item-title">מצב לילה</div>
+            <div class="item-description">מצב כהה לקריאה נוחה יותר בחושך</div>
+          </div>
+          <div class="item-control">
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="settings-item">
+          <div class="item-icon">🔤</div>
+          <div class="item-content">
+            <div class="item-title">גודל טקסט</div>
+            <div class="item-description">שנה את גודל הטקסט לקריאה נוחה יותר</div>
+          </div>
+          <div class="item-control">
+            <span class="select-value">בינוני</span>
+          </div>
+        </div>
+        
+        <div class="settings-item">
+          <div class="item-icon">✡️</div>
+          <div class="item-content">
+            <div class="item-title">פונט עברית</div>
+            <div class="item-description">שנה את סוג הפונט לקריאה נוחה יותר</div>
+          </div>
+          <div class="item-control">
+            <span class="select-value">פרנק רול</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- הגדרות קריאה -->
+    <div class="settings-section">
+      <div class="section-title">הגדרות קריאה</div>
+      
+      <div class="settings-card">
+        <div class="settings-item">
+          <div class="item-icon">📖</div>
+          <div class="item-content">
+            <div class="item-title">תצוגת שפה ברירת מחדל</div>
+            <div class="item-description">הגדר איזו שפה להציג כברירת מחדל</div>
+          </div>
+          <div class="item-control">
+            <span class="select-value">דו-לשוני</span>
+          </div>
+        </div>
+        
+        <div class="settings-item">
+          <div class="item-icon">💬</div>
+          <div class="item-content">
+            <div class="item-title">שפה להקראה</div>
+            <div class="item-description">הגדר את שפת הקריאה הקולית</div>
+          </div>
+          <div class="item-control">
+            <span class="select-value">עברית</span>
+          </div>
+        </div>
+        
+        <div class="settings-item">
+          <div class="item-icon">א</div>
+          <div class="item-content">
+            <div class="item-title">הצג ניקוד</div>
+            <div class="item-description">הצג ניקוד בטקסט העברי</div>
+          </div>
+          <div class="item-control">
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- הגדרות תיקון שם ה' -->
+    <div class="settings-section">
+      <div class="section-title">הגדרות תיקון שם ה'</div>
+      
+      <div class="settings-card">
+        <div class="settings-item">
+          <div class="item-icon">✡️</div>
+          <div class="item-content">
+            <div class="item-title">סגנון תיקון ברירת מחדל</div>
+            <div class="item-description">הגדר את צורת שם ה' המועדפת לתיקון</div>
+          </div>
+          <div class="item-control">
+            <span class="select-value">ה'</span>
+          </div>
+        </div>
+        
+        <div class="settings-item">
+          <div class="item-icon">🔄</div>
+          <div class="item-content">
+            <div class="item-title">שמור היסטוריית תיקונים</div>
+            <div class="item-description">שמירת תיקונים קודמים לגישה מהירה</div>
+          </div>
+          <div class="item-control">
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- הגדרות משתמש -->
+    <div class="settings-section">
+      <div class="section-title">הגדרות משתמש</div>
+      
+      <div class="settings-card">
+        <button class="full-button">
+          <div class="settings-item" style="padding: 0;">
+            <div class="item-icon">👤</div>
+            <div class="item-content">
+              <div class="item-title">פרופיל משתמש</div>
+              <div class="item-description">דוד לוי • david@example.com</div>
+            </div>
+          </div>
+        </button>
+        
+        <button class="full-button">
+          <div class="settings-item" style="padding: 0;">
+            <div class="item-icon">🔔</div>
+            <div class="item-content">
+              <div class="item-title">התראות</div>
+              <div class="item-description">ניהול העדפות התראות</div>
+            </div>
+          </div>
+        </button>
+        
+        <button class="full-button">
+          <div class="settings-item" style="padding: 0;">
+            <div class="item-icon">🔐</div>
+            <div class="item-content">
+              <div class="item-title">פרטיות ואבטחה</div>
+              <div class="item-description">הגדרות פרטיות וניהול חשבון</div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+    
+    <!-- כפתור יציאה מהחשבון -->
+    <button class="logout-button">יציאה מהחשבון</button>
+    
+    <!-- גרסה -->
+    <div class="version-info">
+      תהילים בקדושה גרסה 1.0.0
+    </div>
+  </div>
+  
+  <!-- ניווט תחתון -->
+  <nav class="bottom-nav">
+    <a href="#" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">בית</div>
+    </a>
+    <a href="#" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">תהילים</div>
+    </a>
+    <a href="#" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🔄</div>
+      <div class="bottom-nav-label">תיקון</div>
+    </a>
+    <a href="#" class="bottom-nav-item">
+      <div class="bottom-nav-icon">👥</div>
+      <div class="bottom-nav-label">קהילה</div>
+    </a>
+  </nav>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // חזרה לעמוד הקודם
+      document.querySelector('.back-button').addEventListener('click', function() {
+        // במימוש אמיתי נשתמש ב-history.back()
+        // אבל כאן נדמה חזרה לדף הבית
+        alert('חזרה לעמוד הבית');
+      });
+      
+      // טיפול בהגדרות
+      const toggleSwitches = document.querySelectorAll('.switch input');
+      toggleSwitches.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+          const settingName = this.closest('.settings-item').querySelector('.item-title').textContent;
+          const status = this.checked ? 'מופעל' : 'כבוי';
+          console.log(`${settingName}: ${status}`);
+        });
+      });
+      
+      // טיפול בכפתורי בחירה
+      const selectValues = document.querySelectorAll('.select-value');
+      selectValues.forEach(select => {
+        select.addEventListener('click', function() {
+          const settingName = this.closest('.settings-item').querySelector('.item-title').textContent;
+          // במימוש אמיתי כאן היה נפתח חלון בחירה
+          alert(`בחירת ${settingName}`);
+        });
+      });
+      
+      // טיפול בכפתור התנתקות
+      document.querySelector('.logout-button').addEventListener('click', function() {
+        if (confirm('האם אתה בטוח שברצונך להתנתק?')) {
+          alert('התנתקת בהצלחה');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>תהילים פרק כ״ג - תהילים בקדושה</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    :root {
+      --color-sky: #e6f3ff;
+      --color-parchment: #f7f2e4;
+      --color-gold: #d4af37;
+      --color-text: #1a2639;
+      --color-accent: #4a6fa5;
+      --color-divine: #b38728;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Assistant', sans-serif;
+      background: var(--color-parchment);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+    
+    header {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--color-accent);
+    }
+    
+    .logo img {
+      height: 30px;
+      margin-left: 10px;
+    }
+    
+    .reading-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .chapter-navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .chapter-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--color-accent);
+    }
+    
+    .chapter-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .chapter-select {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+      background: white;
+    }
+    
+    .nav-button {
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    
+    .nav-button:hover {
+      background: #3a5a8c;
+    }
+    
+    .reading-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .option-button {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    
+    .option-button.active {
+      background: var(--color-accent);
+      color: white;
+      border-color: var(--color-accent);
+    }
+    
+    .option-button:hover {
+      background: #f0f0f0;
+    }
+    
+    .option-button.active:hover {
+      background: #3a5a8c;
+    }
+    
+    .tehilim-content {
+      display: flex;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    
+    .hebrew-text, .russian-text {
+      flex: 1;
+      padding: 30px;
+    }
+    
+    .hebrew-text {
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.3rem;
+      line-height: 1.8;
+      background: var(--color-parchment);
+      border-left: 1px solid #eee;
+    }
+    
+    .russian-text {
+      font-size: 1.2rem;
+      line-height: 1.8;
+    }
+    
+    .verse {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .verse-number {
+      font-weight: bold;
+      color: var(--color-accent);
+      margin-left: 5px;
+      font-size: 0.8em;
+      vertical-align: super;
+    }
+    
+    .divine-name {
+      color: var(--color-divine);
+      font-weight: bold;
+    }
+    
+    .audio-controls {
+      margin-top: 30px;
+      text-align: center;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .audio-button {
+      background: var(--color-gold);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 auto;
+    }
+    
+    .audio-button:hover {
+      background: #aa8c2c;
+    }
+    
+    .dedication-section {
+      margin-top: 30px;
+      text-align: center;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .dedication-section h3 {
+      margin-bottom: 15px;
+      color: var(--color-accent);
+    }
+    
+    .dedication-input {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 10px;
+    }
+    
+    .dedication-button {
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    @media (max-width: 768px) {
+      .tehilim-content {
+        flex-direction: column;
+      }
+      
+      .hebrew-text, .russian-text {
+        padding: 20px;
+      }
+      
+      .hebrew-text {
+        border-left: none;
+        border-bottom: 1px solid #eee;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="/api/placeholder/30/30" alt="לוגו תהילים בקדושה">
+      <span>תהילים בקדושה</span>
+    </div>
+    <nav>
+      <button id="menu-toggle" class="nav-button">תפריט</button>
+    </nav>
+  </header>
+  
+  <div class="reading-container">
+    <div class="chapter-navigation">
+      <h1 class="chapter-title">תהילים פרק כ״ג</h1>
+      <div class="chapter-controls">
+        <select class="chapter-select" id="chapter-select">
+          <option value="1">פרק א׳</option>
+          <option value="2">פרק ב׳</option>
+          <!-- יתר הפרקים כאן -->
+          <option value="23" selected>פרק כ״ג</option>
+          <option value="24">פרק כ״ד</option>
+          <!-- יתר הפרקים כאן -->
+          <option value="150">פרק ק״נ</option>
+        </select>
+        <button class="nav-button" id="prev-chapter">הקודם</button>
+        <button class="nav-button" id="next-chapter">הבא</button>
+      </div>
+    </div>
+    
+    <div class="reading-options">
+      <button class="option-button active" id="both-langs">עברית + רוסית</button>
+      <button class="option-button" id="heb-only">עברית בלבד</button>
+      <button class="option-button" id="rus-only">רוסית בלבד</button>
+      <button class="option-button" id="toggle-nikud">ניקוד</button>
+      <button class="option-button" id="increase-font">הגדל טקסט</button>
+      <button class="option-button" id="decrease-font">הקטן טקסט</button>
+      <button class="option-button" id="night-mode">מצב לילה</button>
+    </div>
+    
+    <div class="tehilim-content">
+      <div class="hebrew-text">
+        <div class="verse">
+          <span class="verse-number">א</span>
+          <span>מִזְמוֹר לְדָוִד <span class="divine-name">ה׳</span> רֹעִי לֹא אֶחְסָר:</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">ב</span>
+          <span>בִּנְאוֹת דֶּשֶׁא יַרְבִּיצֵנִי עַל־מֵי מְנֻחוֹת יְנַהֲלֵנִי:</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">ג</span>
+          <span>נַפְשִׁי יְשׁוֹבֵב יַנְחֵנִי בְמַעְגְּלֵי־צֶדֶק לְמַעַן שְׁמוֹ:</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">ד</span>
+          <span>גַּם כִּי־אֵלֵךְ בְּגֵיא צַלְמָוֶת לֹא־אִירָא רָע כִּי־אַתָּה עִמָּדִי שִׁבְטְךָ וּמִשְׁעַנְתֶּךָ הֵמָּה יְנַחֲמֻנִי:</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">ה</span>
+          <span>תַּעֲרֹךְ לְפָנַי שֻׁלְחָן נֶגֶד צֹרְרָי דִּשַּׁנְתָּ בַשֶּׁמֶן רֹאשִׁי כּוֹסִי רְוָיָה:</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">ו</span>
+          <span>אַךְ טוֹב וָחֶסֶד יִרְדְּפוּנִי כָּל־יְמֵי חַיָּי וְשַׁבְתִּי בְּבֵית־<span class="divine-name">ה׳</span> לְאֹרֶךְ יָמִים:</span>
+        </div>
+      </div>
+      
+      <div class="russian-text">
+        <div class="verse">
+          <span class="verse-number">1</span>
+          <span>Псалом Давида. <span class="divine-name">ה׳</span> — Пастырь мой; я ни в чем не буду нуждаться:</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">2</span>
+          <span>Он покоит меня на злачных пажитях и водит меня к водам тихим,</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">3</span>
+          <span>Подкрепляет душу мою, направляет меня на стези правды ради имени Своего.</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">4</span>
+          <span>Если я пойду и долиною смертной тени, не убоюсь зла, потому что Ты со мной; Твой жезл и Твой посох — они успокаивают меня.</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">5</span>
+          <span>Ты приготовил предо мною трапезу в виду врагов моих; умастил елеем голову мою; чаша моя преисполнена.</span>
+        </div>
+        <div class="verse">
+          <span class="verse-number">6</span>
+          <span>Так, благость и милость да сопровождают меня во все дни жизни моей, и я пребуду в доме <span class="divine-name">ה׳</span> многие дни.</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="audio-controls">
+      <button class="audio-button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        השמע את הפרק בקול
+      </button>
+    </div>
+    
+    <div class="dedication-section">
+      <h3>הקדשת הקריאה</h3>
+      <p>ניתן להקדיש את קריאת פרק זה לרפואה, לעילוי נשמת, להצלחה או לכל מטרה אחרת</p>
+      <input type="text" class="dedication-input" placeholder="הזן שם להקדשה (לדוגמה: לרפואת שרה בת רחל)">
+      <button class="dedication-button">הקדש</button>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Toggle language display
+      document.getElementById('both-langs').addEventListener('click', () => {
+        document.querySelector('.hebrew-text').style.display = 'block';
+        document.querySelector('.russian-text').style.display = 'block';
+        setActiveButton('both-langs');
+      });
+      
+      document.getElementById('heb-only').addEventListener('click', () => {
+        document.querySelector('.hebrew-text').style.display = 'block';
+        document.querySelector('.russian-text').style.display = 'none';
+        setActiveButton('heb-only');
+      });
+      
+      document.getElementById('rus-only').addEventListener('click', () => {
+        document.querySelector('.hebrew-text').style.display = 'none';
+        document.querySelector('.russian-text').style.display = 'block';
+        setActiveButton('rus-only');
+      });
+      
+      // Night mode toggle
+      document.getElementById('night-mode').addEventListener('click', () => {
+        document.body.classList.toggle('night-mode');
+        if (document.body.classList.contains('night-mode')) {
+          document.body.style.background = '#1a2639';
+          document.body.style.color = '#f4f4f4';
+          document.querySelector('.hebrew-text').style.background = '#2a3649';
+          document.querySelectorAll('.tehilim-content, .audio-controls, .dedication-section, .chapter-navigation').forEach(el => {
+            el.style.background = '#2a3649';
+            el.style.color = '#f4f4f4';
+          });
+        } else {
+          document.body.style.background = var(--color-parchment);
+          document.body.style.color = var(--color-text);
+          document.querySelector('.hebrew-text').style.background = var(--color-parchment);
+          document.querySelectorAll('.tehilim-content, .audio-controls, .dedication-section, .chapter-navigation').forEach(el => {
+            el.style.background = 'white';
+            el.style.color = var(--color-text);
+          });
+        }
+      });
+      
+      // Font size controls
+      let fontSize = 1.2;
+      document.getElementById('increase-font').addEventListener('click', () => {
+        if (fontSize < 2) {
+          fontSize += 0.1;
+          document.querySelector('.hebrew-text').style.fontSize = `${fontSize + 0.1}rem`;
+          document.querySelector('.russian-text').style.fontSize = `${fontSize}rem`;
+        }
+      });
+      
+      document.getElementById('decrease-font').addEventListener('click', () => {
+        if (fontSize > 0.8) {
+          fontSize -= 0.1;
+          document.querySelector('.hebrew-text').style.fontSize = `${fontSize + 0.1}rem`;
+          document.querySelector('.russian-text').style.fontSize = `${fontSize}rem`;
+        }
+      });
+      
+      // Toggle nikud (would require actual implementation with both versions)
+      document.getElementById('toggle-nikud').addEventListener('click', function() {
+        this.classList.toggle('active');
+        // Implementation would switch between nikud and non-nikud versions
+      });
+      
+      // Helper function to manage active state of option buttons
+      function setActiveButton(id) {
+        document.querySelectorAll('#both-langs, #heb-only, #rus-only').forEach(button => {
+          button.classList.remove('active');
+        });
+        document.getElementById(id).classList.add('active');
+      }
+      
+      // Chapter navigation (placeholder functionality)
+      document.getElementById('chapter-select').addEventListener('change', (e) => {
+        const chapter = e.target.value;
+        alert(`עוברים לפרק ${chapter}`);
+        // Here would be actual navigation logic
+      });
+      
+      document.getElementById('prev-chapter').addEventListener('click', () => {
+        alert('עוברים לפרק הקודם');
+        // Here would be actual navigation logic
+      });
+      
+      document.getElementById('next-chapter').addEventListener('click', () => {
+        alert('עוברים לפרק הבא');
+        // Here would be actual navigation logic
+      });
+      
+      // Dedication feature
+      document.querySelector('.dedication-button').addEventListener('click', () => {
+        const dedication = document.querySelector('.dedication-input').value;
+        if (dedication) {
+          alert(`פרק זה הוקדש עבור: ${dedication}`);
+          // Here would save dedication to user history or database
+        } else {
+          alert('נא להזין שם להקדשה');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

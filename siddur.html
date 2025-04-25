@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Молитвенник (Сидур) - Тикун Ха-Шем</title>
+  <style>
+    /* בסיס */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    /* כותרת */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .back-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 18px;
+      background-color: transparent;
+      border: none;
+      text-decoration: none;
+    }
+    
+    /* תוכן */
+    .container {
+      padding: var(--content-padding);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* בורר שפה */
+    .language-bar {
+      display: flex;
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .language-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .language-option.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* כלי קריאה */
+    .reading-tools {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .tools-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    @media (min-width: 480px) {
+      .tools-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .tool-button {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .tool-button:hover, .tool-button.active {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    .font-size-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .font-size-button {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .font-size-value {
+      font-weight: 500;
+    }
+    
+    /* בחירת תפילות */
+    .prayer-categories {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .category-selector {
+      display: flex;
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+    
+    .category-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .category-option.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* רשימת תפילות */
+    .prayers-list {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    
+    .prayer-item {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .prayer-item:last-child {
+      border-bottom: none;
+    }
+    
+    .prayer-item:hover {
+      background-color: rgba(67, 97, 238, 0.05);
+    }
+    
+    .prayer-item-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .prayer-item-desc {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+    
+    /* תוכן התפילה */
+    .prayer-content {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      display: none;
+    }
+    
+    .prayer-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .prayer-subtitle {
+      font-size: 16px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+      text-align: center;
+      font-style: italic;
+    }
+    
+    .prayer-instruction {
+      padding: 12px;
+      background-color: rgba(67, 97, 238, 0.1);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    
+    .prayer-text {
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+    
+    .prayer-text p {
+      margin-bottom: 16px;
+    }
+    
+    .hebrew-text {
+      font-family: 'Frank Ruhl Libre', serif;
+      direction: rtl;
+      text-align: right;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+    
+    .translation {
+      font-family: 'PT Serif', serif;
+      margin-bottom: 16px;
+    }
+    
+    .phonetic {
+      font-style: italic;
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    
+    .button-back {
+      padding: 10px 16px;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background-color 0.2s;
+    }
+    
+    .button-back:hover {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    /* Закладки */
+    .bookmarks-section {
+      margin-top: 24px;
+    }
+    
+    .bookmarks-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    
+    .bookmark-list {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    
+    .bookmark-item {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+    
+    .bookmark-item:last-child {
+      border-bottom: none;
+    }
+    
+    .bookmark-info {
+      flex: 1;
+    }
+    
+    .bookmark-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .bookmark-category {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+    
+    .bookmark-action {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .bookmark-button {
+      padding: 6px 12px;
+      background-color: var(--background);
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    /* כפתורי שיתוף */
+    .share-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    
+    .share-button {
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .button-print {
+      background-color: #6c757d;
+      color: white;
+    }
+    
+    .button-share {
+      background-color: #4caf50;
+      color: white;
+    }
+    
+    .button-bookmark {
+      background-color: #f0ad4e;
+      color: white;
+    }
+    
+    /* ניווט תחתון */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* רב-לשוניות */
+    [data-lang="he"] {
+      font-family: 'Frank Ruhl Libre', serif;
+      direction: rtl;
+    }
+    
+    [data-lang="ru"] {
+      font-family: 'PT Serif', serif;
+      direction: ltr;
+    }
+    
+    [data-lang="phonetic"] {
+      font-family: 'Roboto', sans-serif;
+      direction: ltr;
+    }
+  </style>
+</head>
+<body>
+  <!-- כותרת -->
+  <header class="header">
+    <a href="index.html" class="back-button">←</a>
+    <div class="header-title">Молитвенник (Сидур)</div>
+    <a href="settings.html" style="font-size: 20px; width: 36px; text-align: center; text-decoration: none;">⚙️</a>
+  </header>
+  
+  <!-- תוכן -->
+  <div class="container">
+    <!-- בורר שפה -->
+    <div class="language-bar">
+      <div class="language-option active" data-lang="ru">Русский</div>
+      <div class="language-option" data-lang="he">עברית</div>
+      <div class="language-option" data-lang="phonetic">Фонетика</div>
+    </div>
+    
+    <!-- כלי קריאה -->
+    <div class="reading-tools">
+      <div class="tools-title">Инструменты чтения</div>
+      <div class="tools-grid">
+        <button class="tool-button" id="toggle-translation">Перевод</button>
+        <button class="tool-button" id="toggle-nikud">Огласовки</button>
+        <button class="tool-button active" id="toggle-multilingual">Трехъязычно</button>
+        <button class="tool-button" id="toggle-name-highlight">Имена</button>
+      </div>
+      <div class="font-size-controls">
+        <button class="font-size-button" id="decrease-font">-</button>
+        <span class="font-size-value">Размер текста: средний</span>
+        <button class="font-size-button" id="increase-font">+</button>
+      </div>
+    </div>
+    
+    <!-- בחירת תפילות -->
+    <div id="prayer-selector" class="prayer-categories">
+      <div class="category-selector">
+        <div class="category-option active" data-category="morning">Утренние</div>
+        <div class="category-option" data-category="evening">Вечерние</div>
+        <div class="category-option" data-category="shabbat">Шаббат</div>
+        <div class="category-option" data-category="other">Другие</div>
+      </div>
+      
+      <!-- רשימת תפילות - בוקר -->
+      <div id="prayers-morning" class="prayers-list">
+        <div class="prayer-item" data-prayer="modeh-ani">
+          <div class="prayer-item-title">Модэ Ани</div>
+          <div class="prayer-item-desc">Первая утренняя молитва: "Благодарю Тебя"</div>
+        </div>
+        <div class="prayer-item" data-prayer="netilat-yadayim">
+          <div class="prayer-item-title">Нетилат Ядаим</div>
+          <div class="prayer-item-desc">Благословение на омовение рук</div>
+        </div>
+        <div class="prayer-item" data-prayer="asher-yatzar">
+          <div class="prayer-item-title">Ашер Яцар</div>
+          <div class="prayer-item-desc">Благословение после посещения туалета</div>
+        </div>
+        <div class="prayer-item" data-prayer="elohai-neshama">
+          <div class="prayer-item-title">Элоай Нешама</div>
+          <div class="prayer-item-desc">Благодарность за возвращение души</div>
+        </div>
+        <div class="prayer-item" data-prayer="morning-blessings">
+          <div class="prayer-item-title">Утренние благословения</div>
+          <div class="prayer-item-desc">Биркот а-Шахар</div>
+        </div>
+        <div class="prayer-item" data-prayer="shema">
+          <div class="prayer-item-title">Шма Исраэль</div>
+          <div class="prayer-item-desc">Слушай, Израиль</div>
+        </div>
+        <div class="prayer-item" data-prayer="amidah-shacharit">
+          <div class="prayer-item-title">Амида (Шахарит)</div>
+          <div class="prayer-item-desc">Основная утренняя молитва</div>
+        </div>
+      </div>
+      
+      <!-- רשימת תפילות - ערב -->
+      <div id="prayers-evening" class="prayers-list" style="display: none;">
+        <div class="prayer-item" data-prayer="mincha">
+          <div class="prayer-item-title">Минха</div>
+          <div class="prayer-item-desc">Послеполуденная молитва</div>
+        </div>
+        <div class="prayer-item" data-prayer="maariv">
+          <div class="prayer-item-title">Маарив</div>
+          <div class="prayer-item-desc">Вечерняя молитва</div>
+        </div>
+        <div class="prayer-item" data-prayer="shema-bedtime">
+          <div class="prayer-item-title">Шма перед сном</div>
+          <div class="prayer-item-desc">Вечернее чтение Шма</div>
+        </div>
+        <div class="prayer-item" data-prayer="hamapil">
+          <div class="prayer-item-title">Амапиль</div>
+          <div class="prayer-item-desc">Благословение перед сном</div>
+        </div>
+      </div>
+      
+      <!-- רשימת תפילות - שבת -->
+      <div id="prayers-shabbat" class="prayers-list" style="display: none;">
+        <div class="prayer-item" data-prayer="kabbalat-shabbat">
+          <div class="prayer-item-title">Каббалат Шаббат</div>
+          <div class="prayer-item-desc">Встреча Субботы</div>
+        </div>
+        <div class="prayer-item" data-prayer="kiddush">
+          <div class="prayer-item-title">Кидуш</div>
+          <div class="prayer-item-desc">Освящение Субботы над вином</div>
+        </div>
+        <div class="prayer-item" data-prayer="shabbat-amidah">
+          <div class="prayer-item-title">Субботняя Амида</div>
+          <div class="prayer-item-desc">Амида для Шаббата</div>
+        </div>
+        <div class="prayer-item" data-prayer="havdalah">
+          <div class="prayer-item-title">Авдала</div>
+          <div class="prayer-item-desc">Отделение Субботы от будней</div>
+        </div>
+      </div>
+      
+      <!-- רשימת תפילות - אחר -->
+      <div id="prayers-other" class="prayers-list" style="display: none;">
+        <div class="prayer-item" data-prayer="birkat-hamazon">
+          <div class="prayer-item-title">Биркат а-Мазон</div>
+          <div class="prayer-item-desc">Благословение после еды</div>
+        </div>
+        <div class="prayer-item" data-prayer="tefilat-haderech">
+          <div class="prayer-item-title">Тфилат а-Дерех</div>
+          <div class="prayer-item-desc">Молитва путешественника</div>
+        </div>
+        <div class="prayer-item" data-prayer="tehillim">
+          <div class="prayer-item-title">Техилим</div>
+          <div class="prayer-item-desc">Избранные Псалмы</div>
+        </div>
+        <div class="prayer-item" data-prayer="memorial">
+          <div class="prayer-item-title">Поминальные молитвы</div>
+          <div class="prayer-item-desc">Молитвы об усопших</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- תצוגת תפילה - מודה אני -->
+    <div id="prayer-display-modeh-ani" class="prayer-content">
+      <h2 class="prayer-title">Модэ Ани</h2>
+      <div class="prayer-subtitle">Первая утренняя молитва благодарности</div>
+      
+      <div class="prayer-instruction">
+        Эту молитву произносят сразу после пробуждения, ещё не вставая с постели, выражая благодарность Всевышнему за возвращение души.
+      </div>
+      
+      <div class="prayer-text multilingual">
+        <div class="hebrew-text">מוֹדֶה אֲנִי לְפָנֶיךָ מֶלֶךְ חַי וְקַיָּם, שֶׁהֶחֱזַרְתָּ בִּי נִשְׁמָתִי בְּחֶמְלָה. רַבָּה אֱמוּנָתֶךָ.</div>
+        <div class="phonetic">Модэ ани лефанеха мелех хай вэкаям, шехехезарта би нишмати бехемла. Раба эмунатеха.</div>
+        <div class="translation">Благодарю Тебя, живой и вечный Царь, за то, что Ты по милости Своей возвратил мне душу мою. Велика вера моя в Тебя!</div>
+      </div>
+      
+      <button class="button-back" id="back-to-list">Назад к списку молитв</button>
+      
+      <div class="share-buttons">
+        <button class="share-button button-print">Печать</button>
+        <button class="share-button button-bookmark">В закладки</button>
+        <button class="share-button button-share">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- Закладки -->
+    <div class="bookmarks-section">
+      <h2 class="bookmarks-title">Мои закладки</h2>
+      
+      <div class="bookmark-list">
+        <div class="bookmark-item">
+          <div class="bookmark-info">
+            <div class="bookmark-title">Шма Исраэль</div>
+            <div class="bookmark-category">Утренние молитвы</div>
+          </div>
+          <div class="bookmark-action">
+            <button class="bookmark-button" onclick="showPrayer('shema')">Открыть</button>
+            <button class="bookmark-button">❌</button>
+          </div>
+        </div>
+        
+        <div class="bookmark-item">
+          <div class="bookmark-info">
+            <div class="bookmark-title">Тфилат а-Дерех</div>
+            <div class="bookmark-category">Другие молитвы</div>
+          </div>
+          <div class="bookmark-action">
+            <button class="bookmark-button" onclick="showPrayer('tefilat-haderech')">Открыть</button>
+            <button class="bookmark-button">❌</button>
+          </div>
+        </div>
+        
+        <div class="bookmark-item">
+          <div class="bookmark-info">
+            <div class="bookmark-title">Кидуш</div>
+            <div class="bookmark-category">Молитвы Шаббата</div>
+          </div>
+          <div class="bookmark-action">
+            <button class="bookmark-button" onclick="showPrayer('kiddush')">Открыть</button>
+            <button class="bookmark-button">❌</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ניווט תחתון -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">Главная</div>
+    </a>
+    <a href="tehilim.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">Техилим</div>
+    </a>
+    <a href="memorial.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🕯️</div>
+      <div class="bottom-nav-label">За усопших</div>
+    </a>
+    <a href="#" class="bottom-nav-item active">
+      <div class="bottom-nav-icon">📝</div>
+      <div class="bottom-nav-label">Молитвенник</div>
+    </a>
+  </nav>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // החלפת שפה
+      const languageOptions = document.querySelectorAll('.language-option');
+      languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const lang = this.dataset.lang;
+          
+          // שינוי האפשרות הפעילה
+          languageOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          // שמירת השפה הנבחרת
+          localStorage.setItem('preferredLanguage', lang);
+          
+          // עדכון השפה בממשק
+          updateUILanguage(lang);
+        });
+      });
+      
+      // עדכון השפה בממשק
+      function updateUILanguage(lang) {
+        // במימוש אמיתי כאן היה קוד שמעדכן את תצוגת השפה
+        console.log('Язык изменен на:', lang);
+      }
+      
+      // טעינת השפה המועדפת בעת טעינת הדף
+      const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+      languageOptions.forEach(opt => {
+        if (opt.dataset.lang === savedLang) {
+          opt.click();
+        }
+      });
+      
+      // מעבר בין קטגוריות תפילה
+      const categoryOptions = document.querySelectorAll('.category-option');
+      categoryOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const category = this.dataset.category;
+          
+          // שינוי הקטגוריה הפעילה
+          categoryOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          // הצגת רשימת התפילות המתאימה
+          document.querySelectorAll('.prayers-list').forEach(list => {
+            list.style.display = 'none';
+          });
+          document.getElementById('prayers-' + category).style.display = 'block';
+        });
+      });
+      
+      // הצגת תפילה בלחיצה על פריט ברשימה
+      const prayerItems = document.querySelectorAll('.prayer-item');
+      prayerItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const prayerId = this.dataset.prayer;
+          showPrayer(prayerId);
+        });
+      });
+      
+      // הצגת תפילה
+      function showPrayer(prayerId) {
+        // הסתרת בורר התפילות
+        document.getElementById('prayer-selector').style.display = 'none';
+        document.querySelector('.bookmarks-section').style.display = 'none';
+        
+        // במימוש אמיתי כאן היה קוד שמציג את התפילה המבוקשת
+        // לצורך הדגמה אנחנו מציגים תפילה קבועה
+        document.getElementById('prayer-display-modeh-ani').style.display = 'block';
+      }
+      
+      // חזרה לרשימת התפילות
+      document.getElementById('back-to-list').addEventListener('click', function() {
+        // הסתרת תצוגת התפילה
+        document.getElementById('prayer-display-modeh-ani').style.display = 'none';
+        
+        // הצגת בורר התפילות
+        document.getElementById('prayer-selector').style.display = 'block';
+        document.querySelector('.bookmarks-section').style.display = 'block';
+      });
+      
+      // הפעלת פונקציית showPrayer כגלובלית
+      window.showPrayer = showPrayer;
+      
+      // טיפול בכפתורי כלי קריאה
+      const toolButtons = document.querySelectorAll('.tool-button');
+      toolButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          if (this.id === 'toggle-multilingual') {
+            // כפתור תצוגה רב-לשונית תמיד פעיל
+            if (!this.classList.contains('active')) {
+              this.classList.add('active');
+            }
+            return;
+          }
+          
+          this.classList.toggle('active');
+          // טיפול בהתאם לכפתור
+         switch (this.id) {
+           case 'toggle-translation':
+             document.querySelectorAll('.translation').forEach(el => {
+               el.style.display = this.classList.contains('active') ? 'block' : 'none';
+             });
+             break;
+           case 'toggle-nikud':
+             document.querySelectorAll('.hebrew-text').forEach(el => {
+               el.classList.toggle('no-nikud');
+             });
+             break;
+           case 'toggle-name-highlight':
+             document.querySelectorAll('.holy-name').forEach(el => {
+               el.classList.toggle('highlight');
+             });
+             break;
+         }
+       });
+     });
+     
+     // שינוי גודל טקסט
+     let currentFontSize = 18; // גודל טקסט התחלתי
+     const fontSizeValue = document.querySelector('.font-size-value');
+     
+     document.getElementById('increase-font').addEventListener('click', function() {
+       if (currentFontSize < 32) {
+         currentFontSize += 2;
+         updateFontSize();
+       }
+     });
+     
+     document.getElementById('decrease-font').addEventListener('click', function() {
+       if (currentFontSize > 16) {
+         currentFontSize -= 2;
+         updateFontSize();
+       }
+     });
+     
+     function updateFontSize() {
+       document.querySelectorAll('.prayer-text').forEach(el => {
+         el.style.fontSize = currentFontSize + 'px';
+       });
+       
+       const currentLang = document.querySelector('.language-option.active').dataset.lang;
+       let sizeText = '';
+       
+       if (currentFontSize <= 18) {
+         sizeText = currentLang === 'ru' ? 'маленький' : 
+                    currentLang === 'he' ? 'קטן' : 'katan';
+       } else if (currentFontSize <= 22) {
+         sizeText = currentLang === 'ru' ? 'средний' : 
+                    currentLang === 'he' ? 'בינוני' : 'beynoni';
+       } else if (currentFontSize <= 26) {
+         sizeText = currentLang === 'ru' ? 'большой' : 
+                    currentLang === 'he' ? 'גדול' : 'gadol';
+       } else {
+         sizeText = currentLang === 'ru' ? 'очень большой' : 
+                    currentLang === 'he' ? 'גדול מאוד' : 'gadol me\'od';
+       }
+       
+       if (currentLang === 'ru') {
+         fontSizeValue.textContent = `Размер текста: ${sizeText}`;
+       } else if (currentLang === 'he') {
+         fontSizeValue.textContent = `גודל טקסט: ${sizeText}`;
+       } else {
+         fontSizeValue.textContent = `Godel text: ${sizeText}`;
+       }
+     }
+     
+     // כפתורי שיתוף
+     document.querySelector('.button-print').addEventListener('click', function() {
+       window.print();
+     });
+     
+     document.querySelector('.button-share').addEventListener('click', function() {
+       const prayerTitle = document.querySelector('.prayer-title').textContent;
+       
+       if (navigator.share) {
+         navigator.share({
+           title: 'Тикун Ха-Шем - ' + prayerTitle,
+           text: 'Молитва: ' + prayerTitle,
+           url: window.location.href
+         }).catch(err => {
+           console.error('Ошибка при попытке поделиться:', err);
+         });
+       } else {
+         // פתרון חלופי אם Web Share API לא נתמך
+         prompt('Скопируйте ссылку:', window.location.href);
+       }
+     });
+     
+     // כפתור מועדפים
+     document.querySelector('.button-bookmark').addEventListener('click', function() {
+       const prayerTitle = document.querySelector('.prayer-title').textContent;
+       alert(`Молитва "${prayerTitle}" добавлена в закладки`);
+       // במימוש אמיתי כאן היה קוד שמוסיף למועדפים
+     });
+   });
+ </script>
+</body>
+</html>

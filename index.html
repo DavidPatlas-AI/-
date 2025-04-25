@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Тикун Ха-Шем - Псалмы и Молитвы</title>
+  <style>
+    /* Базовые стили */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    /* Заголовок */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    /* Контейнер */
+    .container {
+      padding: var(--content-padding);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* Герой-секция */
+    .hero {
+      background-color: var(--primary);
+      color: white;
+      padding: 40px var(--content-padding);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    
+    .hero-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    
+    .hero-text {
+      font-size: 16px;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+    
+    /* Кнопки */
+    .button {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .button-primary {
+      background-color: white;
+      color: var(--primary);
+    }
+    
+    .button-outline {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    /* Заголовки секций */
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    
+    /* Карточки */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    @media (min-width: 600px) {
+      .card-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .card-content {
+      padding: 16px;
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .card-text {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    
+    .card-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-link {
+      color: var(--primary);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    
+    .card-icon {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--primary);
+      background-color: rgba(67, 97, 238, 0.1);
+      border-radius: 50%;
+      margin-bottom: 12px;
+    }
+    
+    /* Выбор языка */
+    .language-bar {
+      display: flex;
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .language-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .language-option.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* Форма для имени усопшего */
+    .memorial-form {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .form-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    
+    .button-submit {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    /* Нижняя навигация */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* Многоязычные элементы */
+    [data-lang="he"] {
+      font-family: 'Frank Ruhl Libre', serif;
+      direction: rtl;
+    }
+    
+    [data-lang="ru"] {
+      font-family: 'PT Serif', serif;
+    }
+    
+    [data-lang="phonetic"] {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <!-- Заголовок -->
+  <header class="header">
+    <div class="header-title">Тикун Ха-Шем</div>
+    <a href="settings.html" style="color: var(--text); font-size: 20px; text-decoration: none;">⚙️</a>
+  </header>
+  
+  <!-- Контент -->
+  <div class="container">
+    <!-- Герой-секция -->
+    <div class="hero">
+      <h1 class="hero-title">Псалмы и Молитвы</h1>
+      <p class="hero-text">Чтение псалмов и молитв на трех языках для возвышения души</p>
+      <div class="button-group">
+        <a href="tehilim.html" class="button button-primary">Начать чтение</a>
+        <a href="memorial.html" class="button button-outline">Молитва за усопших</a>
+      </div>
+    </div>
+    
+    <!-- Выбор языка -->
+    <div class="language-bar">
+      <div class="language-option active" data-lang="ru">Русский</div>
+      <div class="language-option" data-lang="he">עברית</div>
+      <div class="language-option" data-lang="phonetic">Фонетика</div>
+    </div>
+    
+    <!-- Форма для имени усопшего -->
+    <div class="memorial-form">
+      <h2 class="form-title">Молитва за усопшего</h2>
+      <div class="form-group">
+        <label class="form-label">Введите имя усопшего (на иврите):</label>
+        <input type="text" class="form-control" id="deceased-name" placeholder="שם הנפטר">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Введите имя матери усопшего (на иврите):</label>
+        <input type="text" class="form-control" id="mother-name" placeholder="שם האם">
+      </div>
+      <button class="button-submit" id="generate-prayer">Получить псалмы для чтения</button>
+    </div>
+    
+    <!-- Разделы псалмов -->
+    <h2 class="section-title">Выберите раздел</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-icon">📖</div>
+          <h3 class="card-title">Книга Техилим (Псалмы)</h3>
+          <p class="card-text">Псалмы Давида для ежедневного чтения и молитвы</p>
+          <div class="card-action">
+            <a href="tehilim.html" class="card-link">Начать чтение</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-content">
+          <div class="card-icon">🕯️</div>
+          <h3 class="card-title">За усопших</h3>
+          <p class="card-text">Специальные молитвы для возвышения души усопших</p>
+          <div class="card-action">
+            <a href="memorial.html" class="card-link">Читать молитвы</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-content">
+          <div class="card-icon">📅</div>
+          <h3 class="card-title">Псалом 119 по буквам</h3>
+          <p class="card-text">Чтение псалма 119 по буквам имени усопшего</p>
+          <div class="card-action">
+            <a href="psalm119.html" class="card-link">Открыть псалом</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-content">
+          <div class="card-icon">📝</div>
+          <h3 class="card-title">Молитвенник</h3>
+          <p class="card-text">Ежедневные молитвы на трех языках</p>
+          <div class="card-action">
+            <a href="siddur.html" class="card-link">Открыть молитвенник</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Описание проекта -->
+    <div class="card">
+      <div class="card-content">
+        <h2 class="section-title">О проекте Тикун Ха-Шем</h2>
+        <p style="margin-bottom: 16px;">Проект "Тикун Ха-Шем" создан для того, чтобы помочь русскоязычным евреям читать псалмы и молитвы для возвышения души усопших.</p>
+        <p style="margin-bottom: 16px;">Вы можете читать тексты на иврите, в русском переводе или в фонетической транскрипции – как вам удобнее.</p>
+        <p>Особая функция сайта – возможность выбрать псалмы по буквам имени усопшего, следуя традиции чтения Псалма 119, где каждая строфа соответствует букве еврейского алфавита.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Нижняя навигация -->
+  <nav class="bottom-nav">
+    <a href="#" class="bottom-nav-item active">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">Главная</div>
+    </a>
+    <a href="tehilim.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">Техилим</div>
+    </a>
+    <a href="memorial.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🕯️</div>
+      <div class="bottom-nav-label">За усопших</div>
+    </a>
+    <a href="siddur.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📝</div>
+      <div class="bottom-nav-label">Молитвенник</div>
+    </a>
+  </nav>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Переключение языков
+      const languageOptions = document.querySelectorAll('.language-option');
+      languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          // Удаляем активный класс у всех опций
+          languageOptions.forEach(opt => opt.classList.remove('active'));
+          
+          // Добавляем активный класс выбранной опции
+          this.classList.add('active');
+          
+          // Запоминаем выбранный язык
+          const selectedLang = this.dataset.lang;
+          localStorage.setItem('preferredLanguage', selectedLang);
+          
+          // Обновляем видимый язык (в реальном приложении здесь был бы код для смены языка на странице)
+          console.log('Выбран язык:', selectedLang);
+        });
+      });
+      
+      // Восстанавливаем предпочитаемый язык при загрузке
+      const savedLang = localStorage.getItem('preferredLanguage');
+      if (savedLang) {
+        languageOptions.forEach(opt => {
+          if (opt.dataset.lang === savedLang) {
+            opt.click();
+          }
+        });
+      }
+      
+      // Обработка формы для имени усопшего
+      document.getElementById('generate-prayer').addEventListener('click', function() {
+        const deceasedName = document.getElementById('deceased-name').value.trim();
+        const motherName = document.getElementById('mother-name').value.trim();
+        
+        if (!deceasedName) {
+          alert('Пожалуйста, введите имя усопшего');
+          return;
+        }
+        
+        // В реальном приложении здесь был бы код для генерации молитв на основе имени
+        // Для демонстрации перенаправляем на страницу псалма 119
+        window.location.href = 'psalm119.html?name=' + encodeURIComponent(deceasedName) + 
+                             '&mother=' + encodeURIComponent(motherName);
+      });
+      
+      // Обработка карточек для быстрого перехода
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.addEventListener('click', function() {
+          const link = this.querySelector('.card-link');
+          if (link) {
+            link.click();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

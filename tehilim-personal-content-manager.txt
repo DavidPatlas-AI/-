@@ -1,0 +1,796 @@
+/**
+ * מנהל תוכן אישי - תהילים בקדושה
+ * 
+ * מערכת זו מאפשרת למשתמשים ליצור, לערוך ולשמור מארזים מותאמים אישית 
+ * של טקסטים מתוקנים, ולהדפיס אותם בפורמטים שונים.
+ */
+
+// ============================================
+// מודל נתונים למארזים אישיים
+// ============================================
+
+/**
+ * מחלקה המייצגת מארז תוכן אישי
+ */
+class PersonalCollection {
+  constructor(id, userId, title, type, items = [], metadata = {}) {
+    this.id = id;                // מזהה ייחודי
+    this.userId = userId;        // משתמש בעל המארז
+    this.title = title;          // כותרת המארז
+    this.type = type;            // סוג (תהילים, תפילות, מעורב)
+    this.items = items;          // פריטים במארז
+    this.metadata = metadata;    // מידע נוסף (תאריך יצירה, תיאור, תגיות)
+    this.lastModified = new Date(); // עדכון אחרון
+  }
+  
+  /**
+   * הוספת פריט למארז
+   * @param {CollectionItem} item - הפריט להוספה
+   */
+  addItem(item) {
+    this.items.push(item);
+    this.lastModified = new Date();
+  }
+  
+  /**
+   * הסרת פריט מהמארז
+   * @param {string} itemId - מזהה הפריט להסרה
+   */
+  removeItem(itemId) {
+    this.items = this.items.filter(item => item.id !== itemId);
+    this.lastModified = new Date();
+  }
+  
+  /**
+   * עדכון סדר הפריטים
+   * @param {Array} newOrder - מערך מזהים בסדר החדש
+   */
+  reorderItems(newOrder) {
+    const itemMap = {};
+    this.items.forEach(item => {
+      itemMap[item.id] = item;
+    });
+    
+    // סידור מחדש לפי הסדר החדש
+    this.items = newOrder.map(id => itemMap[id]);
+    this.lastModified = new Date();
+  }
+}
+
+/**
+ * מחלקה המייצגת פריט במארז
+ */
+class CollectionItem {
+  constructor(id, type, content, metadata = {}) {
+    this.id = id;                // מזהה ייחודי
+    this.type = type;            // סוג (פרק תהילים, תפילה, טקסט מתוקן)
+    this.content = content;      // תוכן הפריט
+    this.metadata = metadata;    // מידע נוסף (מקור, תאריך הוספה, הערות)
+    this.userEdits = [];         // עריכות אישיות שהמשתמש ביצע
+  }
+  
+  /**
+   * הוספת עריכה אישית לפריט
+   * @param {Edit} edit - העריכה להוספה
+   */
+  addEdit(edit) {
+    this.userEdits.push(edit);
+  }
+  
+  /**
+   * קבלת הגרסה המעודכנת עם כל העריכות
+   * @returns {string} התוכן המעודכן
+   */
+  getEditedContent() {
+    let editedContent = this.content;
+    
+    // החלת כל העריכות
+    this.userEdits.forEach(edit => {
+      editedContent = edit.applyToContent(editedContent);
+    });
+    
+    return editedContent;
+  }
+}
+
+/**
+ * מחלקה המייצגת עריכה (למשל תיקון שם ה')
+ */
+class Edit {
+  constructor(id, type, replacementStyle, positions = []) {
+    this.id = id;                  // מזהה ייחודי
+    this.type = type;              // סוג העריכה (תיקון שם, הוספת ניקוד)
+    this.replacementStyle = replacementStyle; // סגנון ההחלפה (ה', י-ה-ו-ה וכו')
+    this.positions = positions;    // מיקומים לתיקון
+    this.timestamp = new Date();   // זמן העריכה
+  }
+  
+  /**
+   * החלת העריכה על תוכן
+   * @param {string} content - התוכן המקורי
+   * @returns {string} התוכן המעודכן
+   */
+  applyToContent(content) {
+    // תיקון שם ה'
+    if (this.type === 'divine-name') {
+      let editedContent = content;
+      
+      // מיון המיקומים מהסוף להתחלה כדי שלא להשפיע על אינדקסים
+      const sortedPositions = [...this.positions].sort((a, b) => b.start - a.start);
+      
+      sortedPositions.forEach(pos => {
+        const replacement = `<span class="divine-name">${this.replacementStyle}</span>`;
+        editedContent = editedContent.substring(0, pos.start) +
+                        replacement +
+                        editedContent.substring(pos.end);
+      });
+      
+      return editedContent;
+    }
+    
+    // סוגי עריכה נוספים...
+    
+    return content;
+  }
+}
+
+// ============================================
+// מנהל מארזים אישיים
+// ============================================
+
+/**
+ * מחלקה לניהול מארזים אישיים
+ */
+class PersonalContentManager {
+  constructor(dataService) {
+    this.dataService = dataService;
+    this.collections = {};  // מטמון של מארזים לפי מזהה
+  }
+  
+  /**
+   * יצירת מארז חדש
+   * @param {string} userId - מזהה המשתמש
+   * @param {string} title - כותרת המארז
+   * @param {string} type - סוג המארז
+   * @returns {Promise<PersonalCollection>} המארז החדש
+   */
+  async createCollection(userId, title, type) {
+    try {
+      const collection = new PersonalCollection(
+        generateUUID(),  // פונקציה ליצירת מזהה ייחודי
+        userId,
+        title,
+        type,
+        [],  // פריטים ריק בהתחלה
+        {
+          createdAt: new Date(),
+          description: '',
+          tags: []
+        }
+      );
+      
+      // שמירה במסד הנתונים
+      await this.dataService.saveCollection(collection);
+      
+      // שמירה במטמון
+      this.collections[collection.id] = collection;
+      
+      return collection;
+    } catch (error) {
+      console.error('Error creating collection:', error);
+      throw new Error('Failed to create personal collection');
+    }
+  }
+  
+  /**
+   * טעינת מארז לפי מזהה
+   * @param {string} collectionId - מזהה המארז
+   * @returns {Promise<PersonalCollection>} המארז המבוקש
+   */
+  async loadCollection(collectionId) {
+    // בדיקה אם המארז כבר במטמון
+    if (this.collections[collectionId]) {
+      return this.collections[collectionId];
+    }
+    
+    try {
+      // טעינה מהשרת
+      const collection = await this.dataService.getCollection(collectionId);
+      
+      // שמירה במטמון
+      this.collections[collectionId] = collection;
+      
+      return collection;
+    } catch (error) {
+      console.error(`Error loading collection ${collectionId}:`, error);
+      throw new Error('Failed to load collection');
+    }
+  }
+  
+  /**
+   * טעינת כל המארזים של משתמש
+   * @param {string} userId - מזהה המשתמש
+   * @returns {Promise<Array<PersonalCollection>>} מערך המארזים
+   */
+  async getUserCollections(userId) {
+    try {
+      const collections = await this.dataService.getUserCollections(userId);
+      
+      // שמירה במטמון
+      collections.forEach(collection => {
+        this.collections[collection.id] = collection;
+      });
+      
+      return collections;
+    } catch (error) {
+      console.error(`Error loading collections for user ${userId}:`, error);
+      throw new Error('Failed to load user collections');
+    }
+  }
+  
+  /**
+   * הוספת פריט למארז
+   * @param {string} collectionId - מזהה המארז
+   * @param {string} itemType - סוג הפריט
+   * @param {Object} content - תוכן הפריט
+   * @param {Object} metadata - מידע נוסף
+   * @returns {Promise<CollectionItem>} הפריט שנוסף
+   */
+  async addItemToCollection(collectionId, itemType, content, metadata = {}) {
+    try {
+      const collection = await this.loadCollection(collectionId);
+      
+      const item = new CollectionItem(
+        generateUUID(),
+        itemType,
+        content,
+        {
+          ...metadata,
+          addedAt: new Date()
+        }
+      );
+      
+      collection.addItem(item);
+      
+      // שמירת השינויים
+      await this.dataService.updateCollection(collection);
+      
+      return item;
+    } catch (error) {
+      console.error(`Error adding item to collection ${collectionId}:`, error);
+      throw new Error('Failed to add item to collection');
+    }
+  }
+  
+  /**
+   * עריכת פריט במארז
+   * @param {string} collectionId - מזהה המארז
+   * @param {string} itemId - מזהה הפריט
+   * @param {string} editType - סוג העריכה
+   * @param {string} replacementStyle - סגנון ההחלפה
+   * @param {Array} positions - מיקומים לעריכה
+   * @returns {Promise<Edit>} העריכה שנוספה
+   */
+  async editCollectionItem(collectionId, itemId, editType, replacementStyle, positions) {
+    try {
+      const collection = await this.loadCollection(collectionId);
+      const item = collection.items.find(i => i.id === itemId);
+      
+      if (!item) {
+        throw new Error(`Item ${itemId} not found in collection ${collectionId}`);
+      }
+      
+      const edit = new Edit(
+        generateUUID(),
+        editType,
+        replacementStyle,
+        positions
+      );
+      
+      item.addEdit(edit);
+      
+      // שמירת השינויים
+      await this.dataService.updateCollection(collection);
+      
+      return edit;
+    } catch (error) {
+      console.error(`Error editing item ${itemId} in collection ${collectionId}:`, error);
+      throw new Error('Failed to edit collection item');
+    }
+  }
+}
+
+// ============================================
+// מערכת הדפסה מתקדמת
+// ============================================
+
+/**
+ * מחלקה לניהול הדפסת מארזים
+ */
+class PrintManager {
+  constructor() {
+    // הגדרות ברירת מחדל
+    this.defaultSettings = {
+      format: 'A5',              // גודל דף
+      fontSizeHebrew: 16,        // גודל גופן עברית
+      fontSizeRussian: 14,       // גודל גופן רוסית
+      showNikkud: true,          // הצגת ניקוד
+      divineNameStyle: 'ה\'',    // סגנון שם ה'
+      showBothLanguages: true,   // הצגת שתי השפות
+      margins: {                 // שוליים
+        top: 15,
+        right: 15,
+        bottom: 15,
+        left: 15
+      },
+      addCover: true,            // הוספת עמוד שער
+      addDedication: false,      // הוספת הקדשה
+      dedicationText: ''         // טקסט הקדשה
+    };
+  }
+  
+  /**
+   * יצירת מסמך PDF ממארז
+   * @param {PersonalCollection} collection - המארז להדפסה
+   * @param {Object} settings - הגדרות הדפסה
+   * @returns {Promise<Blob>} הקובץ שנוצר
+   */
+  async generatePDF(collection, settings = {}) {
+    // שילוב הגדרות ברירת המחדל עם ההגדרות שהתקבלו
+    const printSettings = {
+      ...this.defaultSettings,
+      ...settings
+    };
+    
+    try {
+      // כאן נשתמש בספריית הדפסת PDF (כמו jsPDF או pdfmake)
+      // לדוגמה בסיסית בלבד, נשתמש בתיאור פונקציונליות
+      
+      // יצירת מסמך
+      const doc = await this._createDocument(printSettings);
+      
+      // הוספת שער (אם צריך)
+      if (printSettings.addCover) {
+        await this._addCoverPage(doc, collection, printSettings);
+      }
+      
+      // הוספת הקדשה (אם צריך)
+      if (printSettings.addDedication && printSettings.dedicationText) {
+        await this._addDedicationPage(doc, printSettings);
+      }
+      
+      // הוספת תוכן הפריטים
+      for (const item of collection.items) {
+        await this._addItemToDocument(doc, item, printSettings);
+      }
+      
+      // הפקת הקובץ
+      const pdfBlob = await doc.output('blob');
+      
+      return pdfBlob;
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      throw new Error('Failed to generate PDF');
+    }
+  }
+  
+  /**
+   * יצירת מסמך חדש
+   * @private
+   */
+  async _createDocument(settings) {
+    // כאן נייצר מסמך PDF חדש עם הגדרות הדף
+    console.log('Creating new document with format:', settings.format);
+    return {}; // פונקציה לדוגמה
+  }
+  
+  /**
+   * הוספת עמוד שער
+   * @private
+   */
+  async _addCoverPage(doc, collection, settings) {
+    console.log('Adding cover page for collection:', collection.title);
+    return doc; // פונקציה לדוגמה
+  }
+  
+  /**
+   * הוספת עמוד הקדשה
+   * @private
+   */
+  async _addDedicationPage(doc, settings) {
+    console.log('Adding dedication page with text:', settings.dedicationText);
+    return doc; // פונקציה לדוגמה
+  }
+  
+  /**
+   * הוספת פריט למסמך
+   * @private
+   */
+  async _addItemToDocument(doc, item, settings) {
+    // קבלת התוכן המעודכן של הפריט
+    const content = item.getEditedContent();
+    
+    // הוספת הכותרת והתוכן לפי סוג הפריט
+    console.log('Adding item to document, type:', item.type);
+    
+    return doc; // פונקציה לדוגמה
+  }
+  
+  /**
+   * הדפסה ישירה למדפסת
+   * @param {Blob} pdfBlob - קובץ PDF להדפסה
+   */
+  async printDirect(pdfBlob) {
+    try {
+      // יצירת URL לקובץ
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      
+      // פתיחת חלון הדפסה
+      const printWindow = window.open(pdfUrl);
+      
+      printWindow.addEventListener('load', function() {
+        printWindow.print();
+        // שחרור ה-URL לאחר ההדפסה
+        setTimeout(function() {
+          printWindow.close();
+          URL.revokeObjectURL(pdfUrl);
+        }, 1000);
+      });
+    } catch (error) {
+      console.error('Error printing document:', error);
+      throw new Error('Failed to print document');
+    }
+  }
+}
+
+// ============================================
+// ממשק פרונטנד למנהל התוכן האישי
+// ============================================
+
+/**
+ * מחלקה המקשרת בין ממשק המשתמש למנהל התוכן
+ */
+class PersonalAreaViewController {
+  constructor(contentManager, printManager) {
+    this.contentManager = contentManager;
+    this.printManager = printManager;
+    this.currentCollection = null;
+    this.currentUser = null;
+    this.printSettings = { ...this.printManager.defaultSettings };
+  }
+  
+  /**
+   * אתחול הבקר לאחר טעינת הדף
+   */
+  async initialize(userId) {
+    try {
+      this.currentUser = userId;
+      
+      // טעינת המארזים של המשתמש
+      const collections = await this.contentManager.getUserCollections(userId);
+      
+      // הצגת המארזים בממשק
+      this.renderCollectionsList(collections);
+      
+      // הגדרת מאזיני אירועים
+      this.setupEventListeners();
+    } catch (error) {
+      console.error('Error initializing personal area:', error);
+      this.showErrorMessage('שגיאה בטעינת האזור האישי');
+    }
+  }
+  
+  /**
+   * הגדרת מאזיני אירועים
+   */
+  setupEventListeners() {
+    // מאזיני אירועים לטאבים
+    document.querySelectorAll('.tab').forEach((tab, index) => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.switchTab(index);
+      });
+    });
+    
+    // כפתור יצירת מארז חדש
+    document.getElementById('new-collection-btn').addEventListener('click', () => {
+      this.showNewCollectionModal();
+    });
+    
+    // כפתורי הדפסה
+    document.getElementById('download-pdf-btn').addEventListener('click', () => {
+      this.downloadCurrentCollectionAsPDF();
+    });
+    
+    document.getElementById('print-now-btn').addEventListener('click', () => {
+      this.printCurrentCollection();
+    });
+  }
+  
+  /**
+   * מעבר בין טאבים
+   * @param {number} tabIndex - אינדקס הטאב
+   */
+  switchTab(tabIndex) {
+    // הסרת קלאס 'פעיל' מכל הטאבים
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    
+    // הוספת קלאס 'פעיל' לטאב הנבחר
+    document.querySelectorAll('.tab')[tabIndex].classList.add('active');
+    
+    // הסתרת כל תוכן הטאבים
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.style.display = 'none';
+    });
+    
+    // הצגת התוכן של הטאב הנבחר
+    document.querySelectorAll('.tab-content')[tabIndex].style.display = 'block';
+  }
+  
+  /**
+   * הצגת המארזים ברשימה
+   * @param {Array} collections - מארזים להצגה
+   */
+  renderCollectionsList(collections) {
+    const container = document.querySelector('.collections-grid');
+    container.innerHTML = '';
+    
+    collections.forEach(collection => {
+      const itemElement = document.createElement('a');
+      itemElement.href = '#';
+      itemElement.className = 'collection-item';
+      itemElement.setAttribute('data-id', collection.id);
+      
+      let iconClass = '📖'; // ברירת מחדל
+      if (collection.type === 'prayers') iconClass = '🙏';
+      else if (collection.type === 'edited') iconClass = '📝';
+      
+      itemElement.innerHTML = `
+        <div class="collection-icon">${iconClass}</div>
+        <div class="collection-title">${collection.title}</div>
+        <div class="collection-info">
+          ${collection.items.length} פריטים • עודכן ${this.formatDate(collection.lastModified)}
+        </div>
+      `;
+      
+      // מאזין לחיצה
+      itemElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.loadCollection(collection.id);
+      });
+      
+      container.appendChild(itemElement);
+    });
+  }
+  
+  /**
+   * טעינת מארז
+   * @param {string} collectionId - מזהה המארז
+   */
+  async loadCollection(collectionId) {
+    try {
+      const collection = await this.contentManager.loadCollection(collectionId);
+      this.currentCollection = collection;
+      
+      // הצגת המארז בממשק העריכה
+      this.renderCollectionContent(collection);
+      
+      // מעבר לטאב העריכה
+      this.switchTab(1);
+    } catch (error) {
+      console.error(`Error loading collection ${collectionId}:`, error);
+      this.showErrorMessage('שגיאה בטעינת המארז');
+    }
+  }
+  
+  /**
+   * הצגת תוכן המארז בממשק העריכה
+   * @param {PersonalCollection} collection - המארז להצגה
+   */
+  renderCollectionContent(collection) {
+    // עדכון כותרת
+    document.querySelector('#edit .card-title').textContent = collection.title;
+    
+    // הצגת הפריטים
+    const itemsContainer = document.querySelector('#edit .card-body');
+    itemsContainer.innerHTML = '';
+    
+    collection.items.forEach(item => {
+      // הצגת התוכן המתוקן
+      const content = item.getEditedContent();
+      
+      const itemElement = document.createElement('div');
+      itemElement.className = 'edited-content';
+      itemElement.innerHTML = content;
+      
+      // כפתורי עריכה
+      const editOverlay = document.createElement('div');
+      editOverlay.className = 'edit-overlay';
+      editOverlay.innerHTML = `
+        <button class="edit-btn" data-id="${item.id}">✏️</button>
+        <button class="edit-btn" data-id="${item.id}">➕</button>
+      `;
+      
+      itemElement.appendChild(editOverlay);
+      itemsContainer.appendChild(itemElement);
+      
+      // מאזיני עריכה
+      editOverlay.querySelector('button:first-child').addEventListener('click', () => {
+        this.showEditItemModal(item);
+      });
+    });
+    
+    // עדכון רשימת ההדפסה
+    this.updatePrintSettings();
+  }
+  
+  /**
+   * הצגת חלון יצירת מארז חדש
+   */
+  showNewCollectionModal() {
+    // כאן ניצור ונציג מודל ליצירת מארז חדש
+    // במימוש מלא, נציג מודל HTML עם טופס
+    
+    const title = prompt('שם המארז החדש:');
+    const type = prompt('סוג המארז (tehilim/prayers/edited):');
+    
+    if (title && type) {
+      this.createNewCollection(title, type);
+    }
+  }
+  
+  /**
+   * יצירת מארז חדש
+   */
+  async createNewCollection(title, type) {
+    try {
+      const newCollection = await this.contentManager.createCollection(
+        this.currentUser,
+        title,
+        type
+      );
+      
+      // הוספת המארז החדש לרשימה
+      const collections = await this.contentManager.getUserCollections(this.currentUser);
+      this.renderCollectionsList(collections);
+      
+      // מעבר למארז החדש
+      this.loadCollection(newCollection.id);
+    } catch (error) {
+      console.error('Error creating new collection:', error);
+      this.showErrorMessage('שגיאה ביצירת מארז חדש');
+    }
+  }
+  
+  /**
+   * הצגת חלון עריכת פריט
+   * @param {CollectionItem} item - הפריט לעריכה
+   */
+  showEditItemModal(item) {
+    // כאן ניצור ונציג מודל לעריכת פריט
+    // במימוש מלא, נציג מודל HTML עם אפשרויות העריכה
+    
+    const content = prompt('ערוך את התוכן:', item.content);
+    
+    if (content) {
+      // לדוגמה בלבד - בפועל נשתמש בממשק העריכה המתקדם
+      const positions = [{start: 0, end: 10}]; // לדוגמה
+      this.editItem(this.currentCollection.id, item.id, 'divine-name', 'ה\'', positions);
+    }
+  }
+  
+  /**
+   * עריכת פריט
+   */
+  async editItem(collectionId, itemId, editType, replacementStyle, positions) {
+    try {
+      await this.contentManager.editCollectionItem(
+        collectionId,
+        itemId,
+        editType,
+        replacementStyle,
+        positions
+      );
+      
+      // רענון תצוגת המארז
+      this.loadCollection(collectionId);
+    } catch (error) {
+      console.error('Error editing item:', error);
+      this.showErrorMessage('שגיאה בעריכת הפריט');
+    }
+  }
+  
+  /**
+   * עדכון הגדרות הדפסה
+   */
+  updatePrintSettings() {
+    if (!this.currentCollection) return;
+    
+    const container = document.querySelector('#print .card-body');
+    
+    // עדכון שם המארז
+    document.querySelector('#print .card-title').textContent = 
+      `הדפסת "${this.currentCollection.title}"`;
+    
+    // הצגת הגדרות הדפסה נוכחיות
+    document.querySelectorAll('.setting-value').forEach(setting => {
+      const key = setting.closest('.setting-row').querySelector('div:first-child').textContent;
+      
+      // התאמת הערכים למה שמוצג בממשק
+      switch (key) {
+        case 'גודל גופן':
+          setting.textContent = this.getFontSizeText(this.printSettings.fontSizeHebrew);
+          break;
+        case 'סגנון שם ה׳':
+          setting.textContent = this.printSettings.divineNameStyle;
+          break;
+        case 'הוסף ניקוד':
+          setting.textContent = this.printSettings.showNikkud ? 'כן' : 'לא';
+          break;
+        case 'תצוגת טקסט':
+          setting.textContent = this.printSettings.showBothLanguages ? 'עברית + רוסית' : 'עברית בלבד';
+          break;
+      }
+    });
+  }
+  
+  /**
+   * הורדת המארז הנוכחי כ-PDF
+   */
+  async downloadCurrentCollectionAsPDF() {
+    if (!this.currentCollection) {
+      this.showErrorMessage('יש לבחור מארז להדפסה');
+      return;
+    }
+    
+    try {
+      const pdfBlob = await this.printManager.generatePDF(
+        this.currentCollection,
+        this.printSettings
+      );
+      
+      // יצירת קישור הורדה
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${this.currentCollection.title}.pdf`;
+      a.click();
+      
+      // שחרור ה-URL
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      this.showErrorMessage('שגיאה ביצירת קובץ PDF');
+    }
+  }
+  
+  /**
+   * הדפסת המארז הנוכחי
+   */
+  async printCurrentCollection() {
+    if (!this.currentCollection) {
+      this.showErrorMessage('יש לבחור מארז להדפסה');
+      return;
+    }
+    
+    try {
+      const pdfBlob = await this.printManager.generatePDF(
+        this.currentCollection,
+        this.printSettings
+      );
+      
+      await this.printManager.printDirect(pdfBlob);
+    } catch (error) {
+      console.error('Error printing collection:', error);
+      this.showErrorMessage('שגיאה בהדפסה');
+    }
+  }
+  
+  /**
+   * פורמט תאריך
+   * @param {Date} date - התאריך
+   * @returns {string} התא

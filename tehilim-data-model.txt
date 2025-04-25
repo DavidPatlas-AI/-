@@ -1,0 +1,631 @@
+// ===================================================
+// מודל נתונים ולוגיקה עסקית - תהילים בקדושה
+// ===================================================
+
+// ================================================
+// 1. מודל הנתונים - הגדרת המבנים העיקריים
+// ================================================
+
+/**
+ * מבנה פרק תהילים
+ * מכיל את כל הנתונים הנחוצים להצגת פרק תהילים
+ */
+class Chapter {
+  constructor(id, number, title, verses = []) {
+    this.id = id;                  // מזהה ייחודי (uuid)
+    this.number = number;          // מספר הפרק (1-150)
+    this.title = title;            // כותרת הפרק (למשל "מזמור לדוד")
+    this.verses = verses;          // מערך של פסוקים
+    this.readCount = 0;            // מספר קריאות
+    this.lastRead = null;          // תאריך קריאה אחרון
+  }
+}
+
+/**
+ * מבנה פסוק בתהילים
+ * מכיל את הטקסט העברי והרוסי של הפסוק
+ */
+class Verse {
+  constructor(number, hebrewText, russianText) {
+    this.number = number;          // מספר הפסוק
+    this.hebrewText = hebrewText;  // טקסט בעברית
+    this.russianText = russianText;// טקסט ברוסית
+    // סימון מיקומי שם ה' בטקסט (אינדקסים)
+    this.divineNamePositions = {
+      hebrew: this._findDivineNamePositions(hebrewText),
+      russian: this._findDivineNamePositions(russianText, true)
+    };
+  }
+  
+  /**
+   * מציאת מיקומי שם ה' בטקסט
+   * @param {string} text - הטקסט לחיפוש
+   * @param {boolean} isRussian - האם מדובר בטקסט רוסי
+   * @returns {Array} מערך של אובייקטים עם התחלה וסוף של כל מופע של שם ה'
+   */
+  _findDivineNamePositions(text, isRussian = false) {
+    const positions = [];
+    
+    if (isRussian) {
+      // חיפוש שמות כמו Господь, Бог וכו'
+      const russianDivineNames = ['Господь', 'Бог', 'Всевышний', 'Иегова', 'ЙХВХ', 'Яхве', 'Адонай'];
+      
+      russianDivineNames.forEach(name => {
+        let index = text.indexOf(name);
+        while (index !== -1) {
+          positions.push({
+            start: index,
+            end: index + name.length,
+            original: name
+          });
+          index = text.indexOf(name, index + 1);
+        }
+      });
+    } else {
+      // חיפוש שם ה' בעברית (פשוט)
+      const hebrewDivineNames = ['יהוה', 'ה\'', 'אלוקים', 'אלקים', 'אדני'];
+      
+      hebrewDivineNames.forEach(name => {
+        let index = text.indexOf(name);
+        while (index !== -1) {
+          positions.push({
+            start: index,
+            end: index + name.length,
+            original: name
+          });
+          index = text.indexOf(name, index + 1);
+        }
+      });
+    }
+    
+    return positions;
+  }
+}
+
+/**
+ * מבנה בקשת תיקון
+ * מכיל את הנתונים של בקשה לתיקון טקסט
+ */
+class CorrectionRequest {
+  constructor(id, userId, originalText, title, status = 'pending') {
+    this.id = id;                  // מזהה ייחודי
+    this.userId = userId;          // מזהה המשתמש המבקש
+    this.originalText = originalText; // הטקסט המקורי
+    this.title = title;            // כותרת לבקשה
+    this.status = status;          // מצב הבקשה: pending/completed/rejected
+    this.createdAt = new Date();   // זמן יצירה
+    this.completedAt = null;       // זמן השלמה
+    this.correctedText = null;     // הטקסט המתוקן (אם הושלם)
+    this.correctorId = null;       // מזהה המשתמש שביצע את התיקון
+  }
+}
+
+/**
+ * מבנה משתמש
+ * מכיל את נתוני המשתמש באפליקציה
+ */
+class User {
+  constructor(id, name, email, avatar = null) {
+    this.id = id;                  // מזהה ייחודי
+    this.name = name;              // שם מלא
+    this.email = email;            // כתובת דוא"ל
+    this.avatar = avatar;          // תמונת משתמש (URL)
+    this.registeredAt = new Date(); // תאריך הרשמה
+    this.preferences = {
+      theme: 'light',              // ערכת נושא
+      fontSize: 'medium',          // גודל טקסט
+      fontFamily: 'FrankRuhl',     // פונט
+      defaultLanguage: 'both',     // עברית/רוסית/שניהם
+      showNikkud: true,            // הצגת ניקוד
+      divineNameStyle: 'ה\'',      // סגנון מועדף להצגת שם ה'
+      playbackLanguage: 'hebrew',  // שפת הקראה
+      saveHistory: true            // שמירת היסטוריה
+    };
+    this.readHistory = [];         // היסטוריית קריאה
+    this.correctionHistory = [];   // היסטוריית תיקונים
+  }
+  
+  /**
+   * הוספת פרק להיסטוריית הקריאה
+   * @param {number} chapterId - מזהה הפרק
+   */
+  addToReadHistory(chapterId) {
+    this.readHistory.unshift({
+      chapterId: chapterId,
+      timestamp: new Date()
+    });
+    
+    // שמירה על היסטוריה של 20 פרקים אחרונים
+    if (this.readHistory.length > 20) {
+      this.readHistory = this.readHistory.slice(0, 20);
+    }
+  }
+  
+  /**
+   * עדכון העדפות משתמש
+   * @param {Object} newPreferences - העדפות לעדכון
+   */
+  updatePreferences(newPreferences) {
+    this.preferences = { ...this.preferences, ...newPreferences };
+  }
+}
+
+/**
+ * מבנה דיון בקהילה
+ * מכיל את נתוני הדיון בקהילה
+ */
+class Discussion {
+  constructor(id, userId, title, content, tags = []) {
+    this.id = id;                  // מזהה ייחודי
+    this.userId = userId;          // מזהה היוצר
+    this.title = title;            // כותרת
+    this.content = content;        // תוכן
+    this.tags = tags;              // תגיות
+    this.createdAt = new Date();   // זמן יצירה
+    this.comments = [];            // תגובות
+    this.likes = 0;                // מספר לייקים
+    this.views = 0;                // מספר צפיות
+  }
+  
+  /**
+   * הוספת תגובה
+   * @param {string} userId - מזהה המגיב
+   * @param {string} content - תוכן התגובה
+   */
+  addComment(userId, content) {
+    const comment = {
+      id: generateUUID(),         // פונקציה שתיצור מזהה ייחודי
+      userId: userId,
+      content: content,
+      createdAt: new Date(),
+      likes: 0
+    };
+    
+    this.comments.push(comment);
+    return comment;
+  }
+}
+
+// ================================================
+// 2. מנהלי נתונים - לוגיקה עסקית מרכזית
+// ================================================
+
+/**
+ * מנהל פרקי תהילים
+ * אחראי על הלוגיקה של טעינה, עדכון והצגה של פרקי תהילים
+ */
+class ChapterManager {
+  constructor(dataService) {
+    this.dataService = dataService;    // שירות גישה לנתונים
+    this.chapters = [];                // מטמון פרקים שנטענו
+  }
+  
+  /**
+   * טעינת פרק לפי מספר
+   * @param {number} chapterNumber - מספר הפרק
+   * @returns {Promise<Chapter>} הפרק המבוקש
+   */
+  async loadChapter(chapterNumber) {
+    // בדיקה אם הפרק כבר במטמון
+    const cachedChapter = this.chapters.find(ch => ch.number === chapterNumber);
+    if (cachedChapter) {
+      return cachedChapter;
+    }
+    
+    // טעינה מהשרת
+    try {
+      const chapter = await this.dataService.fetchChapter(chapterNumber);
+      this.chapters.push(chapter); // הוספה למטמון
+      return chapter;
+    } catch (error) {
+      console.error(`Error loading chapter ${chapterNumber}:`, error);
+      throw new Error(`Failed to load chapter ${chapterNumber}`);
+    }
+  }
+  
+  /**
+   * סימון פרק כנקרא
+   * @param {number} chapterNumber - מספר הפרק
+   * @param {string} userId - מזהה המשתמש
+   */
+  async markAsRead(chapterNumber, userId) {
+    try {
+      // עדכון בשרת
+      await this.dataService.markChapterAsRead(chapterNumber, userId);
+      
+      // עדכון במטמון
+      const chapter = this.chapters.find(ch => ch.number === chapterNumber);
+      if (chapter) {
+        chapter.readCount++;
+        chapter.lastRead = new Date();
+      }
+      
+      // עדכון בהיסטוריית המשתמש
+      const userManager = new UserManager(this.dataService);
+      await userManager.addToUserReadHistory(userId, chapterNumber);
+      
+    } catch (error) {
+      console.error(`Error marking chapter ${chapterNumber} as read:`, error);
+    }
+  }
+  
+  /**
+   * קבלת הפרקים שנקראו לאחרונה על ידי משתמש
+   * @param {string} userId - מזהה המשתמש
+   * @returns {Promise<Array>} רשימת הפרקים האחרונים
+   */
+  async getRecentlyReadChapters(userId) {
+    try {
+      const history = await this.dataService.getUserReadHistory(userId);
+      
+      // טעינת פרטי הפרקים המלאים
+      const chapters = [];
+      for (const item of history.slice(0, 5)) { // 5 אחרונים
+        const chapter = await this.loadChapter(item.chapterId);
+        chapters.push({
+          ...chapter,
+          readAt: item.timestamp
+        });
+      }
+      
+      return chapters;
+    } catch (error) {
+      console.error(`Error getting recently read chapters for user ${userId}:`, error);
+      return [];
+    }
+  }
+}
+
+/**
+ * מנהל תיקון שם ה'
+ * אחראי על הלוגיקה של תיקון שם ה' בטקסטים
+ */
+class DivineNameCorrector {
+  constructor() {
+    // מילון של שמות השם בשפות שונות
+    this.divineNamesDict = {
+      russian: [
+        { original: 'Господь', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Бог', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Всевышний', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Иегова', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'ЙХВХ', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Яхве', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Адонай', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Элохим', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Саваоф', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Шаддай', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } }
+      ],
+      english: [
+        { original: 'God', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Lord', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Jehovah', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'YHWH', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } },
+        { original: 'Yahweh', styles: { 'ה\'': 'ה\'', 'י-ה-ו-ה': 'י-ה-ו-ה', 'השם': 'השם', 'יי': 'יי', 'אדנ-י': 'אדנ-י' } }
+      ]
+    };
+  }
+  
+  /**
+   * תיקון טקסט והחלפת שמות ה' בסגנון המבוקש
+   * @param {string} text - הטקסט לתיקון
+   * @param {string} language - שפת הטקסט (russian/english)
+   * @param {string} style - סגנון התיקון (ה'/י-ה-ו-ה/השם וכו')
+   * @returns {Object} תוצאת התיקון
+   */
+  correctText(text, language, style) {
+    if (!this.divineNamesDict[language]) {
+      throw new Error(`Unsupported language: ${language}`);
+    }
+    
+    let correctedText = text;
+    let replacementCount = 0;
+    const replacements = [];
+    
+    // החלפת כל שם במילון
+    this.divineNamesDict[language].forEach(nameDict => {
+      const { original, styles } = nameDict;
+      const replacement = styles[style] || style; // שימוש בסגנון המבוקש
+      
+      // יצירת ביטוי רגולרי לזיהוי המילה השלמה
+      const regex = new RegExp(`\\b${original}\\b`, 'g');
+      
+      // איתור כל המופעים
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+        replacements.push({
+          original: original,
+          replacement: replacement,
+          index: match.index
+        });
+      }
+      
+      // החלפת הטקסט
+      const replaced = correctedText.replace(regex, `<span class="divine-name">${replacement}</span>`);
+      
+      // ספירת ההחלפות שבוצעו
+      const replacedCount = (replaced.match(new RegExp(`<span class="divine-name">${replacement}</span>`, 'g')) || []).length;
+      replacementCount += replacedCount;
+      
+      correctedText = replaced;
+    });
+    
+    return {
+      originalText: text,
+      correctedText: correctedText,
+      replacementCount: replacementCount,
+      replacements: replacements
+    };
+  }
+  
+  /**
+   * שמירת תיקון בהיסטוריה
+   * @param {Object} correction - תוצאת התיקון
+   * @param {string} userId - מזהה המשתמש
+   * @param {DataService} dataService - שירות גישה לנתונים
+   */
+  async saveCorrection(correction, userId, dataService) {
+    try {
+      const correctionData = {
+        userId: userId,
+        originalText: correction.originalText,
+        correctedText: correction.correctedText,
+        replacementCount: correction.replacementCount,
+        timestamp: new Date()
+      };
+      
+      await dataService.saveCorrectionHistory(correctionData);
+    } catch (error) {
+      console.error('Error saving correction history:', error);
+    }
+  }
+}
+
+/**
+ * מנהל בקשות תיקון
+ * אחראי על הלוגיקה של ניהול בקשות לתיקון טקסטים
+ */
+class CorrectionRequestManager {
+  constructor(dataService, nameCorrector) {
+    this.dataService = dataService;
+    this.nameCorrector = nameCorrector;
+  }
+  
+  /**
+   * יצירת בקשת תיקון חדשה
+   * @param {string} userId - מזהה המשתמש המבקש
+   * @param {string} originalText - הטקסט לתיקון
+   * @param {string} title - כותרת לבקשה
+   * @returns {Promise<CorrectionRequest>} הבקשה שנוצרה
+   */
+  async createRequest(userId, originalText, title) {
+    try {
+      const request = new CorrectionRequest(
+        generateUUID(),
+        userId,
+        originalText,
+        title
+      );
+      
+      // שמירה במסד הנתונים
+      await this.dataService.saveNewCorrectionRequest(request);
+      
+      return request;
+    } catch (error) {
+      console.error('Error creating correction request:', error);
+      throw new Error('Failed to create correction request');
+    }
+  }
+  
+  /**
+   * טיפול בבקשת תיקון (ביצוע התיקון)
+   * @param {string} requestId - מזהה הבקשה
+   * @param {string} correctorId - מזהה המשתמש המתקן
+   * @param {string} style - סגנון התיקון הרצוי
+   * @returns {Promise<CorrectionRequest>} הבקשה המעודכנת
+   */
+  async processRequest(requestId, correctorId, style = 'ה\'') {
+    try {
+      // טעינת הבקשה
+      const request = await this.dataService.getCorrectionRequest(requestId);
+      
+      if (request.status !== 'pending') {
+        throw new Error('Request already processed');
+      }
+      
+      // זיהוי שפת הטקסט בסיסי (יש לשפר בהמשך)
+      const language = this._detectLanguage(request.originalText);
+      
+      // תיקון הטקסט
+      const correctionResult = this.nameCorrector.correctText(
+        request.originalText,
+        language,
+        style
+      );
+      
+      // עדכון הבקשה
+      request.status = 'completed';
+      request.completedAt = new Date();
+      request.correctorId = correctorId;
+      request.correctedText = correctionResult.correctedText;
+      
+      // שמירת השינויים
+      await this.dataService.updateCorrectionRequest(request);
+      
+      return request;
+    } catch (error) {
+      console.error(`Error processing correction request ${requestId}:`, error);
+      throw new Error('Failed to process correction request');
+    }
+  }
+  
+  /**
+   * זיהוי שפת הטקסט - גרסה בסיסית
+   * @param {string} text - הטקסט לזיהוי
+   * @returns {string} קוד השפה (russian/english)
+   */
+  _detectLanguage(text) {
+    // זיהוי גס של אותיות קיריליות
+    const cyrillicPattern = /[\u0400-\u04FF]/;
+    if (cyrillicPattern.test(text)) {
+      return 'russian';
+    }
+    
+    // אחרת - מניחים שזה אנגלית
+    return 'english';
+  }
+  
+  /**
+   * קבלת כל בקשות התיקון הממתינות
+   * @returns {Promise<Array>} רשימת הבקשות
+   */
+  async getPendingRequests() {
+    try {
+      return await this.dataService.getPendingCorrectionRequests();
+    } catch (error) {
+      console.error('Error getting pending correction requests:', error);
+      return [];
+    }
+  }
+}
+
+/**
+ * מנהל משתמשים
+ * אחראי על הלוגיקה של ניהול נתוני משתמשים
+ */
+class UserManager {
+  constructor(dataService) {
+    this.dataService = dataService;
+    this.currentUser = null;  // משתמש נוכחי (מחובר)
+  }
+  
+  /**
+   * כניסה למערכת
+   * @param {string} email - דוא"ל
+   * @param {string} password - סיסמה
+   * @returns {Promise<User>} המשתמש שנכנס
+   */
+  async login(email, password) {
+    try {
+      const user = await this.dataService.authenticateUser(email, password);
+      this.currentUser = user;
+      return user;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw new Error('Invalid email or password');
+    }
+  }
+  
+  /**
+   * יציאה מהמערכת
+   */
+  logout() {
+    this.currentUser = null;
+  }
+  
+  /**
+   * עדכון העדפות המשתמש
+   * @param {string} userId - מזהה המשתמש
+   * @param {Object} preferences - העדפות לעדכון
+   * @returns {Promise<User>} המשתמש המעודכן
+   */
+  async updateUserPreferences(userId, preferences) {
+    try {
+      const updatedUser = await this.dataService.updateUserPreferences(userId, preferences);
+      
+      // עדכון המשתמש הנוכחי אם זה הוא
+      if (this.currentUser && this.currentUser.id === userId) {
+        this.currentUser.preferences = { ...this.currentUser.preferences, ...preferences };
+      }
+      
+      return updatedUser;
+    } catch (error) {
+      console.error(`Error updating preferences for user ${userId}:`, error);
+      throw new Error('Failed to update preferences');
+    }
+  }
+  
+  /**
+   * הוספת פרק להיסטוריית הקריאה
+   * @param {string} userId - מזהה המשתמש
+   * @param {number} chapterId - מזהה הפרק
+   */
+  async addToUserReadHistory(userId, chapterId) {
+    try {
+      await this.dataService.addToUserReadHistory(userId, chapterId);
+      
+      // עדכון המשתמש הנוכחי אם זה הוא
+      if (this.currentUser && this.currentUser.id === userId) {
+        this.currentUser.addToReadHistory(chapterId);
+      }
+    } catch (error) {
+      console.error(`Error adding chapter ${chapterId} to user ${userId} history:`, error);
+    }
+  }
+}
+
+/**
+ * מנהל דיונים וקהילה
+ * אחראי על הלוגיקה של ניהול דיונים בקהילה
+ */
+class CommunityManager {
+  constructor(dataService) {
+    this.dataService = dataService;
+  }
+  
+  /**
+   * יצירת דיון חדש
+   * @param {string} userId - מזהה היוצר
+   * @param {string} title - כותרת
+   * @param {string} content - תוכן
+   * @param {Array} tags - תגיות
+   * @returns {Promise<Discussion>} הדיון שנוצר
+   */
+  async createDiscussion(userId, title, content, tags = []) {
+    try {
+      const discussion = new Discussion(
+        generateUUID(),
+        userId,
+        title,
+        content,
+        tags
+      );
+      
+      // שמירה במסד הנתונים
+      await this.dataService.saveNewDiscussion(discussion);
+      
+      return discussion;
+    } catch (error) {
+      console.error('Error creating discussion:', error);
+      throw new Error('Failed to create discussion');
+    }
+  }
+  
+  /**
+   * קבלת דיונים אחרונים
+   * @param {number} limit - מספר הדיונים להחזיר
+   * @returns {Promise<Array>} רשימת הדיונים
+   */
+  async getRecentDiscussions(limit = 10) {
+    try {
+      return await this.dataService.getRecentDiscussions(limit);
+    } catch (error) {
+      console.error('Error getting recent discussions:', error);
+      return [];
+    }
+  }
+  
+  /**
+   * הוספת תגובה לדיון
+   * @param {string} discussionId - מזהה הדיון
+   * @param {string} userId - מזהה המגיב
+   * @param {string} content - תוכן התגובה
+   * @returns {Promise<Object>} התגובה שנוספה
+   */
+  async addComment(discussionId, userId, content) {
+    try {
+      const discussion = await this.dataService.getDiscussion(discussionId);
+      const comment = discussion.addComment(userId, content);
+      
+      // עדכון הדיון במסד הנתונים
+      

@@ -1,0 +1,16 @@
+{
+  "header_title": "Мой Личный Раздел",
+  "tab_collections": "Мои Сборники",
+  "tab_edit": "Личное Редактирование",
+  "tab_print": "Печать",
+  "button_save": "Сохранить",
+  "button_cancel": "Отмена",
+  "button_edit": "Редактировать",
+  "button_download_pdf": "Скачать PDF",
+  "button_print_now": "Печать Сейчас",
+  "print_format_title": "Выберите Формат Печати",
+  "print_settings_title": "Настройки Печати",
+  "chapter_title": "Псалом",
+  "verse_count": "Количество Стихов",
+  "last_updated": "Последнее обновление"
+}

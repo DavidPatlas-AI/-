@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Техилим (Псалмы) - Тикун Ха-Шем</title>
+  <style>
+    /* בסיס */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    /* כותרת */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .back-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 18px;
+      background-color: transparent;
+      border: none;
+      text-decoration: none;
+    }
+    
+    /* תוכן */
+    .container {
+      padding: var(--content-padding);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* בורר שפה */
+    .language-bar {
+      display: flex;
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .language-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .language-option.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* בורר פרקים */
+    .chapter-selector {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .selector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .selector-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .quick-select {
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .selector-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    
+    @media (max-width: 480px) {
+      .selector-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .chapter-button {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    
+    .chapter-button:hover {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    .chapter-button.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* תוכן התהילים */
+    .tehilim-content {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .chapter-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .chapter-subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 24px;
+      color: var(--text-light);
+    }
+    
+    .pasuk {
+      margin-bottom: 16px;
+      position: relative;
+    }
+    
+    .pasuk-number {
+      font-weight: 700;
+      color: var(--primary);
+      margin-right: 5px;
+      font-size: 16px;
+      position: absolute;
+      left: 0;
+    }
+    
+    .pasuk-text {
+      padding-left: 25px;
+    }
+    
+    /* כלי קריאה */
+    .reading-tools {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .tools-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    @media (min-width: 480px) {
+      .tools-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .tool-button {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .tool-button:hover, .tool-button.active {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    .font-size-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .font-size-button {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .font-size-value {
+      font-weight: 500;
+    }
+    
+    /* כפתורי מעבר */
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+    }
+    
+    .nav-button {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .nav-button:hover {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    /* ניווט תחתון */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* רב-לשוניות */
+    [data-lang="he"] {
+      font-family: 'Frank Ruhl Libre', serif;
+      direction: rtl;
+    }
+    
+    [data-lang="ru"] {
+      font-family: 'PT Serif', serif;
+      direction: ltr;
+    }
+    
+    [data-lang="phonetic"] {
+      font-family: 'Roboto', sans-serif;
+      direction: ltr;
+    }
+  </style>
+</head>
+<body>
+  <!-- כותרת -->
+  <header class="header">
+    <a href="index.html" class="back-button">←</a>
+    <div class="header-title">Псалмы (Техилим)</div>
+    <a href="settings.html" style="font-size: 20px; width: 36px; text-align: center; text-decoration: none;">⚙️</a>
+  </header>
+  
+  <!-- תוכן -->
+  <div class="container">
+    <!-- בורר שפה -->
+    <div class="language-bar">
+      <div class="language-option active" data-lang="ru">Русский</div>
+      <div class="language-option" data-lang="he">עברית</div>
+      <div class="language-option" data-lang="phonetic">Фонетика</div>
+    </div>
+    
+    <!-- בורר פרקים -->
+    <div class="chapter-selector">
+      <div class="selector-header">
+        <div class="selector-title">Выберите псалом</div>
+        <select class="quick-select" id="chapter-quick-select">
+          <option value="">Быстрый выбор</option>
+          <option value="1">Псалом 1 - Ашрей ха-иш</option>
+          <option value="23">Псалом 23 - Господь - пастырь мой</option>
+          <option value="90">Псалом 90 - Молитва Моисея</option>
+          <option value="91">Псалом 91 - Живущий под кровом</option>
+          <option value="119">Псалом 119 - Ашрей темимей дерех</option>
+          <option value="130">Псалом 130 - Из глубины</option>
+          <option value="150">Псалом 150 - Хвалите Господа</option>
+        </select>
+      </div>
+      
+      <div class="selector-grid" id="chapter-grid">
+        <!-- Кнопки для выбора псалма будут созданы с помощью JavaScript -->
+      </div>
+    </div>
+    
+    <!-- כלי קריאה -->
+    <div class="reading-tools">
+      <div class="tools-title">Инструменты чтения</div>
+      <div class="tools-grid">
+        <button class="tool-button" id="toggle-translation">Перевод</button>
+        <button class="tool-button" id="toggle-nikud">Огласовки</button>
+        <button class="tool-button" id="toggle-taamim">Знаки</button>
+        <button class="tool-button" id="toggle-name-highlight">Имена</button>
+      </div>
+      <div class="font-size-controls">
+        <button class="font-size-button" id="decrease-font">-</button>
+        <span class="font-size-value">Размер текста: средний</span>
+        <button class="font-size-button" id="increase-font">+</button>
+      </div>
+    </div>
+    
+    <!-- תוכן התהילים -->
+    <div class="tehilim-content">
+      <h2 class="chapter-title" id="chapter-title-ru" data-lang="ru">Псалом 23</h2>
+      <h2 class="chapter-title" id="chapter-title-he" data-lang="he" style="display: none;">מזמור כ"ג</h2>
+      <h2 class="chapter-title" id="chapter-title-phonetic" data-lang="phonetic" style="display: none;">Mizmor kaf-gimel</h2>
+      
+      <div class="chapter-subtitle" id="subtitle-ru" data-lang="ru">Псалом Давида</div>
+      <div class="chapter-subtitle" id="subtitle-he" data-lang="he" style="display: none;">מזמור לדוד</div>
+      <div class="chapter-subtitle" id="subtitle-phonetic" data-lang="phonetic" style="display: none;">Mizmor le-David</div>
+      
+      <div id="chapter-text-ru" data-lang="ru">
+        <div class="pasuk">
+          <span class="pasuk-number">1</span>
+          <span class="pasuk-text">Господь – пастырь мой; я ни в чем не буду нуждаться.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">2</span>
+          <span class="pasuk-text">Он покоит меня на злачных пажитях и водит меня к водам тихим.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">3</span>
+          <span class="pasuk-text">Подкрепляет душу мою, направляет меня на стези правды ради имени Своего.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">4</span>
+          <span class="pasuk-text">Если я пойду и долиною смертной тени, не убоюсь зла, потому что Ты со мной; Твой жезл и Твой посох – они успокаивают меня.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">5</span>
+          <span class="pasuk-text">Ты приготовил предо мною трапезу в виду врагов моих; умастил елеем голову мою; чаша моя преисполнена.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">6</span>
+          <span class="pasuk-text">Так, благость и милость Твоя да сопровождают меня во все дни жизни моей, и я пребуду в доме Господнем многие дни.</span>
+        </div>
+      </div>
+      
+      <div id="chapter-text-he" data-lang="he" style="display: none;">
+        <div class="pasuk">
+          <span class="pasuk-number">א</span>
+          <span class="pasuk-text">מִזְמוֹר לְדָוִד ה' רֹעִי לֹא אֶחְסָר:</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">ב</span>
+          <span class="pasuk-text">בִּנְאוֹת דֶּשֶׁא יַרְבִּיצֵנִי עַל מֵי מְנֻחוֹת יְנַהֲלֵנִי:</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">ג</span>
+          <span class="pasuk-text">נַפְשִׁי יְשׁוֹבֵב יַנְחֵנִי בְמַעְגְּלֵי צֶדֶק לְמַעַן שְׁמוֹ:</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">ד</span>
+          <span class="pasuk-text">גַּם כִּי אֵלֵךְ בְּגֵיא צַלְמָוֶת לֹא אִירָא רָע כִּי אַתָּה עִמָּדִי שִׁבְטְךָ וּמִשְׁעַנְתֶּךָ הֵמָּה יְנַחֲמֻנִי:</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">ה</span>
+          <span class="pasuk-text">תַּעֲרֹךְ לְפָנַי שֻׁלְחָן נֶגֶד צֹרְרָי דִּשַּׁנְתָּ בַשֶּׁמֶן רֹאשִׁי כּוֹסִי רְוָיָה:</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">ו</span>
+          <span class="pasuk-text">אַךְ טוֹב וָחֶסֶד יִרְדְּפוּנִי כָּל יְמֵי חַיָּי וְשַׁבְתִּי בְּבֵית ה' לְאֹרֶךְ יָמִים:</span>
+        </div>
+      </div>
+      
+      <div id="chapter-text-phonetic" data-lang="phonetic" style="display: none;">
+        <div class="pasuk">
+          <span class="pasuk-number">1</span>
+          <span class="pasuk-text">Mizmor le-David Adonai ro'i lo ekhsar.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">2</span>
+          <span class="pasuk-text">Binot deshe yarbitseni al mei menukhot yenahaleni.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">3</span>
+          <span class="pasuk-text">Nafshi yeshovev yankheni be-ma'aglei tsedek lema'an shmo.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">4</span>
+          <span class="pasuk-text">Gam ki elekh be-gei tsalmavet lo ira ra ki ata imadi shivtekha u-mishantekha hema yenakhamuni.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">5</span>
+          <span class="pasuk-text">Ta'arokh lefanai shulkhan neged tsorerai dishanta va-shemen roshi kosi revaya.</span>
+        </div>
+        <div class="pasuk">
+          <span class="pasuk-number">6</span>
+          <span class="pasuk-text">Akh tov va-khesed yirdefuni kol yemei khayai ve-shavti be-veit Adonai le-orekh yamim.</span>
+        </div>
+      </div>
+      
+      <div class="navigation-buttons">
+        <button class="nav-button" id="prev-chapter">« Предыдущий</button>
+        <button class="nav-button" id="next-chapter">Следующий »</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ניווט תחתון -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">Главная</div>
+    </a>
+    <a href="#" class="bottom-nav-item active">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">Техилим</div>
+    </a>
+    <a href="memorial.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🕯️</div>
+      <div class="bottom-nav-label">За усопших</div>
+    </a>
+    <a href="siddur.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📝</div>
+      <div class="bottom-nav-label">Молитвенник</div>
+    </a>
+  </nav>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // יצירת כפתורי בחירת פרק
+      const chapterGrid = document.getElementById('chapter-grid');
+      for (let i = 1; i <= 150; i++) {
+        const button = document.createElement('button');
+        button.className = 'chapter-button';
+        button.textContent = i;
+        button.dataset.chapter = i;
+        if (i === 23) button.classList.add('active'); // הפרק הנוכחי
+        
+        button.addEventListener('click', function() {
+          document.querySelectorAll('.chapter-button').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          this.classList.add('active');
+          loadChapter(this.dataset.chapter);
+        });
+        
+        chapterGrid.appendChild(button);
+      }
+      
+      // החלפת שפה
+      const languageOptions = document.querySelectorAll('.language-option');
+      languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const lang = this.dataset.lang;
+          
+          // שינוי האפשרות הפעילה
+          languageOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          // שמירת השפה הנבחרת
+          localStorage.setItem('preferredLanguage', lang);
+          
+          // הצגת התוכן בשפה הנבחרת
+          showLanguageContent(lang);
+        });
+      });
+      
+      // הצגת התוכן בשפה הנבחרת
+      function showLanguageContent(lang) {
+        // הסתרת כל התוכן
+        document.querySelectorAll('[id^="chapter-title-"], [id^="subtitle-"], [id^="chapter-text-"]').forEach(el => {
+          el.style.display = 'none';
+        });
+        
+        // הצגת התוכן בשפה הנבחרת
+        document.getElementById(`chapter-title-${lang}`).style.display = 'block';
+        document.getElementById(`subtitle-${lang}`).style.display = 'block';
+        document.getElementById(`chapter-text-${lang}`).style.display = 'block';
+        
+        // עדכון הכפתורים לפי השפה
+        updateUILanguage(lang);
+      }
+      
+      // עדכון ממשק המשתמש לפי השפה
+      function updateUILanguage(lang) {
+        const navPrev = document.getElementById('prev-chapter');
+        const navNext = document.getElementById('next-chapter');
+        const fontSizeValue = document.querySelector('.font-size-value');
+        const toggleNikud = document.getElementById('toggle-nikud');
+        const toggleTaamim = document.getElementById('toggle-taamim');
+        const toggleTranslation = document.getElementById('toggle-translation');
+        const toggleNameHighlight = document.getElementById('toggle-name-highlight');
+        
+        switch (lang) {
+          case 'ru':
+            navPrev.textContent = '« Предыдущий';
+            navNext.textContent = 'Следующий »';
+            fontSizeValue.textContent = 'Размер текста: средний';
+            toggleNikud.textContent = 'Огласовки';
+            toggleTaamim.textContent = 'Знаки';
+            toggleTranslation.textContent = 'Перевод';
+            toggleNameHighlight.textContent = 'Имена';
+            document.querySelector('.tools-title').textContent = 'Инструменты чтения';
+            document.querySelector('.selector-title').textContent = 'Выберите псалом';
+            break;
+          case 'he':
+            navPrev.textContent = '« הקודם';
+            navNext.textContent = 'הבא »';
+            fontSizeValue.textContent = 'גודל טקסט: בינוני';
+            toggleNikud.textContent = 'ניקוד';
+            toggleTaamim.textContent = 'טעמים';
+            toggleTranslation.textContent = 'תרגום';
+            toggleNameHighlight.textContent = 'שמות';
+            document.querySelector('.tools-title').textContent = 'כלי קריאה';
+            document.querySelector('.selector-title').textContent = 'בחר מזמור';
+            break;
+          case 'phonetic':
+            navPrev.textContent = '« Kodem';
+            navNext.textContent = 'Ha-ba »';
+            fontSizeValue.textContent = 'Godel text: beynoni';
+            toggleNikud.textContent = 'Nikud';
+            toggleTaamim.textContent = 'Te\'amim';
+            toggleTranslation.textContent = 'Tirgum';
+            toggleNameHighlight.textContent = 'Shemot';
+            document.querySelector('.tools-title').textContent = 'Klei kri\'a';
+            document.querySelector('.selector-title').textContent = 'Bkhar mizmor';
+            break;
+        }
+      }
+      
+      // טעינת השפה המועדפת בעת טעינת הדף
+      const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+      languageOptions.forEach(opt => {
+        if (opt.dataset.lang === savedLang) {
+          opt.click();
+        }
+      });
+      
+      // טיפול בכפתורי ניווט
+      document.getElementById('prev-chapter').addEventListener('click', function() {
+        const currentChapter = parseInt(document.querySelector('.chapter-button.active').dataset.chapter);
+        const prevChapter = currentChapter > 1 ? currentChapter - 1 : 150;
+        loadChapter(prevChapter);
+        
+        document.querySelectorAll('.chapter-button').forEach(btn => {
+          btn.classList.remove('active');
+          if (parseInt(btn.dataset.chapter) === prevChapter) {
+            btn.classList.add('active');
+          }
+        });
+      });
+      
+      document.getElementById('next-chapter').addEventListener('click', function() {
+        const currentChapter = parseInt(document.querySelector('.chapter-button.active').dataset.chapter);
+        const nextChapter = currentChapter < 150 ? currentChapter + 1 : 1;
+        loadChapter(nextChapter);
+        
+        document.querySelectorAll('.chapter-button').forEach(btn => {
+          btn.classList.remove('active');
+          if (parseInt(btn.dataset.chapter) === nextChapter) {
+            btn.classList.add('active');
+          }
+        });
+      });
+      
+      // טיפול בבחירה מהירה
+      document.getElementById('chapter-quick-select').addEventListener('change', function() {
+        if (this.value) {
+          const chapter = parseInt(this.value);
+          loadChapter(chapter);
+          
+          document.querySelectorAll('.chapter-button').forEach(btn => {
+            btn.classList.remove('active');
+            if (parseInt(btn.dataset.chapter) === chapter) {
+              btn.classList.add('active');
+            }
+          });
+          
+          this.value = ''; // איפוס הבחירה
+        }
+      });
+      
+      // טיפול בכלי קריאה
+      const toolButtons = document.querySelectorAll('.tool-button');
+      toolButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          this.classList.toggle('active');
+          
+          const buttonId = this.id;
+          switch (buttonId) {
+            case 'toggle-nikud':
+              document.querySelectorAll('[data-lang="he"]').forEach(el => {
+                el.classList.toggle('no-nikud');
+              });
+              break;
+            case 'toggle-taamim':
+              document.querySelectorAll('[data-lang="he"]').forEach(el => {
+                el.classList.toggle('no-taamim');
+              });
+              break;
+            case 'toggle-translation':
+              // במימוש אמיתי כאן היה קוד שמציג/מסתיר תרגום
+             toggleTranslation();
+             break;
+           case 'toggle-name-highlight':
+             document.querySelectorAll('.holy-name').forEach(name => {
+               name.classList.toggle('highlighted');
+             });
+             break;
+         }
+       });
+     });
+     
+     // שינוי גודל טקסט
+     let currentFontSize = 20; // גודל טקסט התחלתי
+     const fontSizeValue = document.querySelector('.font-size-value');
+     
+     document.getElementById('increase-font').addEventListener('click', function() {
+       if (currentFontSize < 32) {
+         currentFontSize += 2;
+         updateFontSize();
+       }
+     });
+     
+     document.getElementById('decrease-font').addEventListener('click', function() {
+       if (currentFontSize > 16) {
+         currentFontSize -= 2;
+         updateFontSize();
+       }
+     });
+     
+     function updateFontSize() {
+       document.querySelectorAll('#chapter-text-ru, #chapter-text-he, #chapter-text-phonetic').forEach(el => {
+         el.style.fontSize = currentFontSize + 'px';
+       });
+       
+       const currentLang = document.querySelector('.language-option.active').dataset.lang;
+       let sizeText = '';
+       
+       if (currentFontSize <= 18) {
+         sizeText = currentLang === 'ru' ? 'маленький' : 
+                    currentLang === 'he' ? 'קטן' : 'katan';
+       } else if (currentFontSize <= 22) {
+         sizeText = currentLang === 'ru' ? 'средний' : 
+                    currentLang === 'he' ? 'בינוני' : 'beynoni';
+       } else if (currentFontSize <= 26) {
+         sizeText = currentLang === 'ru' ? 'большой' : 
+                    currentLang === 'he' ? 'גדול' : 'gadol';
+       } else {
+         sizeText = currentLang === 'ru' ? 'очень большой' : 
+                    currentLang === 'he' ? 'גדול מאוד' : 'gadol me\'od';
+       }
+       
+       if (currentLang === 'ru') {
+         fontSizeValue.textContent = `Размер текста: ${sizeText}`;
+       } else if (currentLang === 'he') {
+         fontSizeValue.textContent = `גודל טקסט: ${sizeText}`;
+       } else {
+         fontSizeValue.textContent = `Godel text: ${sizeText}`;
+       }
+     }
+     
+     // פונקציה לטעינת פרק
+     function loadChapter(chapterNum) {
+       // במימוש אמיתי כאן היה קוד שטוען את הפרק הנבחר מהשרת
+       console.log(`Загрузка псалма ${chapterNum}`);
+       
+       // לצורך הדגמה, נעדכן רק את הכותרת
+       const currentLang = document.querySelector('.language-option.active').dataset.lang;
+       
+       if (currentLang === 'ru') {
+         document.getElementById('chapter-title-ru').textContent = `Псалом ${chapterNum}`;
+       } else if (currentLang === 'he') {
+         document.getElementById('chapter-title-he').textContent = `מזמור ${hebrewNumber(chapterNum)}`;
+       } else {
+         document.getElementById('chapter-title-phonetic').textContent = `Mizmor ${hebrewNumberPhonetic(chapterNum)}`;
+       }
+       
+       // כאן היה קוד שמעדכן את תוכן הפרק
+     }
+     
+     // פונקציה שממירה מספר למספר עברי
+     function hebrewNumber(num) {
+       if (num === 23) return 'כ"ג';
+       if (num === 1) return 'א\'';
+       if (num === 119) return 'קי"ט';
+       // במימוש אמיתי כאן היה קוד מלא להמרת מספרים לעברית
+       return num + "'";
+     }
+     
+     // פונקציה שממירה מספר למספר עברי בכתיב פונטי
+     function hebrewNumberPhonetic(num) {
+       if (num === 23) return 'kaf-gimel';
+       if (num === 1) return 'alef';
+       if (num === 119) return 'kuf-yud-tet';
+       // במימוש אמיתי כאן היה קוד מלא להמרת מספרים לעברית בכתיב פונטי
+       return num;
+     }
+     
+     // פונקציה להצגת/הסתרת תרגום
+     function toggleTranslation() {
+       // במימוש אמיתי כאן היה קוד שמציג או מסתיר תרגום לכל פסוק
+       console.log('Переключение перевода');
+     }
+   });
+ </script>
+</body>
+</html>
