@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Молитвы за усопших - Тикун Ха-Шем</title>
+  <style>
+    /* בסיס */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    /* כותרת */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .back-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 18px;
+      background-color: transparent;
+      border: none;
+      text-decoration: none;
+    }
+    
+    /* תוכן */
+    .container {
+      padding: var(--content-padding);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* בורר שפה */
+    .language-bar {
+      display: flex;
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .language-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .language-option.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* הכנסת שם הנפטר */
+    .memorial-form {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .form-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .form-desc {
+      margin-bottom: 16px;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 16px;
+      direction: rtl;
+    }
+    
+    .button-primary {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    /* כרטיסיות תפילות */
+    .prayer-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    
+    .prayer-tab {
+      padding: 12px 16px;
+      background-color: var(--background);
+      border-radius: var(--radius);
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    
+    .prayer-tab.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* תוכן התפילה */
+    .prayer-content {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .prayer-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .prayer-subtitle {
+      font-size: 16px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+      text-align: center;
+      font-style: italic;
+    }
+    
+    .prayer-instruction {
+      padding: 12px;
+      background-color: rgba(67, 97, 238, 0.1);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    
+    .prayer-text {
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+    
+    .prayer-text p {
+      margin-bottom: 16px;
+    }
+    
+    .prayer-section {
+      margin-bottom: 16px;
+    }
+    
+    .prayer-section-title {
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    
+    /* כלי קריאה */
+    .reading-tools {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .tools-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    @media (min-width: 480px) {
+      .tools-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .tool-button {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .tool-button:hover, .tool-button.active {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    .font-size-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .font-size-button {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .font-size-value {
+      font-weight: 500;
+    }
+    
+    /* כפתורי שיתוף */
+    .share-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    
+    .share-button {
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .button-print {
+      background-color: #6c757d;
+      color: white;
+    }
+    
+    .button-share {
+      background-color: #4caf50;
+      color: white;
+    }
+    
+    /* רשימת יארצייט */
+    .yahrzeit-list {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    
+    .yahrzeit-header {
+      padding: 16px;
+      background-color: rgba(67, 97, 238, 0.1);
+      font-weight: 700;
+      font-size: 16px;
+    }
+    
+    .yahrzeit-item {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+    
+    .yahrzeit-item:last-child {
+      border-bottom: none;
+    }
+    
+    .yahrzeit-info {
+      flex: 1;
+    }
+    
+    .yahrzeit-name {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .yahrzeit-date {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+    
+    .yahrzeit-action {
+      margin-left: 12px;
+    }
+    
+    /* ניווט תחתון */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* רב-לשוניות */
+    [data-lang="he"] {
+      font-family: 'Frank Ruhl Libre', serif;
+      direction: rtl;
+    }
+    
+    [data-lang="ru"] {
+      font-family: 'PT Serif', serif;
+      direction: ltr;
+    }
+    
+    [data-lang="phonetic"] {
+      font-family: 'Roboto', sans-serif;
+      direction: ltr;
+    }
+  </style>
+</head>
+<body>
+  <!-- כותרת -->
+  <header class="header">
+    <a href="index.html" class="back-button">←</a>
+    <div class="header-title">Молитвы за усопших</div>
+    <a href="settings.html" style="font-size: 20px; width: 36px; text-align: center; text-decoration: none;">⚙️</a>
+  </header>
+  
+  <!-- תוכן -->
+  <div class="container">
+    <!-- בורר שפה -->
+    <div class="language-bar">
+      <div class="language-option active" data-lang="ru">Русский</div>
+      <div class="language-option" data-lang="he">עברית</div>
+      <div class="language-option" data-lang="phonetic">Фонетика</div>
+    </div>
+    
+    <!-- הכנסת שם הנפטר -->
+    <div class="memorial-form">
+      <h2 class="form-title">Молитва за усопшего</h2>
+      <p class="form-desc">Введите имя усопшего, чтобы включить его в текст молитвы</p>
+      
+      <div class="form-group">
+        <label class="form-label">Имя усопшего (на иврите):</label>
+        <input type="text" class="form-control" id="deceased-name" placeholder="שם הנפטר">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Имя матери усопшего (на иврите):</label>
+        <input type="text" class="form-control" id="mother-name" placeholder="שם האם">
+      </div>
+      
+      <button class="button-primary" id="update-prayers">Применить</button>
+    </div>
+    
+    <!-- כלי קריאה -->
+    <div class="reading-tools">
+      <div class="tools-title">Инструменты чтения</div>
+      <div class="tools-grid">
+        <button class="tool-button" id="toggle-translation">Перевод</button>
+        <button class="tool-button" id="toggle-nikud">Огласовки</button>
+        <button class="tool-button" id="toggle-taamim">Знаки</button>
+        <button class="tool-button" id="toggle-name-highlight">Имена</button>
+      </div>
+      <div class="font-size-controls">
+        <button class="font-size-button" id="decrease-font">-</button>
+        <span class="font-size-value">Размер текста: средний</span>
+        <button class="font-size-button" id="increase-font">+</button>
+      </div>
+    </div>
+    
+    <!-- כרטיסיות תפילות -->
+    <div class="prayer-tabs">
+      <div class="prayer-tab active" data-tab="kaddish">Кадиш</div>
+      <div class="prayer-tab" data-tab="el-male-rachamim">Эль мале рахамим</div>
+      <div class="prayer-tab" data-tab="yizkor">Изкор</div>
+      <div class="prayer-tab" data-tab="tehilim">Избранные Псалмы</div>
+      <div class="prayer-tab" data-tab="azkara">День памяти</div>
+    </div>
+    
+    <!-- תוכן התפילה - קדיש -->
+    <div class="prayer-content" id="prayer-kaddish" data-lang="ru">
+      <h2 class="prayer-title">Кадиш</h2>
+      <div class="prayer-subtitle">Молитва освящения Имени Всевышнего</div>
+      
+      <div class="prayer-instruction">
+        Эту молитву произносят в память об усопших родственниках. Текст написан на арамейском языке, который был разговорным языком евреев во времена составления молитвы.
+      </div>
+      
+      <div class="prayer-text">
+        <p><strong>Итгадаль вэиткадаш шмей раба.</strong> (Да возвеличится и освятится великое Имя Его)</p>
+        <p><strong>Бэальма ди вра хирутей, вэямлих малхутей, вэяцмах пурканей викарев мэшихей.</strong> (В мире, который Он сотворил по воле Своей, и да явит Он царствование Своё при жизни вашей, и в дни ваши, и при жизни всего дома Израиля, вскоре, в ближайшее время. И скажем: амен!)</p>
+        <p><strong>Бэхайехон увйомехон увхайей дэхоль бейт Исраэль, баагала увизман карив, вэимру амен.</strong></p>
+        <p><strong>Йэhей шмей раба мэварах лэалам ульалмей альмая.</strong> (Да будет благословенно Его великое Имя всегда и во веки веков!)</p>
+        <p><strong>Итбарах вэиштабах вэитпаар вэитромам вэитнасе вэитhадар вэиталё вэитhалаль шмей дэкудша, брих hу.</strong> (Да будет благословляемо, восхваляемо, прославляемо, возвеличиваемо, превозносимо, почитаемо, возводимо и воспеваемо Имя Святого, благословен Он)</p>
+        <p><strong>Лэйла мин коль бирхата вэширата, тушбэхата вэнэхэмата, даамиран бэальма, вэимру амен.</strong> (выше всех благословений, и песнопений, восхвалений и утешений, произносимых в мире. И скажем: амен!)</p>
+        <p><strong>Йеhей шлама раба мин шмая вэхаим алейну вэаль коль Исраэль, вэимру амен.</strong> (Да будет с небес обильный мир и жизнь нам и всему Израилю. И скажем: амен!)</p>
+        <p><strong>Осэ шалом бимромав, hу яасэ шалом алейну вэаль коль Исраэль, вэимру амен.</strong> (Устанавливающий мир в высотах Своих, Он установит мир для нас и для всего Израиля. И скажем: амен!)</p>
+      </div>
+      
+      <div class="share-buttons">
+        <button class="share-button button-print">Печать</button>
+        <button class="share-button button-share">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- תוכן התפילה - אל מלא רחמים -->
+    <div class="prayer-content" id="prayer-el-male-rachamim" data-lang="ru" style="display: none;">
+      <h2 class="prayer-title">Эль Мале Рахамим</h2>
+      <div class="prayer-subtitle">Молитва "Бог, исполненный милосердия"</div>
+      
+      <div class="prayer-instruction">
+        Эту молитву произносят в память об усопших во время поминальных служб и посещения могил. В ней просят Всевышнего даровать покой душе умершего.
+      </div>
+      
+      <div class="prayer-text">
+        <p><strong>Эль мале рахамим, шохен бамромим, амце менуха нехона аль канфей а-Шхина, бемаалот кдошим у-теорим, кезоар а-ракиа маз'ирим, эт нишмат (имя усопшего) бен/бат (имя матери) ше-алах/алха леоламо/леолама, бааво́р шебли недер этен цдака беад азкарат нишмато/нишмата. Беган Эден теэ менухато/менухата. Лахен бааль а-рахамим ястиреу/ястирэа бесетер кнафав леоламим, вицрор бицрор а-хаим эт нишмато/нишмата, Адонай У нахалато/нахалата, вэянуах/вэтануах бешалом аль мишкаво/мишкава. Веномар амен.</strong></p>
+        <p>Бог, исполненный милосердия, обитающий в высотах! Да найдёт верный покой под сенью Божественного Присутствия – среди святых и чистых душ, сияющих, словно небесный свод, – душа (имя усопшего), сына/дочери (имя матери), отошедшего/отошедшей в вечность, ибо я, не связывая себя обетом, пожертвую на благотворительные цели в память о его/её душе. Да будет Сад Эдена местом его/её упокоения! Да укроет его/её Господин милосердия под покровом Своих крыльев на веки вечные и да сохранит в обители вечной жизни его/её душу! Господь – его/её наследственный удел, да упокоится он/она в мире на ложе своем, и скажем: амен.</p>
+      </div>
+      
+      <div class="share-buttons">
+        <button class="share-button button-print">Печать</button>
+        <button class="share-button button-share">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- תוכן התפילה - יזכור -->
+    <div class="prayer-content" id="prayer-yizkor" data-lang="ru" style="display: none;">
+      <h2 class="prayer-title">Изкор</h2>
+      <div class="prayer-subtitle">Поминальная молитва</div>
+      
+      <div class="prayer-instruction">
+        Молитву Изкор произносят в синагоге четыре раза в год: в Йом Кипур, в Шмини Ацерет, в седьмой день Песаха и во второй день Шавуот.
+      </div>
+      
+      <div class="prayer-text">
+        <div class="prayer-section">
+          <h3 class="prayer-section-title">За отца</h3>
+          <p><strong>Изкор Элоим нишмат ави мори (имя отца) бен (имя его матери) шеалах леоламо, баавур шебли недер этен цдака беад азкарат нишмато. Ана тиье нафшо црура бицрор ахаим, им нишмот Авраам, Ицхак веЯаков, Сара, Ривка, Рахель веЛеа, веим шеар цадиким вецидканийот шебеГан Эден, венома́р амен.</strong></p>
+          <p>Да вспомнит Бог душу моего отца и наставника (имя отца), сына (имя его матери), ушедшего в вечность, – ради того, что я, не связывая себя обетом, дам пожертвование на благотворительные цели в память о его душе. Да будет душа его завязана в узле вечной жизни вместе с душами Авраама, Ицхака и Яакова, Сары, Ривки, Рахели и Леи и других праведников и праведниц, пребывающих в Саду Эдена. И скажем: амен.</p>
+        </div>
+        
+        <div class="prayer-section">
+          <h3 class="prayer-section-title">За мать</h3>
+          <p><strong>Изкор Элоим нишмат ими морати (имя матери) бат (имя ее матери) шеалха леолама, баавур шебли недер этен цдака беад азкарат нишмата. Ана тиье нафша црура бицрор ахаим, им нишмот Авраам, Ицхак веЯаков, Сара, Ривка, Рахель веЛеа, веим шеар цадиким вецидканийот шебеГан Эден, венома́р амен.</strong></p>
+          <p>Да вспомнит Бог душу моей матери и наставницы (имя матери), дочери (имя ее матери), ушедшей в вечность, – ради того, что я, не связывая себя обетом, дам пожертвование на благотворительные цели в память о её душе. Да будет душа её завязана в узле вечной жизни вместе с душами Авраама, Ицхака и Яакова, Сары, Ривки, Рахели и Леи и других праведников и праведниц, пребывающих в Саду Эдена. И скажем: амен.</p>
+        </div>
+      </div>
+      
+      <div class="share-buttons">
+        <button class="share-button button-print">Печать</button>
+        <button class="share-button button-share">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- תוכן התפילה - פרקי תהילים נבחרים -->
+    <div class="prayer-content" id="prayer-tehilim" data-lang="ru" style="display: none;">
+      <h2 class="prayer-title">Избранные Псалмы</h2>
+      <div class="prayer-subtitle">Псалмы, традиционно читаемые в память об усопших</div>
+      
+      <div class="prayer-instruction">
+        Существует обычай читать определенные псалмы в память об усопших. Ниже приведены наиболее часто используемые псалмы. Можно читать их все или выбрать некоторые.
+      </div>
+      
+      <div class="prayer-section">
+        <h3 class="prayer-section-title">Псалом 16</h3>
+        <div class="prayer-text">
+          <p><strong>1.</strong> Храни меня, Боже, ибо я на Тебя уповаю.</p>
+          <p><strong>2.</strong> Я сказал Господу: «Ты – Господь мой; блага мои Тебе не нужны».</p>
+          <p><strong>3.</strong> К святым, которые на земле, и к дивным Твоим – к ним все желание мое.</p>
+          <p><strong>4.</strong> Пусть умножаются скорби у тех, которые текут к богу чужому; я не возлию кровавых возлияний их и не помяну имен их устами моими.</p>
+          <p><strong>5.</strong> Господь есть часть наследия моего и чаши моей. Ты держишь жребий мой.</p>
+          <p><strong>6.</strong> Межи мои прошли по прекрасным местам, и наследие мое приятно для меня.</p>
+          <p><strong>7.</strong> Благословлю Господа, вразумившего меня; даже и ночью учит меня внутренность моя.</p>
+          <p><strong>8.</strong> Всегда видел я пред собою Господа, ибо Он одесную меня; не поколеблюсь.</p>
+          <p><strong>9.</strong> Оттого возрадовалось сердце мое и возвеселился язык мой; даже и плоть моя успокоится в уповании,</p>
+          <p><strong>10.</strong> ибо Ты не оставишь души моей в аде и не дашь святому Твоему увидеть тление,</p>
+          <p><strong>11.</strong> Ты укажешь мне путь жизни: полнота радостей пред лицем Твоим, блаженство в деснице Твоей вовек.</p>
+        </div>
+      </div>
+      
+      <div class="prayer-section">
+        <h3 class="prayer-section-title">Псалом 23</h3>
+        <div class="prayer-text">
+          <p><strong>1.</strong> Господь – Пастырь мой; я ни в чем не буду нуждаться:</p>
+          <p><strong>2.</strong> Он покоит меня на злачных пажитях и водит меня к водам тихим,</p>
+          <p><strong>3.</strong> подкрепляет душу мою, направляет меня на стези правды ради имени Своего.</p>
+          <p><strong>4.</strong> Если я пойду и долиною смертной тени, не убоюсь зла, потому что Ты со мной; Твой жезл и Твой посох – они успокаивают меня.</p>
+          <p><strong>5.</strong> Ты приготовил предо мною трапезу в виду врагов моих; умастил елеем голову мою; чаша моя преисполнена.</p>
+          <p><strong>6.</strong> Так, благость и милость да сопровождают меня во все дни жизни моей, и я пребуду в доме Господнем многие дни.</p>
+        </div>
+      </div>
+      
+      <div class="prayer-section">
+        <h3 class="prayer-section-title">Псалом 91</h3>
+        <div class="prayer-text">
+          <p><strong>1.</strong> Живущий под кровом Всевышнего под сенью Всемогущего покоится,</p>
+          <p><strong>2.</strong> говорит Господу: «прибежище мое и защита моя, Бог мой, на Которого я уповаю!»</p>
+          <p><strong>3.</strong> Он избавит тебя от сети ловца, от гибельной язвы,</p>
+          <p><strong>4.</strong> перьями Своими осенит тебя, и под крыльями Его будешь безопасен; щит и ограждение – истина Его.</p>
+          <p><strong>5.</strong> Не убоишься ужасов в ночи, стрелы, летящей днем,</p>
+          <p><strong>6.</strong> язвы, ходящей во мраке, заразы, опустошающей в полдень.</p>
+          <p><strong>7.</strong> Падут подле тебя тысяча и десять тысяч одесную тебя; но к тебе не приблизится:</p>
+          <p><strong>8.</strong> только смотреть будешь очами твоими и видеть возмездие нечестивым.</p>
+          <p><strong>9.</strong> Ибо ты сказал: «Господь – упование мое»; Всевышнего избрал ты прибежищем твоим;</p>
+          <p><strong>10.</strong> не приключится тебе зло, и язва не приблизится к жилищу твоему;</p>
+          <p><strong>11.</strong> ибо Ангелам Своим заповедает о тебе – охранять тебя на всех путях твоих:</p>
+          <p><strong>12.</strong> на руках понесут тебя, да не преткнешься о камень ногою твоею;</p>
+          <p><strong>13.</strong> на аспида и василиска наступишь; попирать будешь льва и дракона.</p>
+          <p><strong>14.</strong> «За то, что он возлюбил Меня, избавлю его; защищу его, потому что он познал имя Мое.</p>
+          <p><strong>15.</strong> Воззовет ко Мне, и услышу его; с ним Я в скорби; избавлю его и прославлю его,</p>
+          <p><strong>16.</strong> долготою дней насыщу его, и явлю ему спасение Мое».</p>
+        </div>
+      </div>
+      
+      <div class="share-buttons">
+        <button class="share-button button-print">Печать</button>
+        <button class="share-button button-share">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- תוכן התפילה - יום האזכרה -->
+    <div class="prayer-content" id="prayer-azkara" data-lang="ru" style="display: none;">
+      <h2 class="prayer-title">День памяти (Азкара)</h2>
+      <div class="prayer-subtitle">Обычаи и молитвы для дня годовщины смерти</div>
+      
+      <div class="prayer-instruction">
+        В годовщину смерти (яарцайт) принято зажигать свечу, которая горит 24 часа, читать Кадиш (если есть возможность молиться с миньяном), изучать Мишну и посещать могилу.
+      </div>
+      
+      <div class="prayer-text">
+        <div class="prayer-section">
+          <h3 class="prayer-section-title">Перед посещением могилы</h3>
+          <p>Перед посещением могилы вымойте руки и произнесите:</p>
+          <p><strong>Да будет воля Твоя, Господь, Бог мой и Бог отцов моих, сопровождать меня в мире и направлять мои шаги в мире, и вернуть меня в мире, и спасти меня от всякого врага и засады в пути. И пошли благословение делам рук моих, и даруй мне благодать, добро и милость в Твоих глазах и в глазах всех, кто видит меня, и внемли голосу моих молитв, ибо Ты внимаешь молитве всех уст. Благословен Ты, Господь, внимающий молитве!</strong></p>
+        </div>
+        
+        <div class="prayer-section">
+          <h3 class="prayer-section-title">На кладбище</h3>
+          <p>При входе на кладбище произносят:</p>
+          <p><strong>Благословен Ты, Господь, Бог наш, Царь вселенной, Который создал вас по закону, питал вас по закону, содержал вас по закону, собрал вас по закону, и в будущем воскресит вас по закону. Благословен Ты, Господь, воскрешающий мертвых.</strong></p>
+          <p>У могилы читают соответствующие псалмы (16, 23, 91, 103) и произносят молитву "Эль мале рахамим".</p>
+        </div>
+      </div>
+      
+      <div class="share-buttons">
+        <button class="share-button button-print">Печать</button>
+        <button class="share-button button-share">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- רשימת יארצייט -->
+    <div class="yahrzeit-list">
+      <div class="yahrzeit-header">Список годовщин (Яарцайт)</div>
+      
+      <div class="yahrzeit-item">
+        <div class="yahrzeit-info">
+          <div class="yahrzeit-name" id="yahrzeit-name-1">Давид бен Рахель</div>
+          <div class="yahrzeit-date">3 Нисана 5783 (25.03.2023)</div>
+        </div>
+        <div class="yahrzeit-action">
+          <button class="tool-button" onclick="loadPrayer('yahrzeit-name-1')">Молитвы</button>
+        </div>
+      </div>
+      
+      <div class="yahrzeit-item">
+        <div class="yahrzeit-info">
+          <div class="yahrzeit-name" id="yahrzeit-name-2">Сара бат Лея</div>
+          <div class="yahrzeit-date">15 Ияра 5782 (16.05.2022)</div>
+        </div>
+        <div class="yahrzeit-action">
+          <button class="tool-button" onclick="loadPrayer('yahrzeit-name-2')">Молитвы</button>
+        </div>
+      </div>
+      
+      <div class="yahrzeit-item">
+        <button class="button-primary" style="padding: 8px;">Добавить годовщину</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ניווט תחתון -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">Главная</div>
+    </a>
+    <a href="tehilim.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">Техилим</div>
+    </a>
+    <a href="#" class="bottom-nav-item active">
+      <div class="bottom-nav-icon">🕯️</div>
+      <div class="bottom-nav-label">За усопших</div>
+    </a>
+    <a href="siddur.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📝</div>
+      <div class="bottom-nav-label">Молитвенник</div>
+    </a>
+  </nav>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // החלפת שפה
+      const languageOptions = document.querySelectorAll('.language-option');
+      languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const lang = this.dataset.lang;
+          
+          // שינוי האפשרות הפעילה
+          languageOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          // שמירת השפה הנבחרת
+          localStorage.setItem('preferredLanguage', lang);
+          
+          // עדכון השפה בממשק
+          updateUILanguage(lang);
+        });
+      });
+      
+      // עדכון השפה בממשק
+      function updateUILanguage(lang) {
+        // בממשק אמיתי כאן היה קוד שמעדכן את תצוגת השפה
+        console.log('Язык изменен на:', lang);
+      }
+      
+      // טעינת השפה המועדפת בעת טעינת הדף
+      const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+      languageOptions.forEach(opt => {
+        if (opt.dataset.lang === savedLang) {
+          opt.click();
+        }
+      });
+      
+      // מעבר בין לשוניות תפילה
+      const prayerTabs = document.querySelectorAll('.prayer-tab');
+      prayerTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabId = this.dataset.tab;
+          
+          // מעבר ללשונית הנבחרת
+          prayerTabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          
+          // הצגת התפילה המתאימה
+          document.querySelectorAll('.prayer-content').forEach(content => {
+            content.style.display = 'none';
+          });
+          document.getElementById('prayer-' + tabId).style.display = 'block';
+        });
+      });
+      
+      // עדכון התפילות עם שם הנפטר
+      document.getElementById('update-prayers').addEventListener('click', function() {
+        const deceasedName = document.getElementById('deceased-name').value.trim();
+        const motherName = document.getElementById('mother-name').value.trim();
+        
+        if (!deceasedName) {
+          alert('Пожалуйста, введите имя усопшего');
+          return;
+        }
+        
+        // עדכון טקסט התפילה
+        updatePrayerText(deceasedName, motherName);
+      });
+      
+      // פונקציה לעדכון טקסט התפילה עם שם הנפטר
+      function updatePrayerText(name, motherName) {
+        const fullName = motherName ? `${name} בן/בת ${motherName}` : name;
+        
+        // במימוש אמיתי כאן היה קוד שמעדכן את כל הטקסטים עם השם
+        console.log('Имя усопшего обновлено:', fullName);
+        
+        // הצגת הודעה למשתמש
+        alert('Молитвы обновлены с именем: ' + fullName);
+      }
+      
+      // שינוי גודל טקסט
+      let currentFontSize = 18; // גודל טקסט התחלתי
+      const fontSizeValue = document.querySelector('.font-size-value');
+      
+      document.getElementById('increase-font').addEventListener('click', function() {
+        if (currentFontSize < 32) {
+          currentFontSize += 2;
+          updateFontSize();
+        }
+      });
+      
+      document.getElementById('decrease-font').addEventListener('click', function() {
+        if (currentFontSize > 16) {
+          currentFontSize -= 2;
+          updateFontSize();
+        }
+      });
+      
+      function updateFontSize() {
+        document.querySelectorAll('.prayer-text').forEach(el => {
+          el.style.fontSize = currentFontSize + 'px';
+        });
+        
+        const currentLang = document.querySelector('.language-option.active').dataset.lang;
+        let sizeText = '';
+        
+        if (currentFontSize <= 18) {
+          sizeText = currentLang === 'ru' ? 'маленький' : 
+                     currentLang === 'he' ? 'קטן' : 'katan';
+        } else if (currentFontSize <= 22) {
+          sizeText = currentLang === 'ru' ? 'средний' : 
+                     currentLang === 'he' ? 'בינוני' : 'beynoni';
+        } else if (currentFontSize <= 26) {
+          sizeText = currentLang === 'ru' ? 'большой' : 
+                     currentLang === 'he' ? 'גדול' : 'gadol';
+        } else {
+          sizeText = currentLang === 'ru' ? 'очень большой' : 
+                     currentLang === 'he' ? 'גדול מאוד' : 'gadol me\'od';
+        }
+        
+        if (currentLang === 'ru') {
+          fontSizeValue.textContent = `Размер текста: ${sizeText}`;
+        } else if (currentLang === 'he') {
+          fontSizeValue.textContent = `גודל טקסט: ${sizeText}`;
+        } else {
+          fontSizeValue.textContent = `Godel text: ${sizeText}`;
+        }
+      }
+      
+      // כפתורי שיתוף
+      document.querySelectorAll('.button-print').forEach(button => {
+        button.addEventListener('click', function() {
+          window.print();
+        });
+      });
+      
+      document.querySelectorAll('.button-share').forEach(button => {
+        button.addEventListener('click', function() {
+          const prayerTitle = this.closest('.prayer-content').querySelector('.prayer-title').textContent;
+          
+          if (navigator.share) {
+            navigator.share({
+              title: 'Тикун Ха-Шем - ' + prayerTitle,
+              text: 'Молитва: ' + prayerTitle,
+              url: window.location.href
+            }).catch(err => {
+              console.error('Ошибка при попытке поделиться:', err);
+            });
+          } else {
+            // פתרון חלופי אם Web Share API לא נתמך
+            prompt('Скопируйте ссылку:', window.location.href);
+          }
+        });
+      });
+      
+      // טיפול ברשימת יארצייט
+      function loadPrayer(nameId) {
+        const name = document.getElementById(nameId).textContent;
+        document.getElementById('deceased-name').value = name.split(' בן ')[0] || name;
+        
+        const motherMatch = name.match(/בן\s+(\S+)/);
+        if (motherMatch && motherMatch[1]) {
+          document.getElementById('mother-name').value = motherMatch[1];
+        }
+        
+        document.getElementById('update-prayers').click();
+        // מעבר ללשונית של אל מלא רחמים
+        document.querySelector('[data-tab="el-male-rachamim"]').click();
+        
+        // גלילה לתפילה
+        document.getElementById('prayer-el-male-rachamim').scrollIntoView({ behavior: 'smooth' });
+      }
+      
+      // הגדרת הפונקציה כגלובלית כדי שתהיה נגישה מה-onclick
+      window.loadPrayer = loadPrayer;
+    });
+  </script>
+</body>
+</html>

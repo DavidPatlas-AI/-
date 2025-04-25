@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Исправление текста - Тикун Ха-Шем</title>
+  <style>
+    /* בסיס */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --primary-dark: #3a56d4;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+      --success: #28a745;
+      --warning: #ffc107;
+      --highlight: #fffacd;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    /* כותרת */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .back-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 18px;
+      background-color: transparent;
+      border: none;
+      text-decoration: none;
+    }
+    
+    /* תוכן */
+    .container {
+      padding: var(--content-padding);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* מידע והסבר */
+    .info-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .info-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    
+    .info-text {
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    
+    .info-examples {
+      background-color: rgba(67, 97, 238, 0.05);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+    
+    .example-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+    }
+    
+    .example-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    .incorrect {
+      color: #dc3545;
+      text-decoration: line-through;
+      margin-right: 8px;
+    }
+    
+    .correct {
+      color: var(--success);
+      font-weight: 500;
+    }
+    
+    /* עורך טקסט */
+    .editor-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .editor-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    
+    .editor-subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    
+    .editor-area {
+      width: 100%;
+      min-height: 150px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-family: 'PT Serif', serif;
+      font-size: 16px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .button {
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.2s;
+    }
+    
+    .button-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .button-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .button-secondary {
+      background-color: var(--text-light);
+      color: white;
+    }
+    
+    .button-secondary:hover {
+      background-color: #5a6268;
+    }
+    
+    /* אפשרויות תיקון */
+    .correction-options {
+      margin-bottom: 16px;
+    }
+    
+    .options-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+    
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .option-item {
+      position: relative;
+    }
+    
+    .option-item input {
+      opacity: 0;
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+    
+    .option-label {
+      display: inline-block;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .option-item input:checked + .option-label {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    /* תוצאת תיקון */
+    .result-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      display: none;
+    }
+    
+    .result-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .result-content {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-family: 'PT Serif', serif;
+      line-height: 1.6;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    
+    .highlight {
+      background-color: var(--highlight);
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+    
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding: 10px;
+      background-color: rgba(67, 97, 238, 0.05);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .stats-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .stats-value {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--primary);
+    }
+    
+    .stats-label {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .share-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    /* היסטוריית תיקונים */
+    .history-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    
+    .history-header {
+      padding: 16px;
+      background-color: rgba(67, 97, 238, 0.1);
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .history-clear {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+    
+    .history-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    
+    .history-info {
+      flex: 1;
+    }
+    
+    .history-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    
+    .history-meta {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .history-action {
+      margin-left: 12px;
+    }
+    
+    /* ניווט תחתון */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* התראה */
+    .notification {
+      position: fixed;
+      bottom: calc(var(--bottom-nav-height) + 16px);
+      left: 16px;
+      right: 16px;
+      padding: 16px;
+      background-color: var(--success);
+      color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      z-index: 1000;
+      text-align: center;
+    }
+    
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- כותרת -->
+  <header class="header">
+    <a href="index.html" class="back-button">←</a>
+    <div class="header-title">Исправление имён Всевышнего</div>
+    <a href="settings.html" style="font-size: 20px; width: 36px; text-align: center; text-decoration: none;">⚙️</a>
+  </header>
+  
+  <!-- תוכן -->
+  <div class="container">
+    <!-- מידע והסבר -->
+    <div class="info-card">
+      <h2 class="info-title">Почему важно правильно писать имена Всевышнего</h2>
+      
+      <p class="info-text">Согласно еврейской традиции, имена Всевышнего обладают святостью и требуют особого уважения. В печатных и электронных материалах принято заменять полные имена особыми формами записи, чтобы избежать их стирания или осквернения.</p>
+      
+      <div class="info-examples">
+        <h3 style="margin-bottom: 10px; font-size: 15px;">Примеры правильной замены:</h3>
+        
+        <div class="example-item">
+          <div><span class="incorrect">Бог</span> → <span class="correct">Б-г</span></div>
+        </div>
+        <div class="example-item">
+          <div><span class="incorrect">Господь</span> → <span class="correct">Г-сподь</span></div>
+        </div>
+        <div class="example-item">
+          <div><span class="incorrect">Всевышний</span> → <span class="correct">Вс-вышний</span></div>
+        </div>
+        <div class="example-item">
+          <div><span class="incorrect">Адонай</span> → <span class="correct">А-донай</span></div>
+        </div>
+      </div>
+      
+      <p class="info-text">Этот инструмент поможет вам автоматически исправить имена Всевышнего в любом тексте на русском языке, сохраняя должное уважение к святости этих имён.</p>
+    </div>
+    
+    <!-- עורך טקסט -->
+    <div class="editor-card">
+      <h2 class="editor-title">Исправление текста</h2>
+      <p class="editor-subtitle">Вставьте текст ниже и выберите предпочтительный способ исправления имён Всевышнего</p>
+      
+      <textarea id="input-text" class="editor-area" placeholder="Вставьте здесь текст для исправления..."></textarea>
+      
+      <div class="correction-options">
+        <div class="options-title">Способ исправления:</div>
+        <div class="options-row">
+          <div class="option-item">
+            <input type="radio" id="option-dash" name="correction-style" value="dash" checked>
+            <label class="option-label" for="option-dash">С дефисом (Б-г)</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="option-hebrew" name="correction-style" value="hebrew">
+            <label class="option-label" for="option-hebrew">Иврит (ה')</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="option-hashem" name="correction-style" value="hashem">
+            <label class="option-label" for="option-hashem">Словом (а-Шем)</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="actions-row">
+        <button id="btn-correct" class="button button-primary">Исправить текст</button>
+        <button id="btn-clear" class="button button-secondary">Очистить</button>
+      </div>
+    </div>
+    
+    <!-- תוצאת תיקון -->
+    <div id="result-card" class="result-card">
+      <div class="result-title">
+        <span>Исправленный текст</span>
+        <span id="result-count" style="font-size: 14px; font-weight: 400; color: var(--text-light);"></span>
+      </div>
+      
+      <div id="result-content" class="result-content"></div>
+      
+      <div class="stats-row">
+        <div class="stats-item">
+          <div class="stats-value" id="stats-total">0</div>
+          <div class="stats-label">Всего замен</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value" id="stats-bog">0</div>
+          <div class="stats-label">Б-г</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value" id="stats-gospod">0</div>
+          <div class="stats-label">Г-сподь</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value" id="stats-other">0</div>
+          <div class="stats-label">Другие</div>
+        </div>
+      </div>
+      
+      <div class="share-row">
+        <button id="btn-copy" class="button button-primary">Копировать текст</button>
+        <button id="btn-print" class="button button-secondary">Печать</button>
+        <button id="btn-share" class="button button-secondary">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- היסטוריית תיקונים -->
+    <div class="history-card">
+      <div class="history-header">
+        <span>История исправлений</span>
+        <span class="history-clear" id="btn-clear-history">Очистить историю</span>
+      </div>
+      
+      <div id="history-container">
+        <!-- היסטוריית התיקונים תיווצר דינמית -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- התראה -->
+  <div id="notification" class="notification">Текст скопирован в буфер обмена</div>
+  
+  <!-- ניווט תחתון -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">Главная</div>
+    </a>
+    <a href="tehilim.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">Техилим</div>
+    </a>
+    <a href="memorial.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🕯️</div>
+      <div class="bottom-nav-label">За усопших</div>
+    </a>
+    <a href="siddur.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📝</div>
+      <div class="bottom-nav-label">Молитвенник</div>
+    </a>
+  </nav>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // טעינת אלמנטים
+      const inputText = document.getElementById('input-text');
+      const resultCard = document.getElementById('result-card');
+      const resultContent = document.getElementById('result-content');
+      const resultCount = document.getElementById('result-count');
+      const statsTotal = document.getElementById('stats-total');
+      const statsBog = document.getElementById('stats-bog');
+      const statsGospod = document.getElementById('stats-gospod');
+      const statsOther = document.getElementById('stats-other');
+      const historyContainer = document.getElementById('history-container');
+      const notification = document.getElementById('notification');
+      
+      // טיפול בכפתורים
+      document.getElementById('btn-correct').addEventListener('click', function() {
+        const text = inputText.value.trim();
+        
+        if (!text) {
+          showNotification('Пожалуйста, введите текст для исправления', 'warning');
+          return;
+        }
+        
+        const correctionStyle = document.querySelector('input[name="correction-style"]:checked').value;
+        const result = correctText(text, correctionStyle);
+        
+        // הצגת התוצאה
+        resultContent.innerHTML = result.html;
+        resultCard.style.display = 'block';
+        
+        // עדכון סטטיסטיקות
+        statsTotal.textContent = result.stats.total;
+        statsBog.textContent = result.stats.bog;
+        statsGospod.textContent = result.stats.gospod;
+        statsOther.textContent = result.stats.other;
+        
+        // עדכון כותרת התוצאה
+        resultCount.textContent = result.stats.total > 0 ? 
+          `Исправлено ${result.stats.total} ${getCorrectWordForm(result.stats.total, 'имя', 'имени', 'имён')}` : 
+          'Имена не найдены';
+        
+        // שמירה בהיסטוריה
+        saveToHistory(text, result.text, result.stats.total, correctionStyle);
+        
+        // גלילה לתוצאה
+        resultCard.scrollIntoView({ behavior: 'smooth' });
+      });
+      
+      document.getElementById('btn-clear').addEventListener('click', function() {
+        inputText.value = '';
+        resultCard.style.display = 'none';
+      });
+      
+      document.getElementById('btn-copy').addEventListener('click', function() {
+        // העתקת הטקסט המתוקן
+        const textToCopy = resultContent.textContent;
+        
+        navigator.clipboard.writeText(textToCopy).then(function() {
+          showNotification('Текст скопирован в буфер обмена');
+        }).catch(function(err) {
+          console.error('Ошибка при копировании текста: ', err);
+          // גיבוי במקרה של שגיאה
+          const tempTextarea = document.createElement('textarea');
+          tempTextarea.value = textToCopy;
+          document.body.appendChild(tempTextarea);
+          tempTextarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempTextarea);
+          showNotification('Текст скопирован в буфер обмена');
+        });
+      });
+      
+      document.getElementById('btn-print').addEventListener('click', function() {
+        // הכנה להדפסה
+        const printWindow = window.open('', '_blank');
+        const correctedText = resultContent.textContent;
+        
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Исправленный текст - Тикун Ха-Шем</title>
+            <meta charset="UTF-8">
+            <style>
+              body {
+                font-family: 'Times New Roman', serif;
+                line-height: 1.6;
+                padding: 20px;
+              }
+              h1 {
+                font-size: 18px;
+                text-align: center;
+                margin-bottom: 20px;
+              }
+              .content {
+                white-space: pre-wrap;
+                font-size: 14px;
+              }
+              .footer {
+                margin-top: 30px;
+                text-align: center;
+                font-size: 12px;
+                color: #6c757d;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Исправленный текст</h1>
+            <div class="content">${correctedText}</div>
+            <div class="footer">Исправлено с помощью сервиса Тикун Ха-Шем</div>
+            <script>
+              window.onload = function() {
+                window.print();
+                setTimeout(function() { window.close(); }, 500);
+              };
+            </script>
+          </body>
+          </html>
+        `);
+        
+        printWindow.document.close();
+      });
+      
+      document.getElementById('btn-share').addEventListener('click', function() {
+        const textToShare = resultContent.textContent;
+        
+        if (navigator.share) {
+          navigator.share({
+            title: 'Исправленный текст - Тикун Ха-Шем',
+            text: textToShare
+          }).catch(err => {
+            console.error('Ошибка при попытке поделиться:', err);
+          });
+        } else {
+          // אם API שיתוף לא קיים, נציע העתקה ללוח
+          document.getElementById('btn-copy').click();
+        }
+      });
+      
+      document.getElementById('btn-clear-history').addEventListener('click', function() {
+        if (confirm('Вы уверены, что хотите очистить всю историю исправлений?')) {
+          localStorage.removeItem('correctionHistory');
+          updateHistoryUI();
+        }
+      });
+      
+      // פונקציה לתיקון טקסט
+      function correctText(text, style) {
+        // הגדרת מילים להחלפה
+        const wordsToReplace = {
+          'бог': { dash: 'Б-г', hebrew: 'ה\'', hashem: 'Вс-вышний' },
+          'бога': { dash: 'Б-га', hebrew: 'ה\'', hashem: 'Вс-вышнего' },
+          'богу': { dash: 'Б-гу', hebrew: 'ה\'', hashem: 'Вс-вышнему' },
+          'богом': { dash: 'Б-гом', hebrew: 'ה\'', hashem: 'Вс-вышним' },
+          'боге': { dash: 'Б-ге', hebrew: 'ה\'', hashem: 'Вс-вышнем' },
+          'боже': { dash: 'Б-же', hebrew: 'ה\'', hashem: 'Вс-вышний' },
+          
+          'господь': { dash: 'Г-сподь', hebrew: 'ה\'', hashem: 'а-Шем' },
+          'господа': { dash: 'Г-спода', hebrew: 'ה\'', hashem: 'а-Шема' },
+          'господу': { dash: 'Г-споду', hebrew: 'ה\'', hashem: 'а-Шему' },
+          'господом': { dash: 'Г-сподом', hebrew: 'ה\'', hashem: 'а-Шемом' },
+          'господе': { dash: 'Г-споде', hebrew: 'ה\'', hashem: 'а-Шеме' },
+          
+          'всевышний': { dash: 'Вс-вышний', hebrew: 'ה\'', hashem: 'Вс-вышний' },
+          'всевышнего': { dash: 'Вс-вышнего', hebrew: 'ה\'', hashem: 'Вс-вышнего' },
+          'всевышнему': { dash: 'Вс-вышнему', hebrew: 'ה\'', hashem: 'Вс-вышнему' },
+          'всевышним': { dash: 'Вс-вышним', hebrew: 'ה\'', hashem: 'Вс-вышним' },
+          'всевышнем': { dash: 'Вс-вышнем', hebrew: 'ה\'', hashem: 'Вс-вышнем' },
+          
+          'адонай': { dash: 'А-донай', hebrew: 'ה\'', hashem: 'а-Шем' },
+          
+          'творец': { dash: 'Тв-рец', hebrew: 'ה\'', hashem: 'Тв-рец' },
+          'творца': { dash: 'Тв-рца', hebrew: 'ה\'', hashem: 'Тв-рца' },
+          'творцу': { dash: 'Тв-рцу', hebrew: 'ה\'', hashem: 'Тв-рцу' },
+          'творцом': { dash: 'Тв-рцом', hebrew: 'ה\'', hashem: 'Тв-рцом' },
+          'творце': { dash: 'Тв-рце', hebrew: 'ה\'', hashem: 'Тв-рце' }
+        };
+        
+        // סטטיסטיקות
+        const stats = {
+          total: 0,
+          bog: 0,
+          gospod: 0,
+          other: 0
+        };
+        
+        // עיבוד הטקסט
+       let processedText = text;
+       let htmlResult = text;
+       
+       // רשימת מילים להחלפה - עם התאמה לאותיות גדולות וקטנות
+       Object.keys(wordsToReplace).forEach(word => {
+         const replacement = wordsToReplace[word][style];
+         
+         // ביטוי רגולרי לחיפוש המילה בטקסט - עם התחשבות בגבולות מילה
+         const regex = new RegExp(`\\b${word}\\b`, 'gi');
+         
+         // ספירת המופעים
+         const matches = processedText.match(regex);
+         if (matches) {
+           const count = matches.length;
+           stats.total += count;
+           
+           // עדכון סטטיסטיקות לפי סוג
+           if (word.startsWith('бог') || word === 'боже') {
+             stats.bog += count;
+           } else if (word.startsWith('господ')) {
+             stats.gospod += count;
+           } else {
+             stats.other += count;
+           }
+         }
+         
+         // החלפה בטקסט הרגיל
+         processedText = processedText.replace(regex, replacement);
+         
+         // החלפה בטקסט HTML עם הדגשה
+         htmlResult = htmlResult.replace(regex, match => {
+           // שמירה על אות ראשונה גדולה אם המקור עם אות גדולה
+           let finalReplacement = replacement;
+           if (match.charAt(0) === match.charAt(0).toUpperCase()) {
+             finalReplacement = finalReplacement.charAt(0).toUpperCase() + finalReplacement.slice(1);
+           }
+           
+           return `<span class="highlight">${finalReplacement}</span>`;
+         });
+       });
+       
+       return {
+         text: processedText,
+         html: htmlResult,
+         stats: stats
+       };
+     }
+     
+     // פונקציה לשמירה בהיסטוריה
+     function saveToHistory(originalText, correctedText, count, style) {
+       // אין טעם לשמור תיקון ללא שינויים
+       if (count === 0) {
+         return;
+       }
+       
+       // קבלת היסטוריה קיימת
+       let history = JSON.parse(localStorage.getItem('correctionHistory') || '[]');
+       
+       // הגבלת היסטוריה ל-10 פריטים
+       if (history.length >= 10) {
+         history.pop(); // הסרת הפריט הישן ביותר
+       }
+       
+       // חיתוך הטקסט המקורי אם הוא ארוך מדי
+       const shortOriginal = originalText.length > 50 ? 
+         originalText.substring(0, 50) + '...' : originalText;
+       
+       // יצירת פריט היסטוריה חדש
+       const historyItem = {
+         id: Date.now(), // מזהה ייחודי
+         original: originalText,
+         corrected: correctedText,
+         count: count,
+         style: style,
+         shortText: shortOriginal,
+         timestamp: new Date().toISOString()
+       };
+       
+       // הוספה להיסטוריה
+       history.unshift(historyItem);
+       
+       // שמירה בלוקל סטוראג'
+       localStorage.setItem('correctionHistory', JSON.stringify(history));
+       
+       // עדכון ממשק ההיסטוריה
+       updateHistoryUI();
+     }
+     
+     // פונקציה לעדכון ממשק ההיסטוריה
+     function updateHistoryUI() {
+       // קבלת היסטוריה מהלוקל סטוראג'
+       const history = JSON.parse(localStorage.getItem('correctionHistory') || '[]');
+       
+       // ניקוי מיכל ההיסטוריה
+       historyContainer.innerHTML = '';
+       
+       if (history.length === 0) {
+         // אין היסטוריה
+         historyContainer.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-light);">История пуста</div>';
+         return;
+       }
+       
+       // יצירת אלמנטים להיסטוריה
+       history.forEach(item => {
+         const timeAgo = formatTimeAgo(new Date(item.timestamp));
+         
+         const historyItem = document.createElement('div');
+         historyItem.className = 'history-item';
+         historyItem.innerHTML = `
+           <div class="history-info">
+             <div class="history-text">${item.shortText}</div>
+             <div class="history-meta">
+               <span>Исправлено: ${item.count}</span> • <span>${timeAgo}</span>
+             </div>
+           </div>
+           <div class="history-action">
+             <button class="button button-secondary" style="padding: 6px 10px; font-size: 13px;">Загрузить</button>
+           </div>
+         `;
+         
+         // הוספת אירוע לחיצה לטעינת טקסט מההיסטוריה
+         historyItem.querySelector('button').addEventListener('click', function() {
+           inputText.value = item.original;
+           
+           // בחירת סגנון התיקון המתאים
+           document.querySelectorAll('input[name="correction-style"]').forEach(radio => {
+             if (radio.value === item.style) {
+               radio.checked = true;
+             }
+           });
+           
+           // הפעלת כפתור התיקון
+           document.getElementById('btn-correct').click();
+         });
+         
+         historyContainer.appendChild(historyItem);
+       });
+     }
+     
+     // פונקציה להצגת התראות
+     function showNotification(message, type = 'success') {
+       notification.textContent = message;
+       notification.className = `notification ${type === 'warning' ? 'warning' : 'success'} show`;
+       
+       setTimeout(() => {
+         notification.className = 'notification';
+       }, 3000);
+     }
+     
+     // פונקציה להמרת זמן לפורמט "לפני X דקות/שעות וכו'"
+     function formatTimeAgo(date) {
+       const now = new Date();
+       const diffInSeconds = Math.floor((now - date) / 1000);
+       
+       if (diffInSeconds < 60) {
+         return 'только что';
+       } else if (diffInSeconds < 3600) {
+         const minutes = Math.floor(diffInSeconds / 60);
+         return `${minutes} ${getCorrectWordForm(minutes, 'минуту', 'минуты', 'минут')} назад`;
+       } else if (diffInSeconds < 86400) {
+         const hours = Math.floor(diffInSeconds / 3600);
+         return `${hours} ${getCorrectWordForm(hours, 'час', 'часа', 'часов')} назад`;
+       } else {
+         const days = Math.floor(diffInSeconds / 86400);
+         return `${days} ${getCorrectWordForm(days, 'день', 'дня', 'дней')} назад`;
+       }
+     }
+     
+     // פונקציה לבחירת צורת המילה הנכונה ברוסית לפי המספר
+     function getCorrectWordForm(number, form1, form2, form5) {
+       number = Math.abs(number) % 100;
+       const lastDigit = number % 10;
+       
+       if (number > 10 && number < 20) {
+         return form5;
+       }
+       
+       if (lastDigit === 1) {
+         return form1;
+       }
+       
+       if (lastDigit >= 2 && lastDigit <= 4) {
+         return form2;
+       }
+       
+       return form5;
+     }
+     
+     // טעינת ההיסטוריה בעת טעינת הדף
+     updateHistoryUI();
+   });
+ </script>
+</body>
+</html>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Псалом 119 по буквам имени - Тикун Ха-Шем</title>
+  <style>
+    /* בסיס */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    /* כותרת */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .back-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 18px;
+      background-color: transparent;
+      border: none;
+      text-decoration: none;
+    }
+    
+    /* תוכן */
+    .container {
+      padding: var(--content-padding);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* בורר שפה */
+    .language-bar {
+      display: flex;
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .language-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .language-option.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* כרטיס מידע */
+    .info-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .info-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    
+    .info-subtitle {
+      font-size: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+      color: var(--text-light);
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 16px;
+      direction: rtl;
+    }
+    
+    .button-submit {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    
+    /* אותיות שם */
+    .name-letters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+      margin-bottom: 16px;
+      justify-content: center;
+    }
+    
+    .letter-box {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(67, 97, 238, 0.1);
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--primary);
+      position: relative;
+    }
+    
+    .letter-box:after {
+      content: attr(data-letter-name);
+      position: absolute;
+      bottom: -20px;
+      font-size: 12px;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    
+    /* פסוקי תהילים */
+    .psalm-content {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .psalm-letter-section {
+      margin-bottom: 30px;
+    }
+    
+    .letter-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .letter-badge {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 18px;
+      margin-right: 12px;
+    }
+    
+    .letter-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .pasuk {
+      margin-bottom: 12px;
+      position: relative;
+    }
+    
+    .pasuk-number {
+      font-weight: 700;
+      color: var(--primary);
+      margin-right: 5px;
+      font-size: 14px;
+      display: inline-block;
+      width: 20px;
+    }
+    
+    /* כלי קריאה */
+    .reading-tools {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .tools-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    @media (min-width: 480px) {
+      .tools-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .tool-button {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .tool-button:hover, .tool-button.active {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    .font-size-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .font-size-button {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .font-size-value {
+      font-weight: 500;
+    }
+    
+    /* כפתורי שיתוף */
+    .share-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    
+    .share-button {
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .button-print {
+      background-color: #6c757d;
+      color: white;
+    }
+    
+    .button-share {
+      background-color: #4caf50;
+      color: white;
+    }
+    
+    /* ניווט תחתון */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* רב-לשוניות */
+    [data-lang="he"] {
+      font-family: 'Frank Ruhl Libre', serif;
+      direction: rtl;
+    }
+    
+    [data-lang="ru"] {
+      font-family: 'PT Serif', serif;
+      direction: ltr;
+    }
+    
+    [data-lang="phonetic"] {
+      font-family: 'Roboto', sans-serif;
+      direction: ltr;
+    }
+  </style>
+</head>
+<body>
+  <!-- כותרת -->
+  <header class="header">
+    <a href="index.html" class="back-button">←</a>
+    <div class="header-title">Псалом 119 по буквам имени</div>
+    <a href="settings.html" style="font-size: 20px; width: 36px; text-align: center; text-decoration: none;">⚙️</a>
+  </header>
+  
+  <!-- תוכן -->
+  <div class="container">
+    <!-- בורר שפה -->
+    <div class="language-bar">
+      <div class="language-option active" data-lang="ru">Русский</div>
+      <div class="language-option" data-lang="he">עברית</div>
+      <div class="language-option" data-lang="phonetic">Фонетика</div>
+    </div>
+    
+    <!-- הסבר ופרטי הנפטר -->
+    <div class="info-card">
+      <h2 class="info-title">Чтение Псалма 119 по буквам имени</h2>
+      <p class="info-subtitle">Введите имя усопшего на иврите и получите строфы Псалма 119, соответствующие буквам имени</p>
+      
+      <div class="form-group">
+        <label class="form-label">Имя усопшего (на иврите):</label>
+        <input type="text" class="form-control" id="deceased-name" placeholder="שם הנפטר" value="דוד">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Имя матери усопшего (на иврите):</label>
+        <input type="text" class="form-control" id="mother-name" placeholder="שם האם" value="רחל">
+      </div>
+      
+      <button class="button-submit" id="generate-psalm">Показать строфы Псалма 119</button>
+    </div>
+    
+    <!-- כלי קריאה -->
+    <div class="reading-tools">
+      <div class="tools-title">Инструменты чтения</div>
+      <div class="tools-grid">
+        <button class="tool-button" id="toggle-translation">Перевод</button>
+        <button class="tool-button" id="toggle-nikud">Огласовки</button>
+        <button class="tool-button" id="toggle-taamim">Знаки</button>
+        <button class="tool-button" id="toggle-name-highlight">Имена</button>
+      </div>
+      <div class="font-size-controls">
+        <button class="font-size-button" id="decrease-font">-</button>
+        <span class="font-size-value">Размер текста: средний</span>
+        <button class="font-size-button" id="increase-font">+</button>
+      </div>
+    </div>
+    
+    <!-- אותיות השם -->
+    <div id="name-section" class="info-card">
+      <h3 class="info-title">Буквы имени: דוד בן רחל</h3>
+      
+      <div class="name-letters">
+        <div class="letter-box" data-letter-name="далет">ד</div>
+        <div class="letter-box" data-letter-name="вав">ו</div>
+        <div class="letter-box" data-letter-name="далет">ד</div>
+      </div>
+      
+      <p style="text-align: center; margin-top: 16px;">По традиции читают строфы Псалма 119, соответствующие каждой букве имени усопшего.</p>
+    </div>
+    
+    <!-- פסוקי תהילים לפי אותיות -->
+    <div class="psalm-content" id="psalm-content-ru" data-lang="ru">
+      <div class="psalm-letter-section">
+        <div class="letter-header">
+          <div class="letter-badge">ד</div>
+          <div class="letter-title">Строфа «Далет»</div>
+        </div>
+        
+        <div class="pasuk"><span class="pasuk-number">25</span> Душа моя повержена в прах; оживи меня по слову Твоему.</div>
+        <div class="pasuk"><span class="pasuk-number">26</span> Объявил я пути мои, и Ты услышал меня; научи меня уставам Твоим.</div>
+        <div class="pasuk"><span class="pasuk-number">27</span> Дай мне уразуметь путь повелений Твоих, и буду размышлять о чудесах Твоих.</div>
+        <div class="pasuk"><span class="pasuk-number">28</span> Душа моя истаевает от скорби: укрепи меня по слову Твоему.</div>
+        <div class="pasuk"><span class="pasuk-number">29</span> Удали от меня путь лжи, и закон Твой даруй мне.</div>
+        <div class="pasuk"><span class="pasuk-number">30</span> Я избрал путь истины, поставил пред собою суды Твои.</div>
+        <div class="pasuk"><span class="pasuk-number">31</span> Я прилепился к откровениям Твоим, Господи; не постыди меня.</div>
+        <div class="pasuk"><span class="pasuk-number">32</span> Потеку путем заповедей Твоих, когда Ты расширишь сердце мое.</div>
+      </div>
+      
+      <div class="psalm-letter-section">
+        <div class="letter-header">
+          <div class="letter-badge">ו</div>
+          <div class="letter-title">Строфа «Вав»</div>
+        </div>
+        
+        <div class="pasuk"><span class="pasuk-number">41</span> И да придет ко мне милость Твоя, Господи, спасение Твое по слову Твоему,</div>
+        <div class="pasuk"><span class="pasuk-number">42</span> и я дам ответ поносящему меня, ибо уповаю на слово Твое.</div>
+        <div class="pasuk"><span class="pasuk-number">43</span> Не отнимай совсем от уст моих слова истины, ибо я уповаю на суды Твои</div>
+        <div class="pasuk"><span class="pasuk-number">44</span> и буду хранить закон Твой всегда, во веки и веки;</div>
+        <div class="pasuk"><span class="pasuk-number">45</span> буду ходить свободно, ибо я взыскал повелений Твоих;</div>
+        <div class="pasuk"><span class="pasuk-number">46</span> буду говорить об откровениях Твоих пред царями и не постыжусь;</div>
+        <div class="pasuk"><span class="pasuk-number">47</span> буду утешаться заповедями Твоими, которые возлюбил;</div>
+        <div class="pasuk"><span class="pasuk-number">48</span> руки мои буду простирать к заповедям Твоим, которые я возлюбил, и размышлять об уставах Твоих.</div>
+      </div>
+      
+      <div class="psalm-letter-section">
+        <div class="letter-header">
+          <div class="letter-badge">ד</div>
+          <div class="letter-title">Строфа «Далет» (повторно)</div>
+        </div>
+        
+        <div class="pasuk"><span class="pasuk-number">25</span> Душа моя повержена в прах; оживи меня по слову Твоему.</div>
+        <div class="pasuk"><span class="pasuk-number">26</span> Объявил я пути мои, и Ты услышал меня; научи меня уставам Твоим.</div>
+        <div class="pasuk"><span class="pasuk-number">27</span> Дай мне уразуметь путь повелений Твоих, и буду размышлять о чудесах Твоих.</div>
+        <div class="pasuk"><span class="pasuk-number">28</span> Душа моя истаевает от скорби: укрепи меня по слову Твоему.</div>
+        <div class="pasuk"><span class="pasuk-number">29</span> Удали от меня путь лжи, и закон Твой даруй мне.</div>
+        <div class="pasuk"><span class="pasuk-number">30</span> Я избрал путь истины, поставил пред собою суды Твои.</div>
+        <div class="pasuk"><span class="pasuk-number">31</span> Я прилепился к откровениям Твоим, Господи; не постыди меня.</div>
+        <div class="pasuk"><span class="pasuk-number">32</span> Потеку путем заповедей Твоих, когда Ты расширишь сердце мое.</div>
+      </div>
+      
+      <div class="share-buttons">
+        <button class="share-button button-print">Печать</button>
+        <button class="share-button button-share">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- גרסה עברית (מוסתרת בינתיים) -->
+    <div class="psalm-content" id="psalm-content-he" data-lang="he" style="display: none;">
+      <!-- כאן יהיה תוכן תהילים קי"ט בעברית -->
+    </div>
+    
+    <!-- גרסה פונטית (מוסתרת בינתיים) -->
+    <div class="psalm-content" id="psalm-content-phonetic" data-lang="phonetic" style="display: none;">
+      <!-- כאן יהיה תוכן תהילים קי"ט בכתיב פונטי -->
+    </div>
+  </div>
+  
+  <!-- ניווט תחתון -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">Главная</div>
+    </a>
+    <a href="tehilim.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">Техилим</div>
+    </a>
+    <a href="memorial.html" class="bottom-nav-item active">
+      <div class="bottom-nav-icon">🕯️</div>
+      <div class="bottom-nav-label">За усопших</div>
+    </a>
+    <a href="siddur.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📝</div>
+      <div class="bottom-nav-label">Молитвенник</div>
+    </a>
+  </nav>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // החלפת שפה
+      const languageOptions = document.querySelectorAll('.language-option');
+      languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const lang = this.dataset.lang;
+          
+          // שינוי האפשרות הפעילה
+          languageOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          // שמירת השפה הנבחרת
+          localStorage.setItem('preferredLanguage', lang);
+          
+          // הצגת התוכן בשפה הנבחרת
+          showLanguageContent(lang);
+        });
+      });
+      
+      // הצגת התוכן בשפה הנבחרת
+      function showLanguageContent(lang) {
+        // הסתרת כל התוכן
+        document.querySelectorAll('[id^="psalm-content-"]').forEach(el => {
+          el.style.display = 'none';
+        });
+        
+        // הצגת התוכן בשפה הנבחרת
+        document.getElementById(`psalm-content-${lang}`).style.display = 'block';
+        
+        // עדכון הכפתורים לפי השפה
+        updateUILanguage(lang);
+      }
+      
+      // עדכון ממשק המשתמש לפי השפה
+      function updateUILanguage(lang) {
+        const fontSizeValue = document.querySelector('.font-size-value');
+        const toggleNikud = document.getElementById('toggle-nikud');
+        const toggleTaamim = document.getElementById('toggle-taamim');
+        const toggleTranslation = document.getElementById('toggle-translation');
+        const toggleNameHighlight = document.getElementById('toggle-name-highlight');
+        const generatePsalm = document.querySelector('.button-submit');
+        
+        switch (lang) {
+          case 'ru':
+            fontSizeValue.textContent = 'Размер текста: средний';
+            toggleNikud.textContent = 'Огласовки';
+            toggleTaamim.textContent = 'Знаки';
+            toggleTranslation.textContent = 'Перевод';
+            toggleNameHighlight.textContent = 'Имена';
+            document.querySelector('.tools-title').textContent = 'Инструменты чтения';
+            generatePsalm.textContent = 'Показать строфы Псалма 119';
+            document.querySelector('.button-print').textContent = 'Печать';
+            document.querySelector('.button-share').textContent = 'Поделиться';
+            break;
+          case 'he':
+            fontSizeValue.textContent = 'גודל טקסט: בינוני';
+            toggleNikud.textContent = 'ניקוד';
+            toggleTaamim.textContent = 'טעמים';
+            toggleTranslation.textContent = 'תרגום';
+            toggleNameHighlight.textContent = 'שמות';
+            document.querySelector('.tools-title').textContent = 'כלי קריאה';
+            generatePsalm.textContent = 'הצג פסוקי תהילים קי״ט';
+            document.querySelector('.button-print').textContent = 'הדפסה';
+            document.querySelector('.button-share').textContent = 'שיתוף';
+            break;
+          case 'phonetic':
+            fontSizeValue.textContent = 'Godel text: beynoni';
+            toggleNikud.textContent = 'Nikud';
+            toggleTaamim.textContent = 'Te\'amim';
+            toggleTranslation.textContent = 'Tirgum';
+            toggleNameHighlight.textContent = 'Shemot';
+            document.querySelector('.tools-title').textContent = 'Klei kri\'a';
+            generatePsalm.textContent = 'Hatseg psukey Tehilim 119';
+            document.querySelector('.button-print').textContent = 'Hadfasa';
+            document.querySelector('.button-share').textContent = 'Shituf';
+            break;
+        }
+      }
+      
+      // טעינת השפה המועדפת בעת טעינת הדף
+      const savedLang = localStorage.getItem('preferredLanguage') || 'ru';
+      languageOptions.forEach(opt => {
+        if (opt.dataset.lang === savedLang) {
+          opt.click();
+        }
+      });
+      
+      // יצירת פסוקים לפי שם הנפטר
+      document.getElementById('generate-psalm').addEventListener('click', function() {
+        const deceasedName = document.getElementById('deceased-name').value.trim();
+        const motherName = document.getElementById('mother-name').value.trim();
+        
+        if (!deceasedName) {
+          alert('Пожалуйста, введите имя усопшего');
+          return;
+        }
+        
+        // במימוש אמיתי כאן היה קוד שמחלץ את האותיות משם הנפטר
+        // ומציג את הפסוקים המתאימים מתהילים קי"ט
+        
+        // לצורך הדגמה, נעדכן את כותרת התצוגה
+        let displayName = deceasedName;
+        if (motherName) {
+          displayName += ` בן ${motherName}`;
+        }
+        
+        document.querySelector('.info-title').textContent = `Буквы имени: ${displayName}`;
+        
+        // לצורך הדגמה, יוצר תיבות אותיות
+        const nameLetters = document.querySelector('.name-letters');
+        nameLetters.innerHTML = '';
+        
+        for (let i = 0; i < deceasedName.length; i++) {
+          const letter = deceasedName[i];
+          const letterBox = document.createElement('div');
+          letterBox.className = 'letter-box';
+          letterBox.textContent = letter;
+          
+          // שמות האותיות ברוסית
+          const letterNames = {
+            'א': 'алеф', 'ב': 'бет', 'ג': 'гимель', 'ד': 'далет',
+            'ה': 'хей', 'ו': 'вав', 'ז': 'заин', 'ח': 'хет',
+            'ט': 'тет', 'י': 'йуд', 'כ': 'каф', 'ל': 'ламед',
+            'מ': 'мем', 'נ': 'нун', 'ס': 'самех', 'ע': 'аин',
+            'פ': 'пей', 'צ': 'цади', 'ק': 'куф', 'ר': 'рейш',
+            'ש': 'шин', 'ת': 'тав'
+          };
+          
+          letterBox.dataset.letterName = letterNames[letter] || letter;
+          nameLetters.appendChild(letterBox);
+        }
+      });
+      // טיפול בכלי קריאה
+     const toolButtons = document.querySelectorAll('.tool-button');
+     toolButtons.forEach(button => {
+       button.addEventListener('click', function() {
+         this.classList.toggle('active');
+       });
+     });
+     
+     // שינוי גודל טקסט
+     let currentFontSize = 18; // גודל טקסט התחלתי
+     const fontSizeValue = document.querySelector('.font-size-value');
+     
+     document.getElementById('increase-font').addEventListener('click', function() {
+       if (currentFontSize < 32) {
+         currentFontSize += 2;
+         updateFontSize();
+       }
+     });
+     
+     document.getElementById('decrease-font').addEventListener('click', function() {
+       if (currentFontSize > 16) {
+         currentFontSize -= 2;
+         updateFontSize();
+       }
+     });
+     
+     function updateFontSize() {
+       document.querySelectorAll('.psalm-content').forEach(el => {
+         el.style.fontSize = currentFontSize + 'px';
+       });
+       
+       const currentLang = document.querySelector('.language-option.active').dataset.lang;
+       let sizeText = '';
+       
+       if (currentFontSize <= 18) {
+         sizeText = currentLang === 'ru' ? 'маленький' : 
+                    currentLang === 'he' ? 'קטן' : 'katan';
+       } else if (currentFontSize <= 22) {
+         sizeText = currentLang === 'ru' ? 'средний' : 
+                    currentLang === 'he' ? 'בינוני' : 'beynoni';
+       } else if (currentFontSize <= 26) {
+         sizeText = currentLang === 'ru' ? 'большой' : 
+                    currentLang === 'he' ? 'גדול' : 'gadol';
+       } else {
+         sizeText = currentLang === 'ru' ? 'очень большой' : 
+                    currentLang === 'he' ? 'גדול מאוד' : 'gadol me\'od';
+       }
+       
+       if (currentLang === 'ru') {
+         fontSizeValue.textContent = `Размер текста: ${sizeText}`;
+       } else if (currentLang === 'he') {
+         fontSizeValue.textContent = `גודל טקסט: ${sizeText}`;
+       } else {
+         fontSizeValue.textContent = `Godel text: ${sizeText}`;
+       }
+     }
+     
+     // כפתורי שיתוף
+     document.querySelector('.button-print').addEventListener('click', function() {
+       window.print();
+     });
+     
+     document.querySelector('.button-share').addEventListener('click', function() {
+       const deceasedName = document.getElementById('deceased-name').value.trim();
+       const motherName = document.getElementById('mother-name').value.trim();
+       
+       let shareText = `Псалом 119 по буквам имени ${deceasedName}`;
+       if (motherName) {
+         shareText += ` בן ${motherName}`;
+       }
+       
+       if (navigator.share) {
+         navigator.share({
+           title: 'Тикун Ха-Шем - Псалом 119',
+           text: shareText,
+           url: window.location.href
+         }).catch(err => {
+           console.error('Ошибка при попытке поделиться:', err);
+         });
+       } else {
+         // פתרון חלופי אם Web Share API לא נתמך
+         prompt('Скопируйте ссылку:', window.location.href);
+       }
+     });
+     
+     // בדיקה אם יש פרמטרים בכתובת
+     const urlParams = new URLSearchParams(window.location.search);
+     const nameParam = urlParams.get('name');
+     const motherParam = urlParams.get('mother');
+     
+     if (nameParam) {
+       document.getElementById('deceased-name').value = nameParam;
+       if (motherParam) {
+         document.getElementById('mother-name').value = motherParam;
+       }
+       // הפעלת הפונקציה ליצירת פסוקים אוטומטית
+       document.getElementById('generate-psalm').click();
+     }
+   });
+ </script>
+</body>
+</html>
