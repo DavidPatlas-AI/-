@@ -1,0 +1,228 @@
+<!-- הטמעת מתג שפה בכותרת -->
+<header class="header">
+  <a href="index.html" class="back-button">←</a>
+  <div class="header-title" data-i18n="memorial.title">Молитвы за усопших</div>
+  <a href="settings.html" style="font-size: 20px; width: 36px; text-align: center; text-decoration: none;">⚙️</a>
+  
+  <!-- מתג שפה -->
+  <div class="language-switcher">
+    <button class="lang-btn active" data-lang="ru">RU</button>
+    <button class="lang-btn" data-lang="he">עב</button>
+  </div>
+</header>
+
+<!-- בורר שפה - לשקול הסרה או התאמה כדי למנוע בלבול עם מתג השפה החדש -->
+<div class="language-bar">
+  <div class="language-option active" data-i18n="common.russian" data-lang-option="ru">Русский</div>
+  <div class="language-option" data-i18n="common.hebrew" data-lang-option="he">Иврит</div>
+  <div class="language-option" data-i18n="common.phonetic" data-lang-option="phonetic">Фонетика</div>
+</div>
+
+<!-- טופס -->
+<div class="memorial-form">
+  <h2 class="form-title" data-i18n="memorial.formTitle">Молитва за усопшего</h2>
+  <p class="form-desc" data-i18n="memorial.formDesc">Введите имя усопшего, чтобы включить его в текст молитвы</p>
+  
+  <div class="form-group">
+    <label class="form-label" data-i18n="memorial.deceasedName">Имя усопшего (на иврите):</label>
+    <input type="text" class="form-control" id="deceased-name" placeholder="שם הנפטר">
+  </div>
+  
+  <div class="form-group">
+    <label class="form-label" data-i18n="memorial.motherName">Имя матери усопшего (на иврите):</label>
+    <input type="text" class="form-control" id="mother-name" placeholder="שם האם">
+  </div>
+  
+  <button class="button-primary" id="update-prayers" data-i18n="buttons.apply">Применить</button>
+</div>
+
+<!-- כלי קריאה -->
+<div class="reading-tools">
+  <div class="tools-title" data-i18n="tehilim.readingTools">Инструменты чтения</div>
+  <div class="tools-grid">
+    <button class="tool-button" id="toggle-translation" data-i18n="tehilim.translation">Перевод</button>
+    <button class="tool-button" id="toggle-nikud" data-i18n="tehilim.nikud">Огласовки</button>
+    <button class="tool-button" id="toggle-taamim" data-i18n="tehilim.signs">Знаки</button>
+    <button class="tool-button" id="toggle-name-highlight" data-i18n="tehilim.nameHighlight">Имена</button>
+  </div>
+  <div class="font-size-controls">
+    <button class="font-size-button" id="decrease-font">-</button>
+    <span class="font-size-value">Размер текста: средний</span>
+    <button class="font-size-button" id="increase-font">+</button>
+  </div>
+</div>
+
+<!-- כרטיסיות תפילה -->
+<div class="prayer-tabs">
+  <div class="prayer-tab active" data-tab="kaddish" data-i18n="memorial.kaddish">Кадиш</div>
+  <div class="prayer-tab" data-tab="el-male-rachamim" data-i18n="memorial.elMale">Эль Мале Рахамим</div>
+  <div class="prayer-tab" data-tab="yizkor" data-i18n="memorial.yizkor">Изкор</div>
+  <div class="prayer-tab" data-tab="tehilim" data-i18n="memorial.tehilim">Избранные Псалмы</div>
+  <div class="prayer-tab" data-tab="azkara" data-i18n="memorial.azkara">День памяти</div>
+</div>
+
+<!-- תוכן תפילה - קדיש -->
+<div class="prayer-content" id="prayer-kaddish" data-lang="ru">
+  <h2 class="prayer-title" data-i18n="memorial.kaddish">Кадиш</h2>
+  <div class="prayer-subtitle" data-i18n="memorial.kaddishDesc">Молитва освящения Имени Всевышнего</div>
+  
+  <div class="prayer-instruction">
+    <span data-i18n="memorial.kaddishInstr">Эту молитву произносят в память об усопших родственниках. Текст написан на арамейском языке, который был разговорным языком евреев во времена составления молитвы.</span>
+  </div>
+  
+  <!-- תוכן התפילה נשאר כפי שהוא -->
+</div>
+
+<!-- תוכן תפילה - אל מלא רחמים -->
+<div class="prayer-content" id="prayer-el-male-rachamim" data-lang="ru" style="display: none;">
+  <h2 class="prayer-title" data-i18n="memorial.elMale">Эль Мале Рахамим</h2>
+  <div class="prayer-subtitle" data-i18n="memorial.elMaleDesc">Молитва "Бог, исполненный милосердия"</div>
+  
+  <div class="prayer-instruction">
+    <span data-i18n="memorial.elMaleInstr">Эту молитву произносят в память об усопших во время поминальных служб и посещения могил. В ней просят Всевышнего даровать покой душе умершего.</span>
+  </div>
+  
+  <!-- תוכן התפילה נשאר כפי שהוא -->
+</div>
+
+<!-- כל שאר תכני התפילות נשארים כפי שהם -->
+
+<!-- רשימת יארצייט -->
+<div class="yahrzeit-list">
+  <div class="yahrzeit-header" data-i18n="memorial.yahrzeit">Список годовщин (Яарцайт)</div>
+  
+  <!-- תוכן הרשימה נשאר כפי שהוא -->
+  
+  <div class="yahrzeit-item">
+    <button class="button-primary" style="padding: 8px;" data-i18n="memorial.addYahrzeit">Добавить годовщину</button>
+  </div>
+</div>
+
+<!-- ניווט תחתון -->
+<nav class="bottom-nav">
+  <a href="index.html" class="bottom-nav-item">
+    <div class="bottom-nav-icon">🏠</div>
+    <div class="bottom-nav-label" data-i18n="nav.home">Главная</div>
+  </a>
+  <a href="tehilim.html" class="bottom-nav-item">
+    <div class="bottom-nav-icon">📖</div>
+    <div class="bottom-nav-label" data-i18n="nav.tehilim">Техилим</div>
+  </a>
+  <a href="#" class="bottom-nav-item active">
+    <div class="bottom-nav-icon">🕯️</div>
+    <div class="bottom-nav-label" data-i18n="nav.memorial">За усопших</div>
+  </a>
+  <a href="siddur.html" class="bottom-nav-item">
+    <div class="bottom-nav-icon">📝</div>
+    <div class="bottom-nav-label" data-i18n="nav.prayerbook">Молитвенник</div>
+  </a>
+</nav>
+
+<!-- JavaScript תוספת לטיפול בתרגומים -->
+<script>
+  // מערכת ניהול שפה
+  const TikunHaShemLanguage = {
+    // המצב הנוכחי של השפה
+    currentLanguage: 'ru', // ברירת מחדל היא רוסית
+    
+    // התרגומים
+    translations: {
+      // רוסית
+      ru: {
+        // כותרות ראשיות
+        siteTitle: 'Тикун Ха-Шем',
+        homeTitle: 'Тикун Ха-Шем - Псалмы и Молитвы',
+        
+        // תפריט ניווט
+        nav: {
+          home: 'Главная',
+          tehilim: 'Техилим',
+          memorial: 'За усопших',
+          prayerbook: 'Молитвенник'
+        },
+        
+        // כפתורים
+        buttons: {
+          apply: 'Применить',
+          print: 'Печать',
+          share: 'Поделиться'
+        },
+        
+        // קטגוריות כלליות
+        common: {
+          russian: 'Русский',
+          hebrew: 'Иврит',
+          phonetic: 'Фонетика'
+        },
+        
+        // כלי קריאה
+        tehilim: {
+          readingTools: 'Инструменты чтения',
+          translation: 'Перевод',
+          nikud: 'Огласовки',
+          signs: 'Знаки',
+          nameHighlight: 'Имена',
+          fontSize: 'Размер текста',
+          fontSizes: {
+            small: 'маленький',
+            medium: 'средний',
+            large: 'большой',
+            xlarge: 'очень большой'
+          }
+        },
+        
+        // דף אזכרה
+        memorial: {
+          title: 'Молитвы за усопших',
+          subtitle: 'Молитвы для возвышения души',
+          formTitle: 'Молитва за усопшего',
+          formDesc: 'Введите имя усопшего, чтобы включить его в текст молитвы',
+          deceasedName: 'Имя усопшего (на иврите):',
+          motherName: 'Имя матери усопшего (на иврите):',
+          kaddish: 'Кадиш',
+          kaddishDesc: 'Молитва освящения Имени Всевышнего',
+          kaddishInstr: 'Эту молитву произносят в память об усопших родственниках. Текст написан на арамейском языке, который был разговорным языком евреев во времена составления молитвы.',
+          elMale: 'Эль Мале Рахамим',
+          elMaleDesc: 'Молитва "Бог, исполненный милосердия"',
+          elMaleInstr: 'Эту молитву произносят в память об усопших во время поминальных служб и посещения могил. В ней просят Всевышнего даровать покой душе умершего.',
+          yizkor: 'Изкор',
+          yizkorDesc: 'Поминальная молитва',
+          tehilim: 'Избранные Псалмы',
+          tehilimDesc: 'Псалмы, традиционно читаемые в память об усопших',
+          azkara: 'День памяти',
+          azkaraDesc: 'Обычаи и молитвы для дня годовщины смерти',
+          yahrzeit: 'Список годовщин (Яарцайт)',
+          addYahrzeit: 'Добавить годовщину'
+        }
+      },
+      
+      // עברית
+      he: {
+        // כותרות ראשיות
+        siteTitle: 'תיקון השם',
+        homeTitle: 'תיקון השם - תהילים ותפילות',
+        
+        // תפריט ניווט
+        nav: {
+          home: 'ראשי',
+          tehilim: 'תהילים',
+          memorial: 'לעילוי נשמת',
+          prayerbook: 'סידור'
+        },
+        
+        // כפתורים
+        buttons: {
+          apply: 'החל',
+          print: 'הדפס',
+          share: 'שתף'
+        },
+        
+        // קטגוריות כלליות
+        common: {
+          russian: 'רוסית',
+          hebrew: 'עברית',
+          phonetic: 'פונטי'
+        },
+        
+        // כלי קריאה
+        tehil

@@ -1,0 +1,354 @@
+<!-- הטמעת מתג שפה בכותרת -->
+<header class="header">
+  <a href="index.html" class="back-button">←</a>
+  <div class="header-title" data-i18n="tehilim.title">Псалмы (Техилим)</div>
+  <a href="settings.html" style="font-size: 20px; width: 36px; text-align: center; text-decoration: none;">⚙️</a>
+  
+  <!-- מתג שפה -->
+  <div class="language-switcher">
+    <button class="lang-btn active" data-lang="ru">RU</button>
+    <button class="lang-btn" data-lang="he">עב</button>
+  </div>
+</header>
+
+<!-- בורר פרקים עם תגיות שפה -->
+<div class="chapter-selector">
+  <div class="selector-header">
+    <div class="selector-title" data-i18n="tehilim.selectChapter">Выберите псалом</div>
+    <select class="quick-select" id="chapter-quick-select">
+      <option value="" data-i18n="tehilim.quickSelect">Быстрый выбор</option>
+      <option value="1">Псалом 1 - Ашрей ха-иш</option>
+      <option value="23">Псалом 23 - Господь - пастырь мой</option>
+      <option value="90">Псалом 90 - Молитва Моисея</option>
+      <option value="91">Псалом 91 - Живущий под кровом</option>
+      <option value="119">Псалом 119 - Ашрей темимей дерех</option>
+      <option value="130">Псалом 130 - Из глубины</option>
+      <option value="150">Псалом 150 - Хвалите Господа</option>
+    </select>
+  </div>
+  
+  <div class="selector-grid" id="chapter-grid">
+    <!-- Кнопки для выбора псалма будут созданы с помощью JavaScript -->
+  </div>
+</div>
+
+<!-- כלי קריאה -->
+<div class="reading-tools">
+  <div class="tools-title" data-i18n="tehilim.readingTools">Инструменты чтения</div>
+  <div class="tools-grid">
+    <button class="tool-button" id="toggle-translation" data-i18n="tehilim.translation">Перевод</button>
+    <button class="tool-button" id="toggle-nikud" data-i18n="tehilim.nikud">Огласовки</button>
+    <button class="tool-button" id="toggle-taamim" data-i18n="tehilim.signs">Знаки</button>
+    <button class="tool-button" id="toggle-name-highlight" data-i18n="tehilim.nameHighlight">Имена</button>
+  </div>
+  <div class="font-size-controls">
+    <button class="font-size-button" id="decrease-font">-</button>
+    <span class="font-size-value">Размер текста: средний</span>
+    <button class="font-size-button" id="increase-font">+</button>
+  </div>
+</div>
+
+<!-- JavaScript תוספת לטיפול בתרגומים -->
+<script>
+  // מערכת ניהול שפה
+  const TikunHaShemLanguage = {
+    // המצב הנוכחי של השפה
+    currentLanguage: 'ru', // ברירת מחדל היא רוסית
+    
+    // התרגומים
+    translations: {
+      // רוסית
+      ru: {
+        // דף תהילים
+        tehilim: {
+          title: 'Псалмы (Техилим)',
+          selectChapter: 'Выберите псалом',
+          quickSelect: 'Быстрый выбор',
+          readingTools: 'Инструменты чтения',
+          translation: 'Перевод',
+          nikud: 'Огласовки',
+          signs: 'Знаки',
+          nameHighlight: 'Имена',
+          fontSize: 'Размер текста',
+          fontSizes: {
+            small: 'маленький',
+            medium: 'средний',
+            large: 'большой',
+            xlarge: 'очень большой'
+          },
+          multiLingual: 'Двуязычно',
+          hebrewOnly: 'Только иврит',
+          russianOnly: 'Только русский',
+          phoneticOnly: 'Только фонетика',
+          bookmark: 'Закладка',
+          recent: 'Недавно прочитанные',
+          readCount: 'Прочитано раз:',
+          lastRead: 'Последнее чтение:',
+          prevChapter: 'Предыдущий',
+          nextChapter: 'Следующий',
+          chapterPrefix: 'Псалом'
+        },
+        
+        // תפריט ניווט
+        nav: {
+          home: 'Главная',
+          tehilim: 'Техилим',
+          memorial: 'За усопших',
+          prayerbook: 'Молитвенник',
+          corrector: 'Исправление текста'
+        }
+      },
+      
+      // עברית
+      he: {
+        // דף תהילים
+        tehilim: {
+          title: 'תהילים',
+          selectChapter: 'בחר פרק',
+          quickSelect: 'בחירה מהירה',
+          readingTools: 'כלי קריאה',
+          translation: 'תרגום',
+          nikud: 'ניקוד',
+          signs: 'טעמים',
+          nameHighlight: 'שמות',
+          fontSize: 'גודל טקסט',
+          fontSizes: {
+            small: 'קטן',
+            medium: 'בינוני',
+            large: 'גדול',
+            xlarge: 'גדול מאוד'
+          },
+          multiLingual: 'דו-לשוני',
+          hebrewOnly: 'עברית בלבד',
+          russianOnly: 'רוסית בלבד',
+          phoneticOnly: 'פונטי בלבד',
+          bookmark: 'סימניה',
+          recent: 'נקרא לאחרונה',
+          readCount: 'מספר קריאות:',
+          lastRead: 'קריאה אחרונה:',
+          prevChapter: 'הקודם',
+          nextChapter: 'הבא',
+          chapterPrefix: 'פרק'
+        },
+        
+        // תפריט ניווט
+        nav: {
+          home: 'ראשי',
+          tehilim: 'תהילים',
+          memorial: 'לעילוי נשמת',
+          prayerbook: 'סידור',
+          corrector: 'תיקון טקסט'
+        }
+      }
+    },
+    
+    // פונקציה לקבלת תרגום
+    getText: function(key) {
+      // מפריד את המפתח לחלקים אם יש נקודה
+      const parts = key.split('.');
+      
+      // חיפוש הערך בתרגומים
+      let result = this.translations[this.currentLanguage];
+      for (let i = 0; i < parts.length; i++) {
+        if (result[parts[i]] === undefined) {
+          return key; // אם לא נמצא, מחזירים את המפתח המקורי
+        }
+        result = result[parts[i]];
+      }
+      
+      return result;
+    },
+    
+    // פונקציה להחלפת השפה
+    setLanguage: function(lang) {
+      // בדיקה שהשפה נתמכת
+      if (this.translations[lang]) {
+        this.currentLanguage = lang;
+        localStorage.setItem('preferredLanguage', lang);
+        
+        // עדכון כפתורים
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          if (btn.getAttribute('data-lang') === lang) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+        
+        // עדכון טקסטים בדף
+        this.updateTexts();
+        
+        // עדכון גודל טקסט נוכחי בהתאם לשפה
+        this.updateFontSizeText();
+        
+        return true;
+      }
+      return false;
+    },
+    
+    // עדכון כל הטקסטים בדף
+    updateTexts: function() {
+      // עדכון כל האלמנטים עם מאפיין data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        element.textContent = this.getText(key);
+      });
+      
+      // עדכון כותרת הדף
+      document.title = this.getText('tehilim.title') + ' - ' + this.getText('tehilim.title');
+      
+      // עדכון טקסטים בבורר הפרקים
+      this.updateChapterSelector();
+      
+      // עדכון כפתורי ניווט בפרקים
+      const prevButton = document.getElementById('prev-chapter');
+      if (prevButton) {
+        prevButton.textContent = this.getText('tehilim.prevChapter');
+      }
+      
+      const nextButton = document.getElementById('next-chapter');
+      if (nextButton) {
+        nextButton.textContent = this.getText('tehilim.nextChapter');
+      }
+      
+      // עדכון תפריט ניווט תחתון
+      this.updateBottomNav();
+    },
+    
+    // עדכון בורר פרקים
+    updateChapterSelector: function() {
+      // עדכון אפשרויות בבורר המהיר
+      const quickSelect = document.getElementById('chapter-quick-select');
+      if (quickSelect) {
+        // עדכון אפשרות ברירת מחדל
+        const defaultOption = quickSelect.querySelector('option[value=""]');
+        if (defaultOption) {
+          defaultOption.textContent = this.getText('tehilim.quickSelect');
+        }
+        
+        // עדכון אפשרויות הפרקים
+        const options = quickSelect.querySelectorAll('option[value]:not([value=""])');
+        options.forEach(option => {
+          const chapterNum = option.value;
+          if (chapterNum) {
+            // שימור מידע מקורי אם יש
+            const originalText = option.getAttribute('data-original-text') || option.textContent;
+            option.setAttribute('data-original-text', originalText);
+            
+            // עדכון טקסט האפשרות בהתאם לשפה
+            const chapterPrefix = this.getText('tehilim.chapterPrefix');
+            // שימור תיאור הפרק (אחרי המקף) אם יש
+            let chapterDesc = '';
+            if (originalText.includes(' - ')) {
+              chapterDesc = ' - ' + originalText.split(' - ')[1];
+            }
+            option.textContent = `${chapterPrefix} ${chapterNum}${chapterDesc}`;
+          }
+        });
+      }
+    },
+    
+    // עדכון טקסט גודל פונט
+    updateFontSizeText: function() {
+      const fontSizeValue = document.querySelector('.font-size-value');
+      if (fontSizeValue) {
+        // הערכת הגודל הנוכחי
+        let sizeText = 'medium';
+        // ניתן לקבוע את הגודל הנוכחי לפי יישום ספציפי
+        // לדוגמה:
+        if (window.currentFontSize) {
+          if (window.currentFontSize <= 16) sizeText = 'small';
+          else if (window.currentFontSize <= 20) sizeText = 'medium';
+          else if (window.currentFontSize <= 24) sizeText = 'large';
+          else sizeText = 'xlarge';
+        }
+        
+        // עדכון הטקסט בהתאם לשפה
+        fontSizeValue.textContent = `${this.getText('tehilim.fontSize')}: ${this.getText('tehilim.fontSizes.' + sizeText)}`;
+      }
+    },
+    
+    // עדכון תפריט ניווט תחתון
+    updateBottomNav: function() {
+      const navLabels = document.querySelectorAll('.bottom-nav-label');
+      if (navLabels.length >= 4) {
+        navLabels[0].textContent = this.getText('nav.home');
+        navLabels[1].textContent = this.getText('nav.tehilim');
+        navLabels[2].textContent = this.getText('nav.memorial');
+        navLabels[3].textContent = this.getText('nav.prayerbook');
+      }
+    },
+    
+    // אתחול מערכת השפה
+    init: function() {
+      // טעינת השפה השמורה אם קיימת
+      const savedLang = localStorage.getItem('preferredLanguage');
+      if (savedLang && this.translations[savedLang]) {
+        this.currentLanguage = savedLang;
+      }
+      
+      // האזנה לאירועי לחיצה על כפתורי שפה
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const lang = btn.getAttribute('data-lang');
+          this.setLanguage(lang);
+        });
+        
+        // סימון הכפתור הפעיל
+        if (btn.getAttribute('data-lang') === this.currentLanguage) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      // עדכון טקסטים ראשוני
+      this.updateTexts();
+    }
+  };
+  
+  // הוספת קוד להרחבת הקוד הקיים
+  document.addEventListener('DOMContentLoaded', function() {
+    // אתחול מערכת שפה
+    TikunHaShemLanguage.init();
+    
+    // הרחבת הקוד הקיים לניהול גודל פונט
+    const originalUpdateFontSize = window.updateFontSize || function() {};
+    window.updateFontSize = function() {
+      // הפעלת הפונקציה המקורית אם קיימת
+      originalUpdateFontSize.apply(this, arguments);
+      
+      // עדכון טקסט גודל הפונט בהתאם לשפה
+      TikunHaShemLanguage.updateFontSizeText();
+    };
+  });
+</script>
+
+<!-- הוספת CSS עבור מתג השפה -->
+<style>
+  /* מערכת שפה */
+  .language-switcher {
+    position: absolute;
+    left: 60px; /* שינוי למיקום מתאים */
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 1000;
+  }
+  
+  .lang-btn {
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .lang-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+</style>

@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Исправление текста - Тикун Ха-Шем</title>
+  <style>
+    /* בסיס */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --primary-dark: #3a56d4;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+      --success: #28a745;
+      --warning: #ffc107;
+      --highlight: #fffacd;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    /* כותרת */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .back-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 18px;
+      background-color: transparent;
+      border: none;
+      text-decoration: none;
+    }
+    
+    /* תוכן */
+    .container {
+      padding: var(--content-padding);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* מידע והסבר */
+    .info-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .info-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    
+    .info-text {
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    
+    .info-examples {
+      background-color: rgba(67, 97, 238, 0.05);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+    
+    .example-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+    }
+    
+    .example-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    .incorrect {
+      color: #dc3545;
+      text-decoration: line-through;
+      margin-right: 8px;
+    }
+    
+    .correct {
+      color: var(--success);
+      font-weight: 500;
+    }
+    
+    /* עורך טקסט */
+    .editor-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .editor-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    
+    .editor-subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    
+    .editor-area {
+      width: 100%;
+      min-height: 150px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-family: 'PT Serif', serif;
+      font-size: 16px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .button {
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.2s;
+    }
+    
+    .button-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .button-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .button-secondary {
+      background-color: var(--text-light);
+      color: white;
+    }
+    
+    .button-secondary:hover {
+      background-color: #5a6268;
+    }
+    
+    /* אפשרויות תיקון */
+    .correction-options {
+      margin-bottom: 16px;
+    }
+    
+    .options-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+    
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .option-item {
+      position: relative;
+    }
+    
+    .option-item input {
+      opacity: 0;
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+    
+    .option-label {
+      display: inline-block;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .option-item input:checked + .option-label {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    /* תוצאת תיקון */
+    .result-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      display: none;
+    }
+    
+    .result-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .result-content {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-family: 'PT Serif', serif;
+      line-height: 1.6;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    
+    .highlight {
+      background-color: var(--highlight);
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+    
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding: 10px;
+      background-color: rgba(67, 97, 238, 0.05);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .stats-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .stats-value {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--primary);
+    }
+    
+    .stats-label {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .share-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    /* היסטוריית תיקונים */
+    .history-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    
+    .history-header {
+      padding: 16px;
+      background-color: rgba(67, 97, 238, 0.1);
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .history-clear {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+    
+    .history-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    
+    .history-info {
+      flex: 1;
+    }
+    
+    .history-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    
+    .history-meta {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .history-action {
+      margin-left: 12px;
+    }
+    
+    /* ניווט תחתון */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* התראה */
+    .notification {
+      position: fixed;
+      bottom: calc(var(--bottom-nav-height) + 16px);
+      left: 16px;
+      right: 16px;
+      padding: 16px;
+      background-color: var(--success);
+      color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      z-index: 1000;
+      text-align: center;
+    }
+    
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    /* מערכת שפה */
+    .language-switcher {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      display: flex;
+      gap: 5px;
+      z-index: 1000;
+    }
+    
+    .lang-btn {
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .lang-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <!-- כותרת -->
+  <header class="header">
+    <a href="index.html" class="back-button">←</a>
+    <div class="header-title" data-i18n="corrector.title">Исправление имён Всевышнего</div>
+    <a href="settings.html" style="font-size: 20px; width: 36px; text-align: center; text-decoration: none;">⚙️</a>
+    
+    <!-- מתג שפה -->
+    <div class="language-switcher">
+      <button class="lang-btn active" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="he">עב</button>
+    </div>
+  </header>
+  
+  <!-- תוכן -->
+  <div class="container">
+    <!-- מידע והסבר -->
+    <div class="info-card">
+      <h2 class="info-title" data-i18n="corrector.subtitle">Почему важно правильно писать имена Всевышнего</h2>
+      
+      <p class="info-text" data-i18n="corrector.explanation">Согласно еврейской традиции, имена Всевышнего обладают святостью и требуют особого уважения. В печатных и электронных материалах принято заменять полные имена особыми формами записи, чтобы избежать их стирания или осквернения.</p>
+      
+      <div class="info-examples">
+        <h3 style="margin-bottom: 10px; font-size: 15px;" data-i18n="corrector.examples">Примеры правильной замены:</h3>
+        
+        <div class="example-item">
+          <div><span class="incorrect">Бог</span> → <span class="correct">Б-г</span></div>
+        </div>
+        <div class="example-item">
+          <div><span class="incorrect">Господь</span> → <span class="correct">Г-сподь</span></div>
+        </div>
+        <div class="example-item">
+          <div><span class="incorrect">Всевышний</span> → <span class="correct">Вс-вышний</span></div>
+        </div>
+        <div class="example-item">
+          <div><span class="incorrect">Адонай</span> → <span class="correct">А-донай</span></div>
+        </div>
+      </div>
+      
+      <p class="info-text" data-i18n="corrector.additional-explanation">Этот инструмент поможет вам автоматически исправить имена Всевышнего в любом тексте на русском языке, сохраняя должное уважение к святости этих имён.</p>
+    </div>
+    
+    <!-- עורך טקסט -->
+    <div class="editor-card">
+      <h2 class="editor-title" data-i18n="corrector.editorTitle">Исправление текста</h2>
+      <p class="editor-subtitle" data-i18n="corrector.editorSubtitle">Вставьте текст ниже и выберите предпочтительный способ исправления имён Всевышнего</p>
+      
+      <textarea id="input-text" class="editor-area" placeholder="Вставьте здесь текст для исправления..."></textarea>
+      
+      <div class="correction-options">
+        <div class="options-title" data-i18n="corrector.correctionStyle">Способ исправления:</div>
+        <div class="options-row">
+          <div class="option-item">
+            <input type="radio" id="option-dash" name="correction-style" value="dash" checked>
+            <label class="option-label" for="option-dash" data-i18n="corrector.styleDash">С дефисом (Б-г)</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="option-hebrew" name="correction-style" value="hebrew">
+            <label class="option-label" for="option-hebrew" data-i18n="corrector.styleHebrew">Иврит (ה')</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="option-hashem" name="correction-style" value="hashem">
+            <label class="option-label" for="option-hashem" data-i18n="corrector.styleHaShem">Словом (а-Шем)</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="actions-row">
+        <button id="btn-correct" class="button button-primary" data-i18n="corrector.btnCorrect">Исправить текст</button>
+        <button id="btn-clear" class="button button-secondary" data-i18n="corrector.btnClear">Очистить</button>
+      </div>
+    </div>
+    
+    <!-- תוצאת תיקון -->
+    <div id="result-card" class="result-card">
+      <div class="result-title">
+        <span data-i18n="corrector.resultTitle">Исправленный текст</span>
+        <span id="result-count" style="font-size: 14px; font-weight: 400; color: var(--text-light);"></span>
+      </div>
+      
+      <div id="result-content" class="result-content"></div>
+      
+      <div class="stats-row">
+        <div class="stats-item">
+          <div class="stats-value" id="stats-total">0</div>
+          <div class="stats-label" data-i18n="corrector.totalReplacements">Всего замен</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value" id="stats-bog">0</div>
+          <div class="stats-label">Б-г</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value" id="stats-gospod">0</div>
+          <div class="stats-label">Г-сподь</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value" id="stats-other">0</div>
+          <div class="stats-label">Другие</div>
+        </div>
+      </div>
+      
+      <div class="share-row">
+        <button id="btn-copy" class="button button-primary" data-i18n="buttons.copy">Копировать текст</button>
+        <button id="btn-print" class="button button-secondary" data-i18n="buttons.print">Печать</button>
+        <button id="btn-share" class="button button-secondary" data-i18n="buttons.share">Поделиться</button>
+      </div>
+    </div>
+    
+    <!-- היסטוריית תיקונים -->
+    <div class="history-card">
+      <div class="history-header">
+        <span data-i18n="corrector.history">История исправлений</span>
+        <span class="history-clear" id="btn-clear-history" data-i18n="corrector.clearHistory">Очистить историю</span>
+      </div>
+      
+      <div id="history-container">
+        <!-- היסטוריית התיקונים תיווצר דינמית -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- התראה -->
+  <div id="notification" class="notification">Текст скопирован в буфер обмена</div>
+  
+  <!-- ניווט תחתון -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label" data-i18n="nav.home">Главная</div>
+    </a>
+    <a href="tehilim.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label" data-i18n="nav.tehilim">Техилим</div>
+    </a>
+    <a href="memorial.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🕯️</div>
+      <div class="bottom-nav-label" data-i18n="nav.memorial">За усопших</div>
+    </a>
+    <a href="siddur.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📝</div>
+      <div class="bottom-nav-label" data-i18n="nav.prayerbook">Молитвенник</div>
+    </a>
+  </nav>
+  
+  <script>
+    // מערכת ניהול שפה
+    const TikunHaShemLanguage = {
+      // המצב הנוכחי של השפה
+      currentLanguage: 'ru', // ברירת מחדל היא רוסית
+      
+      // התרגומים
+      translations: {
+        // רוסית
+        ru: {
+          // כותרות ראשיות
+          siteTitle: 'Тикун Ха-Шем',
+          homeTitle: 'Тикун Ха-Шем - Псалмы и Молитвы',
+          mainSubtitle: 'Чтение псалмов и молитв на трех языках для возвышения души',
+          
+          // תפריט ניווט
+          nav: {
+            home: 'Главная',
+            tehilim: 'Техилим',
+            memorial: 'За усопших',
+            prayerbook: 'Молитвенник',
+            corrector: 'Исправление текста'
+          },
+          
+          // כפתורים
+          buttons: {
+            start: 'Начать чтение',
+            memorial: 'Молитва за усопших',
+            search: 'Поиск',
+            select: 'Выбрать',
+            correct: 'Исправить текст',
+            clear: 'Очистить',
+            copy: 'Копировать текст',
+            print: 'Печать',
+            share: 'Поделиться',
+            save: 'Сохранить',
+            apply: 'Применить',
+            next: 'Следующий',
+            previous: 'Предыдущий',
+            back: 'Назад'
+          },
+          
+          // קטגוריות כלליות
+          common: {
+            chapter: 'Псалом',
+            verse: 'Стих',
+            section: 'Раздел',
+            search: 'Искать псалом или ключевое слово...',
+            psalm: 'Псалом',
+            psalms: 'Псалмы',
+            settings: 'Настройки',
+            language: 'Язык',
+            hebrew: 'Иврит',
+            russian: 'Русский',
+            phonetic: 'Фонетика'
+          },
+          
+          // דף תיקון טקסט
+          corrector: {
+            title: 'Исправление имён Всевышнего',
+            subtitle: 'Почему важно правильно писать имена Всевышнего',
+            explanation: 'Согласно еврейской традиции, имена Всевышнего обладают святостью и требуют особого уважения. В печатных и электронных материалах принято заменять полные имена особыми формами записи, чтобы избежать их стирания или осквернения.',
+            'additional-explanation': 'Этот инструмент поможет вам автоматически исправить имена Всевышнего в любом тексте на русском языке, сохраняя должное уважение к святости этих имён.',
+            examples: 'Примеры правильной замены:',
+            editorTitle: 'Исправление текста',
+            editorSubtitle: 'Вставьте текст ниже и выберите предпочтительный способ исправления имён Всевышнего',
+            correctionStyle: 'Способ исправления:',
+            styleDash: 'С дефисом (Б-г)',
+            styleHebrew: 'Иврит (ה\')',
+            styleHaShem: 'Словом (а-Шем)',
+            btnCorrect: 'Исправить текст',
+            btnClear: 'Очистить',
+            resultTitle: 'Исправленный текст',
+            totalReplacements: 'Всего замен',
+            history: 'История исправлений',
+            clearHistory: 'Очистить историю'
+          },
+          
+          // הודעות מערכת
+          messages: {
+            textCopied: 'Текст скопирован в буфер обмена',
+            pleaseEnterText: 'Пожалуйста, введите текст для исправления',
+            correctionComplete: 'Исправление завершено!',
+            historyEmpty: 'История пуста',
+            noChanges: 'Изменений не обнаружено',
+            confirmClearHistory: 'Вы уверены, что хотите очистить всю историю исправлений?'
+          }
+        },
+        
+        // עברית
+        he: {
+          // כותרות ראשיות
+          siteTitle: 'תיקון השם',
+          homeTitle: 'תיקון השם - תהילים ותפילות',
+          mainSubtitle: 'קריאת תהילים ותפילות בשלוש שפות לעילוי נשמה',
+          
+          // תפריט ניווט
+          nav: {
+            home: 'ראשי',
+            tehilim: 'תהילים',
+            memorial: 'לעילוי נשמת',
+            prayerbook: 'סידור',
+            corrector: 'תיקון טקסט'
+          },
+          
+          // כפתורים
+          buttons: {
+            start: 'התחל לקרוא',
+            memorial: 'תפילה לעילוי נשמת',
+            search: 'חיפוש',
+            select: 'בחר',
+            correct: 'תקן טקסט',
+            clear: 'נקה',
+            copy: 'העתק טקסט',
+            print: 'הדפס',
+            share: 'שתף',
+            save: 'שמור',
+            apply: 'החל',
+            next: 'הבא',
+            previous: 'הקודם',
+            back: 'חזור'
+          },
+          
+          // קטגוריות כלליות
+          common: {
+            chapter: 'פרק',
+            verse: 'פסוק',
+            section: 'חלק',
+            search: 'חפש פרק או מילת מפתח...',
+            psalm: 'מזמור',
+            psalms: 'תהילים',
+            settings: 'הגדרות',
+            language: 'שפה',
+            hebrew: 'עברית',
+            russian: 'רוסית',
+            phonetic: 'פונטי'
+          },
+          
+          // דף תיקון טקסט
+          corrector: {
+            title: 'תיקון שמות השם',
+            subtitle: 'מדוע חשוב לכתוב נכון את שמות השם',
+            explanation: 'על פי המסורת היהודית, שמות השם מקודשים ודורשים כבוד מיוחד. בחומר מודפס ואלקטרוני מקובל להחליף את השמות המלאים בצורות כתיבה מיוחדות, כדי למנוע את מחיקתם או חילולם.',
+            'additional-explanation': 'כלי זה יעזור לך לתקן אוטומטית את שמות השם בכל טקסט ברוסית, תוך שמירה על הכבוד הראוי לקדושת השמות הללו.',
+            examples: 'דוגמאות להחלפה נכונה:',
+            editorTitle: 'תיקון טקסט',
+            editorSubtitle: 'הדבק טקסט למטה ובחר את האופן המועדף לתיקון שמות השם',
+            correctionStyle: 'סגנון תיקון:',
+            styleDash: 'עם מקף (א-לוהים)',
+            styleHebrew: 'עברית (ה\')',
+            styleHaShem: 'במילה (השם)',
+            btnCorrect: 'תקן טקסט',
+            btnClear: 'נקה',
+            resultTitle: 'טקסט מתוקן',
+            totalReplacements: 'סה"כ החלפות',
+            history: 'היסטורית תיקונים',
+            clearHistory: 'נקה היסטוריה'
+          },
+          
+          // הודעות מערכת
+          messages: {
+            textCopied: 'הטקסט הועתק ללוח',
+            pleaseEnterText: 'נא להזין טקסט לתיקון',
+            correctionComplete: 'התיקון הושלם!',
+            historyEmpty: 'ההיסטוריה ריקה',
+            noChanges: 'לא נמצאו שינויים',
+            confirmClearHistory: 'האם אתה בטוח שברצונך לנקות את כל היסטוריית התיקונים?'
+          }
+        }
+      },
+      
+      // פונקציה לקבלת תרגום
+      getText: function(key) {
+        // מפריד את המפתח לחלקים אם יש נקודה
+        const parts = key.split('.');
+        
+        // חיפוש הערך בתרגומים
+        let result = this.translations[this.currentLanguage];
+        for (let i = 0; i < parts.length; i++) {
+          if (result[parts[i]] === undefined) {
+            return key; // אם לא נמצא, מחזירים את המפתח המקורי
+          }
+          result = result[parts[i]];
+        }
+        
+        return result;
+      },
+      
+      // פונקציה להחלפת השפה
+      setLanguage: function(lang) {
+        // בדיקה שהשפה נתמכת
+        if (this.translations[lang]) {
+          this.currentLanguage = lang;
+          localStorage.setItem('preferredLanguage', lang);
+          
+          // עדכון כפתורים
+          document.querySelectorAll('.lang-btn').forEach(btn => {
+            if (btn.getAttribute('data-lang') === lang) {
+              btn.classList.add('active');
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+          
+          // עדכון טקסטים בדף
+          this.updateTexts();
+          
+          return true;
+        }
+        return false;
+      },
+      
+      // עדכון כל הטקסטים בדף
+      updateTexts: function() {
+        // עדכון כל האלמנטים עם מאפיין data-i18n
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+          const key = element.getAttribute('data-i18n');
+          element.textContent = this.getText(key);
+        });
+        
+        // עדכון כותרת הדף
+        document.title = this.getText('corrector.title') + ' - ' + this.getText('siteTitle');
+        
+        // עדכון הודעת העתקה
+        document.getElementById('notification').textContent = this.getText('messages.textCopied');
+        
+        // עדכון קלט טקסט placeholder
+        document.getElementById('input-text').placeholder = this.currentLanguage === 'ru' ? 
+          'Вставьте здесь текст для исправления...' : 
+          'הדבק כאן טקסט ברוסית לתיקון...';
+      },
+      
+      // אתחול מערכת השפה
+      init: function() {
+        // טעינת השפה השמורה אם קיימת
+        const savedLang = localStorage.getItem('preferredLanguage');
+        if (savedLang && this.translations[savedLang]) {
+          this.currentLanguage = savedLang;
+        }
+        
+        // האזנה לאירועי לחיצה על כפתורי שפה
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+            this.setLanguage(lang);
+          });
+          
+          // סימון הכפתור הפעיל
+          if (btn.getAttribute('data-lang') === this.currentLanguage) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+        
+        // עדכון טקסטים ראשוני
+        this.updateTexts();
+      }
+    };
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // אתחול מערכת שפה
+      TikunHaShemLanguage.init();
+      
+      // טעינת אלמנטים
+      const inputText = document.getElementById('input-text');
+      const resultCard = document.getElementById('result-card');
+      const resultContent = document.getElementById('result-content');
+      const resultCount = document.getElementById('result-count');
+      const statsTotal = document.getElementById('stats-total');
+      const statsBog = document.getElementById('stats-bog');
+      const statsGospod = document.getElementById('stats-gospod');
+      const statsOther = document.getElementById('stats-other');
+      const historyContainer = document.getElementById('history-container');
+      const notification = document.getElementById('notification');
+      
+      // טיפול בכפתורים
+      document.getElementById('btn-correct').addEventListener('click', function() {
+        const text = inputText.value.trim();
+        
+        if (!text) {
+          showNotification(TikunHaShemLanguage.getText('messages.pleaseEnterText'), 'warning');
+          return;
+        }
+        
+        const correctionStyle = document.querySelector('input[name="correction-style"]:checked').value;
+        const result = correctText(text, correctionStyle);
+        
+        // הצגת התוצאה
+        resultContent.innerHTML = result.html;
+        resultCard.style.display = 'block';
+        
+        // עדכון סטטיסטיקות
+        statsTotal.textContent = result.stats.total;
+        statsBog.textContent = result.stats.bog;
+        statsGospod.textContent = result.stats.gospod;
+        statsOther.textContent = result.stats.other;
+        
+        // עדכון כותרת התוצאה
+        if (result.stats.total > 0) {
+          let replacementText = '';
+          if (TikunHaShemLanguage.currentLanguage === 'ru') {
+            replacementText = `Исправлено ${result.stats.total} ${getCorrectWordForm(result.stats.total, 'имя', 'имени', 'имён')}`;
+          } else {
+            replacementText = `תוקנו ${result.stats.total} שמות`;
+          }
+          resultCount.textContent = replacementText;
+        } else {
+          resultCount.textContent = TikunHaShemLanguage.getText('messages.noChanges');
+        }
+        
+        // שמירה בהיסטוריה
+        saveToHistory(text, result.text, result.stats.total, correctionStyle);
+        
+        // גלילה לתוצאה
+        resultCard.scrollIntoView({ behavior: 'smooth' });
+      });
+      
+      document.getElementById('btn-clear').addEventListener('click', function() {
+        inputText.value = '';
+        resultCard.style.display = 'none';
+      });
+      
+      document.getElementById('btn-copy').addEventListener('click', function() {
+        // העתקת הטקסט המתוקן
+        const textToCopy = resultContent.textContent;
+        
+        navigator.clipboard.writeText(textToCopy).then(function() {
+          showNotification(TikunHaShemLanguage.getText('messages.textCopied'));
+        }).catch(function(err) {
+          console.error('Ошибка при копировании текста: ', err);
+          // גיבוי במקרה של שגיאה
+          const tempTextarea = document.createElement('textarea');
+          tempTextarea.value = textToCopy;
+          document.body.appendChild(tempTextarea);
+          tempTextarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempTextarea);
+          showNotification(TikunHaShemLanguage.getText('messages.textCopied'));
+        });
+      });
+      
+      document.getElementById('btn-print').addEventListener('click', function() {
+        // הכנה להדפסה
+        const printWindow = window.open('', '_blank');
+        const correctedText = resultContent.textContent;
+        
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>${TikunHaShemLanguage.getText('corrector.resultTitle')} - ${TikunHaShemLanguage.getText('siteTitle')}</title>
+            <meta charset="UTF-8">
+            <style>
+              body {
+                font-family: 'Times New Roman', serif;
+                line-height: 1.6;
+                padding: 20px;
+              }
+              h1 {
+                font-size: 18px;
+                text-align: center;
+                margin-bottom: 20px;
+              }
+              .content {
+                white-space: pre-wrap;
+                font-size: 14px;
+              }
+              .footer {
+                margin-top: 30px;
+                text-align: center;
+                font-size: 12px;
+                color: #6c757d;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>${TikunHaShemLanguage.getText('corrector.resultTitle')}</h1>
+            <div class="content">${correctedText}</div>
+            <div class="footer">${TikunHaShemLanguage.currentLanguage === 'ru' ? 
+              'Исправлено с помощью сервиса Тикун Ха-Шем' : 
+              'תוקן באמצעות שירות תיקון השם'}</div>
+            <script>
+              window.onload = function() {
+                window.print();
+                setTimeout(function() { window.close(); }, 500);
+              };
+            </script>
+          </body>
+          </html>
+        `);
+        
+        printWindow.document.close();
+      });
+      
+      document.getElementById('btn-share').addEventListener('click', function() {
+        const textToShare = resultContent.textContent;
+        
+        if (navigator.share) {
+          navigator.share({
+            title: `${TikunHaShemLanguage.getText('corrector.resultTitle')} - ${TikunHaShemLanguage.getText('siteTitle')}`,
+            text: textToShare
+          }).catch(err => {
+            console.error('Ошибка при попытке поделиться:', err);
+          });
+        } else {
+          // אם API שיתוף לא קיים, נציע העתקה ללוח
+          document.getElementById('btn-copy').click();
+        }
+      });
+      
+      document.getElementById('btn-clear-history').addEventListener('click', function() {
+        const confirmMessage = TikunHaShemLanguage.getText('messages.confirmClearHistory');
+        if (confirm(confirmMessage)) {
+          localStorage.removeItem('correctionHistory');
+          updateHistoryUI();
+        }
+      });
+      
+      // פונקציה לתיקון טקסט
+      function correctText(text, style) {
+        // הגדרת מילים להחלפה
+        const wordsToReplace = {
+          'бог': { dash: 'Б-г', hebrew: 'ה\'', hashem: 'Вс-вышний' },
+          'бога': { dash: 'Б-га', hebrew: 'ה\'', hashem: 'Вс-вышнего' },
+          'богу': { dash: 'Б-гу', hebrew: 'ה\'', hashem: 'Вс-вышнему' },
+          'богом': { dash: 'Б-гом', hebrew: 'ה\'', hashem: 'Вс-вышним' },
+          'боге': { dash: 'Б-ге', hebrew: 'ה\'', hashem: 'Вс-вышнем' },
+          'боже': { dash: 'Б-же', hebrew: 'ה\'', hashem: 'Вс-вышний' },
+          
+          'господь': { dash: 'Г-сподь', hebrew: 'ה\'', hashem: 'а-Шем' },
+          'господа': { dash: 'Г-спода', hebrew: 'ה\'', hashem: 'а-Шема' },
+          'господу': { dash: 'Г-споду', hebrew: 'ה\'', hashem: 'а-Шему' },
+          'господом': { dash: 'Г-сподом', hebrew: 'ה\'', hashem: 'а-Шемом' },
+          'господе': { dash: 'Г-споде', hebrew: 'ה\'', hashem: 'а-Шеме' },
+          
+          'всевышний': { dash: 'Вс-вышний', hebrew: 'ה\'', hashem: 'Вс-вышний' },
+          'всевышнего': { dash: 'Вс-вышнего', hebrew: 'ה\'', hashem: 'Вс-вышнего' },
+          'всевышнему': { dash: 'Вс-вышнему', hebrew: 'ה\'', hashem: 'Вс-вышнему' },
+          'всевышним': { dash: 'Вс-вышним', hebrew: 'ה\'', hashem: 'Вс-вышним' },
+          'всевышнем': { dash: 'Вс-вышнем', hebrew: 'ה\'', hashem: 'Вс-вышнем' },
+          
+          'адонай': { dash: 'А-донай', hebrew: 'ה\'', hashem: 'а-Шем' },
+          
+          'творец': { dash: 'Тв-рец', hebrew: 'ה\'', hashem: 'Тв-рец' },
+          'творца': { dash: 'Тв-рца', hebrew: 'ה\'', hashem: 'Тв-рца' },
+          'творцу': { dash: 'Тв-рцу', hebrew: 'ה\'', hashem: 'Тв-рцу' },
+          'творцом': { dash: 'Тв-рцом', hebrew: 'ה\'', hashem: 'Тв-рцом' },
+          'творце': { dash: 'Тв-рце', hebrew: 'ה\'', hashem: 'Тв-рце' }
+        };
+        
+        // סטטיסטיקות
+        const stats = {
+          total: 0,
+          bog: 0,
+          gospod: 0,
+          other: 0
+        };
+        
+        // עיבוד הטקסט
+       let processedText = text;
+       let htmlResult = text;
+       
+       // רשימת מילים להחלפה - עם התאמה לאותיות גדולות וקטנות
+       Object.keys(wordsToReplace).forEach(word => {
+         const replacement = wor

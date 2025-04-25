@@ -1,0 +1,1508 @@
+    /* כפתורים */
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+    
+    .button:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      20% {
+        transform: scale(25, 25);
+        opacity: 0.3;
+      }
+      100% {
+        opacity: 0;
+        transform: scale(50, 50);
+      }
+    }
+    
+    .button-primary {
+      background-color: white;
+      color: var(--primary);
+      box-shadow: 0 4px 6px rgba(67, 97, 238, 0.15);
+    }
+    
+    .button-primary:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(67, 97, 238, 0.2);
+    }
+    
+    .button-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(67, 97, 238, 0.1);
+    }
+    
+    .button-outline {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .button-outline:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+    <!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Тикун Ха-Шем - Платформа для молитв и псалмов</title>
+  <style>
+    /* бסיס */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --primary-dark: #3a56d4;
+      --secondary: #10b981;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --radius-sm: 6px;
+      --radius: 12px;
+      --radius-lg: 20px;
+      --header-height: 70px;
+      --bottom-nav-height: 65px;
+      --content-padding: 16px;
+      --base-font-size: 16px;
+      --hebrew-font: 'Frank Ruhl Libre', serif;
+      --russian-font: 'PT Serif', serif;
+    }
+    
+    [data-theme="dark"] {
+      --primary: #4895ef;
+      --primary-light: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #10b981;
+      --background: #121212;
+      --card: #1e1e1e;
+      --text: #e0e0e0;
+      --text-light: #a0a0a0;
+      --border: #2d2d2d;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: var(--base-font-size);
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    /* כותרת */
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--content-padding);
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+      transition: background-color 0.3s;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 20px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--background);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .icon-btn:hover {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    /* תוכן */
+    .container {
+      padding: var(--content-padding);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* חלק גיבור */
+    .hero {
+      background-color: var(--primary);
+      color: white;
+      padding: 40px var(--content-padding);
+      border-radius: var(--radius);
+      margin-bottom: 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background-image: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -10%;
+      right: -10%;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 0;
+    }
+    
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -10%;
+      left: -10%;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 0;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    
+    .hero-subtitle {
+      font-size: 18px;
+      margin-bottom: 24px;
+      opacity: 0.9;
+    }
+    
+    .hebrew-text {
+      font-family: var(--hebrew-font);
+      direction: rtl;
+    }
+    
+    /* כפתורים */
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    
+    .button-primary {
+      background-color: white;
+      color: var(--primary);
+    }
+    
+    .button-primary:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+    }
+    
+    .button-outline {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+    
+    .button-outline:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+    
+    /* רכיבי גישה מהירה */
+    .quick-access {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    
+    @media (min-width: 768px) {
+      .quick-access {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .quick-access-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    
+    .quick-access-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .quick-access-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+    
+    .quick-access-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .quick-access-desc {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+    
+    /* כרטיסיות תכונות */
+    .features {
+      margin-bottom: 30px;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background-color: var(--primary);
+      border-radius: 3px;
+    }
+    
+    .feature-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    @media (min-width: 768px) {
+      .feature-cards {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .feature-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background-color: var(--primary);
+    }
+    
+    .feature-card::after {
+      content: '→';
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      font-size: 20px;
+      color: var(--primary);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    
+    .feature-card:hover::after {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background-color: rgba(67, 97, 238, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: var(--primary);
+      margin-bottom: 16px;
+      transition: transform 0.3s;
+    }
+    
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1);
+    }
+    
+    .feature-title {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    
+    .feature-desc {
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    
+    .feature-link {
+      color: var(--primary);
+      font-weight: 500;
+      display: inline-block;
+      transition: color 0.3s;
+      position: relative;
+    }
+    
+    .feature-link:hover {
+      color: var(--primary-dark);
+    }
+    
+    /* נתונים מספריים */
+    .stats {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+    
+    .stats-title {
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    @media (min-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .stat-item {
+      padding: 16px;
+    }
+    
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      font-size: 15px;
+      color: var(--text-light);
+    }
+    
+    /* כרטיסים קטנים */
+    .cards-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    @media (min-width: 768px) {
+      .cards-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .small-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .small-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .small-card-icon {
+      width: 50px;
+      height: 50px;
+      background-color: rgba(67, 97, 238, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    
+    .small-card-content {
+      flex: 1;
+    }
+    
+    .small-card-title {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    
+    .small-card-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+    
+    .small-card-link {
+      color: var(--primary);
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    /* טפסים */
+    .form-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .form-title {
+      font-size: 20px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .form-desc {
+      text-align: center;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: inherit;
+      background-color: var(--card);
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .form-button {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 8px;
+    }
+    
+    .form-button:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    /* בורר שפה */
+    .language-bar {
+      display: flex;
+      background-color: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .language-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .language-option.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* פרסומות ותזכורות */
+    .promo-card {
+      background-color: var(--secondary);
+      color: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .promo-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .promo-title {
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    
+    .promo-desc {
+      opacity: 0.9;
+      margin-bottom: 16px;
+    }
+    
+    .promo-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: white;
+      color: var(--secondary);
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .promo-pattern {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 150px;
+      height: 150px;
+      opacity: 0.1;
+      background-image: radial-gradient(circle, white 2px, transparent 3px);
+      background-size: 20px 20px;
+    }
+    
+    /* ניווט תחתון */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+      transition: background-color 0.3s;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* רגליים */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-light);
+      font-size: 14px;
+      margin-bottom: var(--bottom-nav-height);
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .footer-link {
+      color: var(--text-light);
+      transition: color 0.2s;
+    }
+    
+    .footer-link:hover {
+      color: var(--primary);
+    }
+    
+    /* מחשיך מסך */
+    .screen-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 150;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .screen-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+    
+    /* מודל / תיבת דו-שיח */
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background-color: var(--card);
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 500px;
+      z-index: 200;
+      display: none;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    
+    .modal.active {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      padding: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    
+    /* חיווי טעינה */
+    .loading-indicator {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(67, 97, 238, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    @keyframes spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- כותרת -->
+  <header class="header">
+    <div class="header-title">Тикун Ха-Шем</div>
+    <div class="header-actions">
+      <button class="icon-btn" id="language-toggle">🌐</button>
+      <button class="icon-btn" id="theme-toggle">🌙</button>
+      <a href="settings.html" class="icon-btn">⚙️</a>
+    </div>
+  </header>
+  
+  <!-- תוכן -->
+  <div class="container">
+    <!-- גיבור -->
+    <div class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Тикун Ха-Шем</h1>
+        <p class="hero-subtitle">Платформа для молитв, псалмов и еврейских текстов с уважением к святым именам</p>
+        <div class="hero-subtitle hebrew-text">תיקון השם - קריאת תהילים ותפילות בקדושה</div>
+        <div class="button-group">
+          <a href="tehilim.html" class="button button-primary">Начать чтение Техилим</a>
+          <a href="memorial.html" class="button button-outline">Молитвы за усопших</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- מידע נוסף - כרטיסים קטנים -->
+    <div class="cards-row">
+      <div class="small-card">
+        <div class="small-card-icon">🔍</div>
+        <div class="small-card-content">
+          <h3 class="small-card-title">Поиск по содержанию</h3>
+          <p class="small-card-desc">Ищите конкретные фразы или слова в псалмах и молитвах. Находите тексты соответствующие вашим потребностям.</p>
+          <a href="#" class="small-card-link" id="open-search-modal">Искать текст</a>
+        </div>
+      </div>
+      <div class="small-card">
+        <div class="small-card-icon">👥</div>
+        <div class="small-card-content">
+          <h3 class="small-card-title">Сообщество чтецов</h3>
+          <p class="small-card-desc">Присоединяйтесь к группам, где псалмы читаются совместно для особых целей: выздоровление больных, успех и другие нужды.</p>
+          <a href="tehilim-mobile-community.html" class="small-card-link">Присоединиться</a>
+        </div>
+      </div>
+      <div class="small-card">
+        <div class="small-card-icon">📱</div>
+        <div class="small-card-content">
+          <h3 class="small-card-title">Мобильное приложение</h3>
+          <p class="small-card-desc">Скачайте наше приложение для iOS и Android, чтобы иметь доступ к техилим и молитвам даже без интернета.</p>
+          <a href="#" class="small-card-link">Скоро будет доступно</a>
+        </div>
+      </div>
+      <div class="small-card">
+        <div class="small-card-icon">📚</div>
+        <div class="small-card-content">
+          <h3 class="small-card-title">Библиотека текстов</h3>
+          <p class="small-card-desc">Исследуйте обширную коллекцию еврейских текстов: благословения, праздничные молитвы и многое другое.</p>
+          <a href="#" class="small-card-link">Открыть библиотеку</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- הסבר על הקורקטור -->
+    <div class="feature-card" style="margin-bottom: 30px;">
+      <div class="feature-icon">⚡</div>
+      <h3 class="feature-title">Корректор текста с именами Всевышнего</h3>
+      <p class="feature-desc">Наш уникальный инструмент автоматически исправляет имена Всевышнего в текстах в соответствии с еврейской традицией. Загрузите свой текст и получите корректную версию для печати или публикации в интернете.</p>
+      
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <a href="correct-text.html" class="button" style="flex: 1; background-color: var(--primary); color: white; text-align: center;">Исправить текст</a>
+        <a href="#" class="button" style="flex: 1; background-color: var(--background); text-align: center;" id="show-correction-info">Узнать больше</a>
+      </div>
+    </div>
+    
+    <!-- אודות -->
+    <div class="form-card">
+      <h3 class="form-title">О проекте Тикун Ха-Шем</h3>
+      <p style="text-align: center; margin-bottom: 20px;">
+        <span class="hebrew-text" style="font-size: 24px; display: block; margin-bottom: 10px;">תיקון השם</span>
+        Проект "Тикун Ха-Шем" создан для того, чтобы помочь русскоязычным евреям читать псалмы и молитвы с соблюдением святости имен Всевышнего.
+      </p>
+      <p style="text-align: justify; margin-bottom: 15px;">
+        Название проекта "Тикун Ха-Шем" (תיקון השם) имеет двойное значение: "исправление имени" и "возвышение души". Мы стремимся предоставить инструменты для правильного написания и произношения священных имен, а также для чтения молитв, возвышающих души усопших.
+      </p>
+      <p style="text-align: justify;">
+        Вы можете читать тексты на иврите, в русском переводе или в фонетической транскрипции – как вам удобнее, сохраняя при этом должное уважение к святости текстов.
+      </p>
+    </div>
+  </div>
+  
+  <!-- רגליים -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="#" class="footer-link">О нас</a>
+      <a href="#" class="footer-link">Помощь</a>
+      <a href="#" class="footer-link">Контакты</a>
+      <a href="#" class="footer-link">Политика конфиденциальности</a>
+    </div>
+    <div>© 2025 Тикун Ха-Шем. Все права защищены.</div>
+  </footer>
+  
+  <!-- ניווט תחתון -->
+  <nav class="bottom-nav">
+    <a href="#" class="bottom-nav-item active">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">Главная</div>
+    </a>
+    <a href="tehilim.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">Техилим</div>
+    </a>
+    <a href="memorial.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🕯️</div>
+      <div class="bottom-nav-label">За усопших</div>
+    </a>
+    <a href="siddur.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">📝</div>
+      <div class="bottom-nav-label">Молитвенник</div>
+    </a>
+  </nav>
+  
+  <!-- מסך כהה -->
+  <div class="screen-overlay" id="screen-overlay"></div>
+  
+  <!-- מודל חיפוש -->
+  <div class="modal" id="search-modal">
+    <div class="modal-header">
+      <div class="modal-title">Поиск текста</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Что вы хотите найти?</label>
+        <input type="text" class="form-control" placeholder="Введите слово или фразу...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Тип текста</label>
+        <select class="form-control">
+          <option>Все тексты</option>
+          <option>Техилим (Псалмы)</option>
+          <option>Молитвы</option>
+          <option>Благословения</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Язык</label>
+        <select class="form-control">
+          <option>Русский</option>
+          <option>Иврит</option>
+          <option>Транслитерация</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="button" style="background-color: var(--background); color: var(--text);">Отмена</button>
+      <button class="button" style="background-color: var(--primary); color: white;">Искать</button>
+    </div>
+  </div>
+  
+  <!-- מודל מידע על תיקון -->
+  <div class="modal" id="correction-info-modal">
+    <div class="modal-header">
+      <div class="modal-title">О корректоре имен Всевышнего</div>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom: 15px;">
+        В еврейской традиции имена Всевышнего обладают святостью и требуют особого уважения. В печатных и электронных материалах принято заменять полные имена особыми формами записи.
+      </p>
+      
+      <h4 style="font-weight: 600; margin-bottom: 10px;">Примеры правильной замены:</h4>
+      <ul style="list-style: none; margin-bottom: 15px;">
+        <li style="margin-bottom: 5px;">✓ <strong>Б-г</strong> вместо "Бог"</li>
+        <li style="margin-bottom: 5px;">✓ <strong>Г-сподь</strong> вместо "Господь"</li>
+        <li style="margin-bottom: 5px;">✓ <strong>Вс-вышний</strong> вместо "Всевышний"</li>
+        <li style="margin-bottom: 5px;">✓ <strong>ה'</strong> (буква "хей" с апострофом) вместо полного написания</li>
+      </ul>
+      
+      <p style="margin-bottom: 15px;">
+        Наш корректор автоматически обнаруживает и исправляет все имена Всевышнего в русских текстах, что особенно важно при подготовке молитвенников, статей или публикаций в интернете.
+      </p>
+      
+      <h4 style="font-weight: 600; margin-bottom: 10px;">Варианты исправления:</h4>
+      <ul style="list-style: none; margin-bottom: 15px;">
+        <li style="margin-bottom: 5px;">• <strong>С дефисом</strong>: классический метод (Б-г)</li>
+        <li style="margin-bottom: 5px;">• <strong>Буквой иврита</strong>: замена на ה' (хей с апострофом)</li>
+        <li style="margin-bottom: 5px;">• <strong>Словом</strong>: замена на альтернативные названия (Вс-вышний)</li>
+      </ul>
+    </div>
+    <div class="modal-footer">
+      <button class="button" style="background-color: var(--background); color: var(--text);">Закрыть</button>
+      <a href="correct-text.html" class="button" style="background-color: var(--primary); color: white;">Перейти к корректору</a>
+    </div>
+  </div>
+  
+  <script>
+    // פונקציה המופעלת כאשר המסמך נטען במלואו
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Document loaded, initializing scripts...');
+      
+      try {
+        // -- טיפול בהחלפת שפה --
+        initializeLanguageSelector();
+        
+        // -- טיפול במצב כהה --
+        initializeThemeToggle();
+        
+        // -- טיפול בטופס תפילה לנפטר --
+        initializePrayerForm();
+        
+        // -- טיפול במודלים --
+        initializeModals();
+        
+        // -- אתחול כפתורי ניווט מהירים --
+        initializeQuickAccessButtons();
+        
+        console.log('All initialization complete.');
+      } catch (error) {
+        console.error('Error during initialization:', error);
+      }
+    });
+    
+    // פונקציה לבדיקת האם localStorage זמין
+    function isLocalStorageAvailable() {
+      try {
+        const test = 'test';
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+      } catch(e) {
+        console.log('localStorage is not available', e);
+        return false;
+      }
+    }
+    
+    // משתנה גלובלי לשמירת הגדרות אם localStorage לא זמין
+    const tempSettings = {
+      preferredLanguage: 'ru',
+      theme: 'light'
+    };
+    
+    // פונקציה מאובטחת לשמירת הגדרות
+    function saveSetting(key, value) {
+      console.log(`Saving setting: ${key} = ${value}`);
+      if (isLocalStorageAvailable()) {
+        localStorage.setItem(key, value);
+      } else {
+        tempSettings[key] = value;
+      }
+    }
+    
+    // פונקציה מאובטחת לטעינת הגדרות
+    function loadSetting(key, defaultValue) {
+      if (isLocalStorageAvailable()) {
+        return localStorage.getItem(key) || defaultValue;
+      } else {
+        return tempSettings[key] || defaultValue;
+      }
+    }
+    
+    // אתחול בורר שפה
+    function initializeLanguageSelector() {
+      console.log('Initializing language selector...');
+      const languageOptions = document.querySelectorAll('.language-option');
+      if (!languageOptions.length) {
+        console.warn('No language options found');
+        return;
+      }
+      
+      // הוספת אירועי לחיצה למתגי שפה
+      languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          console.log(`Language option clicked: ${this.dataset.lang}`);
+          // שינוי האפשרות הפעילה
+          languageOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          // שמירת השפה הנבחרת
+          const selectedLang = this.dataset.lang;
+          saveSetting('preferredLanguage', selectedLang);
+          
+          // במימוש אמיתי, כאן היה קוד להחלפת שפה באתר
+          console.log('Selected language:', selectedLang);
+        });
+      });
+      
+      // טעינת השפה המועדפת השמורה
+      const savedLang = loadSetting('preferredLanguage', 'ru');
+      console.log(`Loading saved language: ${savedLang}`);
+      
+      let found = false;
+      languageOptions.forEach(opt => {
+        if (opt.dataset.lang === savedLang) {
+          opt.click();
+          found = true;
+        }
+      });
+      
+      // אם לא נמצאה שפה שמורה, בחר באפשרות הראשונה
+      if (!found && languageOptions.length > 0) {
+        languageOptions[0].click();
+      }
+    }
+    
+    // אתחול מתג ערכת נושא (מצב כהה)
+    function initializeThemeToggle() {
+      console.log('Initializing theme toggle...');
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      if (!themeToggleBtn) {
+        console.warn('Theme toggle button not found');
+        return;
+      }
+      
+      const isDarkMode = loadSetting('theme', 'light') === 'dark';
+      console.log(`Current theme mode: ${isDarkMode ? 'dark' : 'light'}`);
+      
+      if (isDarkMode) {
+        document.body.setAttribute('data-theme', 'dark');
+        themeToggleBtn.textContent = '☀️';
+      } else {
+        themeToggleBtn.textContent = '🌙';
+      }
+      
+      themeToggleBtn.addEventListener('click', function() {
+        console.log('Theme toggle clicked');
+        if (document.body.getAttribute('data-theme') === 'dark') {
+          document.body.removeAttribute('data-theme');
+          saveSetting('theme', 'light');
+          this.textContent = '🌙';
+          console.log('Switched to light theme');
+        } else {
+          document.body.setAttribute('data-theme', 'dark');
+          saveSetting('theme', 'dark');
+          this.textContent = '☀️';
+          console.log('Switched to dark theme');
+        }
+      });
+    }
+    
+    // אתחול טופס תפילה לנפטר
+    function initializePrayerForm() {
+      console.log('Initializing prayer form...');
+      const generatePrayerBtn = document.getElementById('generate-prayer');
+      if (!generatePrayerBtn) {
+        console.warn('Generate prayer button not found');
+        return;
+      }
+      
+      const deceasedNameInput = document.getElementById('deceased-name');
+      const motherNameInput = document.getElementById('mother-name');
+      
+      if (!deceasedNameInput || !motherNameInput) {
+        console.warn('Name inputs not found');
+        return;
+      }
+      
+      generatePrayerBtn.addEventListener('click', function() {
+        console.log('Generate prayer button clicked');
+        const deceasedName = deceasedNameInput.value.trim();
+        const motherName = motherNameInput.value.trim();
+        
+        if (!deceasedName) {
+          alert('Пожалуйста, введите имя усопшего');
+          return;
+        }
+        
+        // הפניה לעמוד תהילים 119 עם פרמטרים בכתובת
+        const url = 'psalm119.html?name=' + encodeURIComponent(deceasedName) + 
+                   '&mother=' + encodeURIComponent(motherName);
+        console.log(`Redirecting to: ${url}`);
+        
+        // נסה לנווט לדף בשתי דרכים
+        try {
+          window.location.href = url;
+        } catch (e) {
+          console.error('Navigation failed, trying alternative method', e);
+          // אלטרנטיבה
+          document.location = url;
+        }
+      });
+    }
+    
+    // אתחול מודלים
+    function initializeModals() {
+      console.log('Initializing modals...');
+      const screenOverlay = document.getElementById('screen-overlay');
+      const searchModal = document.getElementById('search-modal');
+      const correctionInfoModal = document.getElementById('correction-info-modal');
+      
+      if (!screenOverlay) {
+        console.warn('Screen overlay not found');
+        return;
+      }
+      
+      // פתיחת מודל חיפוש
+      const openSearchModalBtn = document.getElementById('open-search-modal');
+      if (openSearchModalBtn && searchModal) {
+        openSearchModalBtn.addEventListener('click', function(e) {
+          console.log('Open search modal clicked');
+          e.preventDefault();
+          searchModal.classList.add('active');
+          screenOverlay.classList.add('active');
+        });
+      }
+      
+      // פתיחת מודל מידע על תיקון
+      const showCorrectionInfoBtn = document.getElementById('show-correction-info');
+      if (showCorrectionInfoBtn && correctionInfoModal) {
+        showCorrectionInfoBtn.addEventListener('click', function(e) {
+          console.log('Show correction info clicked');
+          e.preventDefault();
+          correctionInfoModal.classList.add('active');
+          screenOverlay.classList.add('active');
+        });
+      }
+      
+      // סגירת מודלים ברקע שחור
+      if (screenOverlay) {
+        screenOverlay.addEventListener('click', function() {
+          console.log('Overlay clicked');
+          document.querySelectorAll('.modal.active').forEach(modal => {
+            modal.classList.remove('active');
+            console.log(`Closed modal: ${modal.id}`);
+          });
+          screenOverlay.classList.remove('active');
+        });
+      }
+      
+      // סגירת מודל בכפתור סגירה
+      document.querySelectorAll('.modal-close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+          console.log('Close button clicked');
+          const modal = this.closest('.modal');
+          if (modal) {
+            modal.classList.remove('active');
+            screenOverlay.classList.remove('active');
+            console.log(`Closed modal: ${modal.id}`);
+          }
+        });
+      });
+      
+      // סגירת מודל בכפתורי ביטול או סגירה בתחתית המודל
+      document.querySelectorAll('.modal-footer .button').forEach(button => {
+        const text = button.textContent.trim();
+        if (text === 'Отмена' || text === 'Закрыть') {
+          button.addEventListener('click', function() {
+            console.log('Cancel/Close button clicked');
+            const modal = this.closest('.modal');
+            if (modal) {
+              modal.classList.remove('active');
+              screenOverlay.classList.remove('active');
+              console.log(`Closed modal: ${modal.id}`);
+            }
+          });
+        }
+      });
+    }
+    
+    // אתחול כפתורי גישה מהירה
+    function initializeQuickAccessButtons() {
+      console.log('Initializing quick access buttons...');
+      
+      // הוספת אירועי לחיצה לכל הכרטיסיות
+      document.querySelectorAll('.quick-access-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          // מונע ביצוע פעמיים במקרה שלוחצים על הקישור עצמו
+          if (e.target.tagName.toLowerCase() === 'a') return;
+          
+          const link = this.querySelector('a');
+          if (link) {
+            console.log(`Quick access card clicked, navigating to: ${link.href}`);
+            try {
+              window.location.href = link.href;
+            } catch (error) {
+              console.error('Navigation failed, trying alternative', error);
+              document.location = link.href;
+            }
+          }
+        });
+      });
+      
+      // כפתורים בחלק התכונות
+      document.querySelectorAll('.feature-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          // מונע ביצוע פעמיים במקרה שלוחצים על הקישור עצמו
+          if (e.target.tagName.toLowerCase() === 'a') return;
+          
+          const link = this.querySelector('a.feature-link');
+          if (link) {
+            console.log(`Feature card clicked, navigating to: ${link.href}`);
+            try {
+              window.location.href = link.href;
+            } catch (error) {
+              console.error('Navigation failed, trying alternative', error);
+              document.location = link.href;
+            }
+          }
+        });
+      });
+      
+      // כרטיסים קטנים
+      document.querySelectorAll('.small-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          // מונע ביצוע פעמיים במקרה שלוחצים על הקישור עצמו
+          if (e.target.tagName.toLowerCase() === 'a') return;
+          
+          const link = this.querySelector('a.small-card-link');
+          if (link) {
+            console.log(`Small card clicked, navigating to: ${link.href}`);
+            // בדוק אם מדובר בקישור עם # שמפעיל מודל
+            if (link.getAttribute('id') === 'open-search-modal') {
+              link.click();
+            } else if (link.getAttribute('id') === 'show-correction-info') {
+              link.click();
+            } else {
+              try {
+                window.location.href = link.href;
+              } catch (error) {
+                console.error('Navigation failed, trying alternative', error);
+                document.location = link.href;
+              }
+            }
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>
+    
+    <!-- בורר שפה -->
+    <div class="language-bar">
+      <div class="language-option active" data-lang="ru">Русский</div>
+      <div class="language-option" data-lang="he">עברית</div>
+      <div class="language-option" data-lang="phonetic">Фонетика</div>
+    </div>
+    
+    <!-- גישה מהירה -->
+    <div class="quick-access">
+      <a href="tehilim.html" class="quick-access-card">
+        <div class="quick-access-icon">📖</div>
+        <div class="quick-access-title">Техилим</div>
+        <div class="quick-access-desc">Псалмы Давида</div>
+      </a>
+      <a href="siddur.html" class="quick-access-card">
+        <div class="quick-access-icon">📝</div>
+        <div class="quick-access-title">Молитвенник</div>
+        <div class="quick-access-desc">Сидур на каждый день</div>
+      </a>
+      <a href="memorial.html" class="quick-access-card">
+        <div class="quick-access-icon">🕯️</div>
+        <div class="quick-access-title">За усопших</div>
+        <div class="quick-access-desc">Йорцайт и молитвы</div>
+      </a>
+      <a href="correct-text.html" class="quick-access-card">
+        <div class="quick-access-icon">✏️</div>
+        <div class="quick-access-title">Исправление</div>
+        <div class="quick-access-desc">Текст с именами Б-га</div>
+      </a>
+    </div>
+    
+    <!-- תכונות עיקריות -->
+    <section class="features">
+      <h2 class="section-title">Особенности нашей платформы</h2>
+      <div class="feature-cards">
+        <div class="feature-card">
+          <div class="feature-icon">📖</div>
+          <h3 class="feature-title">Псалмы на трех языках</h3>
+          <p class="feature-desc">Читайте Техилим на иврите, русском или с транслитерацией в удобном и красивом интерфейсе.</p>
+          <a href="tehilim.html" class="feature-link">Открыть Техилим →</a>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✏️</div>
+          <h3 class="feature-title">Исправление имён Всевышнего</h3>
+          <p class="feature-desc">Автоматическое исправление текстов с корректной заменой имен Всевышнего согласно еврейской традиции.</p>
+          <a href="correct-text.html" class="feature-link">Исправить текст →</a>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🕯️</div>
+          <h3 class="feature-title">Йорцайт-календарь</h3>
+          <p class="feature-desc">Управляйте годовщинами смерти близких, получайте напоминания и читайте соответствующие молитвы.</p>
+          <a href="memorial.html" class="feature-link">Перейти к календарю →</a>
+        </div>
+      </div>
+    </section>
+    
+    <!-- פרסומת / קידום -->
+    <div class="promo-card">
+      <div class="promo-pattern"></div>
+      <div class="promo-content">
+        <h3 class="promo-title">Новая функция: Молитва по буквам имени</h3>
+        <p class="promo-desc">Псалом 119 содержит стихи для каждой буквы еврейского алфавита. Теперь вы можете выбрать стихи, соответствующие буквам имени усопшего.</p>
+        <a href="psalm119.html" class="promo-button">Попробовать</a>
+      </div>
+    </div>
+    
+    <!-- טפסים עבור נפטרים -->
+    <div class="form-card">
+      <h3 class="form-title">Молитва за усопшего</h3>
+      <p class="form-desc">Введите имя усопшего, чтобы получить специальную подборку псалмов</p>
+      
+      <div class="form-group">
+        <label class="form-label">Имя усопшего (на иврите):</label>
+        <input type="text" class="form-control" id="deceased-name" placeholder="שם הנפטר" dir="rtl">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Имя матери усопшего (на иврите):</label>
+        <input type="text" class="form-control" id="mother-name" placeholder="שם האם" dir="rtl">
+      </div>
+      <button class="form-button" id="generate-prayer">Получить псалмы для чтения</button>
+    </div>
+    
+    <!-- נתונים מספריים -->
+    <div class="stats">
+      <h3 class="stats-title">Наша библиотека</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">150</div>
+          <div class="stat-label">Псалмов</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">50+</div>
+          <div class="stat-label">Молитв</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Языка</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">10K+</div>
+          <div class="stat-label">Пользователей</div>
+        </div>
+      

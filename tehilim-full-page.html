@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Теилим - תהילים</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=PT+Serif:wght@400;700&display=swap');
+    
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --primary-dark: #3a56d4;
+      --background: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --hebrew-text: #333;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --divine: #d4a017;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 12px;
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+      --hebrew-font: 'Frank Ruhl Libre', serif;
+      --russian-font: 'PT Serif', serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      padding-bottom: var(--bottom-nav-height);
+      padding-top: var(--header-height);
+    }
+    
+    .header {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-height);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+    
+    .header-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background);
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+    
+    .psalm-selector {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .psalm-number {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .psalm-navigation {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .nav-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--radius);
+      background-color: var(--primary);
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    .nav-btn:disabled {
+      background-color: var(--text-light);
+      cursor: not-allowed;
+    }
+    
+    .psalm-card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .psalm-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .psalm-text {
+      margin-bottom: 20px;
+    }
+    
+    .verse {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 16px;
+    }
+    
+    .verse-number {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+    
+    .russian-text {
+      font-family: var(--russian-font);
+      font-size: 18px;
+      margin-bottom: 8px;
+      line-height: 1.7;
+    }
+    
+    .hebrew-text {
+      font-family: var(--hebrew-font);
+      font-size: 20px;
+      line-height: 1.7;
+      direction: rtl;
+      color: var(--hebrew-text);
+    }
+    
+    .psalm-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    
+    .action-btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: var(--radius);
+      background-color: var(--background);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background-color: var(--card);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-light);
+      transition: color 0.2s;
+      padding: 8px 0;
+      text-decoration: none;
+    }
+    
+    .bottom-nav-item.active {
+      color: var(--primary);
+    }
+    
+    .bottom-nav-icon {
+      font-size: 22px;
+    }
+    
+    .bottom-nav-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .divine-name {
+      color: var(--divine);
+      font-weight: 700;
+    }
+    
+    /* Режим чтения */
+    body.reading-mode {
+      background-color: #f4ead5; /* цвет бумаги */
+    }
+    
+    body.reading-mode .psalm-card {
+      background-color: #f9f5eb;
+      box-shadow: none;
+    }
+    
+    body.reading-mode .russian-text {
+      font-size: 22px;
+    }
+    
+    body.reading-mode .hebrew-text {
+      font-size: 24px;
+    }
+    
+    body.reading-mode .header,
+    body.reading-mode .bottom-nav,
+    body.reading-mode .psalm-selector {
+      display: none;
+    }
+    
+    body.reading-mode .container {
+      padding-top: 20px;
+    }
+    
+    body.reading-mode .exit-reading-mode {
+      display: block;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 200;
+    }
+    
+    .exit-reading-mode {
+      display: none;
+    }
+    
+    /* Темная тема */
+    body.dark-mode {
+      --background: #121212;
+      --card: #1e1e1e;
+      --text: #e0e0e0;
+      --hebrew-text: #f0f0f0;
+      --text-light: #b0b0b0;
+      --border: #333333;
+    }
+    
+    @media (max-width: 600px) {
+      .psalm-title {
+        font-size: 20px;
+      }
+      
+      .russian-text {
+        font-size: 16px;
+      }
+      
+      .hebrew-text {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Заголовок -->
+  <header class="header">
+    <a href="index.html" class="back-button" style="text-decoration: none; font-size: 20px;">←</a>
+    <div class="header-title">Книга Теилим - ספר תהילים</div>
+    <div class="header-actions">
+      <button class="icon-btn" id="toggle-theme">🌙</button>
+      <button class="icon-btn" id="toggle-reading-mode">📖</button>
+    </div>
+  </header>
+  
+  <!-- Выход из режима чтения -->
+  <button class="icon-btn exit-reading-mode" id="exit-reading-mode">❌</button>
+  
+  <!-- Основной контент -->
+  <div class="container">
+    <!-- Выбор псалма -->
+    <div class="psalm-selector">
+      <div class="psalm-number">
+        Псалом <span id="current-psalm">1</span> - תהילים <span id="current-psalm-hebrew">א</span>
+      </div>
+      <div class="psalm-navigation">
+        <button class="nav-btn" id="prev-psalm" disabled>←</button>
+        <button class="nav-btn" id="select-psalm">Выбрать</button>
+        <button class="nav-btn" id="next-psalm">→</button>
+      </div>
+    </div>
+    
+    <!-- Содержимое псалма -->
+    <div class="psalm-card">
+      <h2 class="psalm-title">Псалом 1 - מזמור א</h2>
+      
+      <div class="psalm-text" id="psalm-content">
+        <!-- Стих 1 -->
+        <div class="verse">
+          <div class="verse-number">1</div>
+          <div class="russian-text">Блажен муж, который не ходит на совет нечестивых, и не стоит на пути грешников, и не сидит в собрании развратителей.</div>
+          <div class="hebrew-text">אַשְׁרֵי הָאִישׁ אֲשֶׁר לֹא הָלַךְ בַּעֲצַת רְשָׁעִים וּבְדֶרֶךְ חַטָּאִים לֹא עָמָד וּבְמוֹשַׁב לֵצִים לֹא יָשָׁב׃</div>
+        </div>
+        
+        <!-- Стих 2 -->
+        <div class="verse">
+          <div class="verse-number">2</div>
+          <div class="russian-text">Но в законе <span class="divine-name">Г-спода</span> воля его, и о законе Его размышляет он день и ночь.</div>
+          <div class="hebrew-text">כִּי אִם בְּתוֹרַת יְהוָה חֶפְצוֹ וּבְתוֹרָתוֹ יֶהְגֶּה יוֹמָם וָלָיְלָה׃</div>
+        </div>
+        
+        <!-- Стих 3 -->
+        <div class="verse">
+          <div class="verse-number">3</div>
+          <div class="russian-text">И будет он как дерево, посаженное при потоках вод, которое приносит плод свой во время свое, и лист которого не вянет; и во всем, что он ни делает, успеет.</div>
+          <div class="hebrew-text">וְהָיָה כְּעֵץ שָׁתוּל עַל פַּלְגֵי מָיִם אֲשֶׁר פִּרְיוֹ יִתֵּן בְּעִתּוֹ וְעָלֵהוּ לֹא יִבּוֹל וְכֹל אֲשֶׁר יַעֲשֶׂה יַצְלִיחַ׃</div>
+        </div>
+        
+        <!-- Стих 4 -->
+        <div class="verse">
+          <div class="verse-number">4</div>
+          <div class="russian-text">Не так нечестивые; но они – как прах, возметаемый ветром.</div>
+          <div class="hebrew-text">לֹא כֵן הָרְשָׁעִים כִּי אִם כַּמֹּץ אֲשֶׁר תִּדְּפֶנּוּ רוּחַ׃</div>
+        </div>
+        
+        <!-- Стих 5 -->
+        <div class="verse">
+          <div class="verse-number">5</div>
+          <div class="russian-text">Потому не устоят нечестивые на суде, и грешники – в собрании праведных.</div>
+          <div class="hebrew-text">עַל כֵּן לֹא יָקֻמוּ רְשָׁעִים בַּמִּשְׁפָּט וְחַטָּאִים בַּעֲדַת צַדִּיקִים׃</div>
+        </div>
+        
+        <!-- Стих 6 -->
+        <div class="verse">
+          <div class="verse-number">6</div>
+          <div class="russian-text">Ибо знает <span class="divine-name">Г-сподь</span> путь праведных, а путь нечестивых погибнет.</div>
+          <div class="hebrew-text">כִּי יוֹדֵעַ יְהוָה דֶּרֶךְ צַדִּיקִים וְדֶרֶךְ רְשָׁעִים תֹּאבֵד׃</div>
+        </div>
+      </div>
+      
+      <div class="psalm-actions">
+        <button class="action-btn" id="btn-print">🖨️ Печать</button>
+        <button class="action-btn" id="btn-share">🔗 Поделиться</button>
+        <button class="action-btn" id="btn-save">💾 Сохранить</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Нижняя навигация -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">🏠</div>
+      <div class="bottom-nav-label">Главная</div>
+    </a>
+    <a href="#" class="bottom-nav-item active">
+      <div class="bottom-nav-icon">📖</div>
+      <div class="bottom-nav-label">Теилим</div>
+    </a>
+    <a href="correct-text.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">✏️</div>
+      <div class="bottom-nav-label">Исправить</div>
+    </a>
+    <a href="tehilim-mobile-community.html" class="bottom-nav-item">
+      <div class="bottom-nav-icon">👥</div>
+      <div class="bottom-nav-label">Сообщество</div>
+    </a>
+  </nav>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Начальные значения
+      let currentPsalm = 1;
+      const totalPsalms = 150;
+      
+      // Ивритские числа для первых 10 псалмов
+      const hebrewNumbers = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'י״א', 'י״ב', 'י״ג', 'י״ד', 'ט״ו'];
+      
+      // Обработчики навигации
+      const prevBtn = document.getElementById('prev-psalm');
+      const nextBtn = document.getElementById('next-psalm');
+      const selectBtn = document.getElementById('select-psalm');
+      const currentPsalmSpan = document.getElementById('current-psalm');
+      const currentPsalmHebrewSpan = document.getElementById('current-psalm-hebrew');
+      
+      // Обновление псалма
+      function updatePsalm() {
+        currentPsalmSpan.textContent = currentPsalm;
+        currentPsalmHebrewSpan.textContent = currentPsalm <= hebrewNumbers.length ? hebrewNumbers[currentPsalm - 1] : currentPsalm;
+        
+        document.querySelector('.psalm-title').textContent = `Псалом ${currentPsalm} - מזמור ${currentPsalm <= hebrewNumbers.length ? hebrewNumbers[currentPsalm - 1] : currentPsalm}`;
+        
+        // Обновление состояния кнопок
+        prevBtn.disabled = currentPsalm <= 1;
+        nextBtn.disabled = currentPsalm >= totalPsalms;
+        
+        // В реальном проекте здесь будет загрузка содержимого псалма
+        // loadPsalmContent(currentPsalm);
+      }
+      
+      // Переход к предыдущему псалму
+      prevBtn.addEventListener('click', function() {
+        if (currentPsalm > 1) {
+          currentPsalm--;
+          updatePsalm();
+        }
+      });
+      
+      // Переход к следующему псалму
+      nextBtn.addEventListener('click', function() {
+        if (currentPsalm < totalPsalms) {
+          currentPsalm++;
+          updatePsalm();
+        }
+      });
+      
+      // Выбор псалма
+      selectBtn.addEventListener('click', function() {
+        const psalmNumber = prompt(`Выберите псалом (1-${totalPsalms}):`, currentPsalm);
+        
+        if (psalmNumber !== null) {
+          const num = parseInt(psalmNumber);
+          
+          if (!isNaN(num) && num >= 1 && num <= totalPsalms) {
+            currentPsalm = num;
+            updatePsalm();
+          } else {
+            alert(`Пожалуйста, введите число от 1 до ${totalPsalms}.`);
+          }
+        }
+      });
+      
+      // Переключение темы
+      const themeToggleBtn = document.getElementById('toggle-theme');
+      
+      themeToggleBtn.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        themeToggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+      });
+      
+      // Режим чтения
+      const readingModeBtn = document.getElementById('toggle-reading-mode');
+      const exitReadingModeBtn = document.getElementById('exit-reading-mode');
+      
+      readingModeBtn.addEventListener('click', function() {
+        document.body.classList.add('reading-mode');
+      });
+      
+      exitReadingModeBtn.addEventListener('click', function() {
+        document.body.classList.remove('reading-mode');
+      });
+      
+      // Обработчики действий
+      document.getElementById('btn-print').addEventListener('click', function() {
+        window.print();
+      });
+      
+      document.getElementById('btn-share').addEventListener('click', function() {
+        if (navigator.share) {
+          navigator.share({
+            title: `Теилим - Псалом ${currentPsalm}`,
+            text: `Псалом ${currentPsalm} из книги Теилим`,
+            url: window.location.href,
+          });
+        } else {
+          alert('Функция "Поделиться" не поддерживается вашим браузером.');
+        }
+      });
+      
+      document.getElementById('btn-save').addEventListener('click', function() {
+        alert('Псалом сохранен в избранном!');
+      });
+    });
+  </script>
+</body>
+</html>
