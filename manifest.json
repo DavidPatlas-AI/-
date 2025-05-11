@@ -1,16 +1,28 @@
 {
-  "name": "תהילים בקדושה",
-  "short_name": "תהילים",
-  "lang": "he",
-  "start_url": "index.html",
+  "name": "תיקון השם",
+  "short_name": "תיקון",
+  "description": "תהילים ותפילות בעברית",
+  "start_url": "/index.html",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#f8f9fa",
   "theme_color": "#4361ee",
-  "icons": [
+  "lang": "he",
+  "dir": "rtl",
+  "scope": "/",
+  "categories": ["books", "education", "lifestyle"],
+  "screenshots": [
     {
-      "src": "icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "assets/images/screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Homepage of Tikun Hashem"
     }
-  ]
-}
+  ],
+  "icons": [
+    { "src": "/assets/images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/images/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "prefer_related_applications": false
+} 

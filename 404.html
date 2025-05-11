@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Страница не найдена</title>
+  <link rel="stylesheet" href="../styles/css/styles.css">
+  <link rel="stylesheet" href="../styles/css/components.css">
+  <link rel="stylesheet" href="../styles/css/responsive.css">
+  <link rel="manifest" href="../public/manifest.json">
+  <link rel="icon" href="../public/favicon.ico">
+  <style>
+    .error-container {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .error-code {
+      font-size: 72px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    .error-message {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+    .error-description {
+      color: var(--text-light);
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="back-button">←</a>
+    <div class="header-title">Страница не найдена</div>
+  </header>
+  
+  <div class="container">
+    <div class="error-container">
+      <div class="error-code">404</div>
+      <div class="error-message">Страница не найдена</div>
+      <div class="error-description">
+        К сожалению, запрашиваемая страница не существует или была перемещена.
+      </div>
+      <a href="index.html" class="button button-primary">Вернуться на главную</a>
+    </div>
+  </div>
+  <script src="../src/js/main.js"></script>
+</body>
+</html> 

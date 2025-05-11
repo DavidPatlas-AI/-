@@ -4,6 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Исправление текста - Тикун Ха-Шем</title>
+  <meta name="description" content="Проверка правильности написания имен на русском языке для поминальной службы.">
+  <meta name="keywords" content="проверка текста, имена, поминальная служба, иудаизм">
+  <meta name="author" content="Тикун Ха-Шем">
+  <meta property="og:title" content="Проверка текста - Тикун Ха-Шем">
+  <meta property="og:description" content="Проверка правильности написания имен на русском языке">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tikun-hashem.com/correct-text.html">
+  <link rel="canonical" href="https://tikun-hashem.com/correct-text.html">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#4361ee">
+  <link rel="stylesheet" href="styles/css/styles.css">
+  <link rel="stylesheet" href="styles/css/accessibility.css">
+  <link rel="stylesheet" href="styles/css/calendar.css">
+  <link rel="stylesheet" href="src/styles/main.css">
+  <link rel="stylesheet" href="src/styles/dark-mode.css">
+  <link rel="stylesheet" href="../styles/css/components.css">
+  <link rel="stylesheet" href="../styles/css/responsive.css">
+  <link rel="icon" href="../public/favicon.ico">
+  <script src="js/main.js" defer></script>
+  <script src="js/floating-letters.js" defer></script>
+  <script src="js/calendar.js" defer></script>
   <style>
     /* בסיס */
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=PT+Serif:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&display=swap');
@@ -597,6 +618,63 @@
       const historyContainer = document.getElementById('history-container');
       const notification = document.getElementById('notification');
       
+      // טבלת החלפות מלאה
+      const styleMap = {
+        dash: 'Б-г',
+        hebrew: 'Господин',
+        hashem: 'Всесильный'
+      };
+      const wordsToReplace = [
+        'бог', 'бога', 'богу', 'богом', 'боге', 'боже', 'божество',
+        'господь', 'господа', 'господу', 'господом', 'господе',
+        'всевышний', 'всевышнего', 'всевышнему', 'всевышним', 'всевышнем',
+        'адонай', 'творец', 'творца', 'творцу', 'творцом', 'творце',
+        'иегова', 'яхве', 'саваоф', 'шаддай', 'элохим',
+        'Господь', 'Бог', 'Всевышний', 'Иегова', 'ЙХВХ', 'Яхве', 'Адонай', 'Элохим', 'Саваоф', 'Шаддай',
+        'השם', 'אדני', 'אלוהים', 'אלקים', 'אלק', 'אלק*', 'י-ה-ו-ה', 'יי', 'אדנ-י', 'שדי', 'צבאות'
+      ];
+      function correctText(text, style) {
+        let total = 0, bog = 0, gospod = 0, other = 0;
+        let html = text;
+        let plain = text;
+        let replacement = styleMap[style] || 'Б-г';
+        wordsToReplace.forEach(word => {
+          const regex = new RegExp(`\\b${word}\\b`, 'gi');
+          const matches = html.match(regex);
+          if (matches) {
+            total += matches.length;
+            if (replacement === 'Б-г') bog += matches.length;
+            else if (replacement === 'Господин') gospod += matches.length;
+            else other += matches.length;
+          }
+          html = html.replace(regex, `<span class="highlight">${replacement}</span>`);
+          plain = plain.replace(regex, replacement);
+        });
+        return {
+          html,
+          text: plain,
+          stats: { total, bog, gospod, other }
+        };
+      }
+      // תצוגה חיה
+      function livePreview() {
+        const text = document.getElementById('input-text').value;
+        const style = document.querySelector('input[name="correction-style"]:checked').value;
+        const result = correctText(text, style);
+        document.getElementById('result-content').innerHTML = result.html;
+        document.getElementById('stats-total').textContent = result.stats.total;
+        document.getElementById('stats-bog').textContent = result.stats.bog;
+        document.getElementById('stats-gospod').textContent = result.stats.gospod;
+        document.getElementById('stats-other').textContent = result.stats.other;
+        document.getElementById('result-card').style.display = text.trim() ? 'block' : 'none';
+      }
+      document.getElementById('input-text').addEventListener('input', livePreview);
+      document.querySelectorAll('input[name="correction-style"]').forEach(radio => {
+        radio.addEventListener('change', livePreview);
+      });
+      // אתחול ראשוני
+      livePreview();
+      
       // טיפול בכפתורים
       document.getElementById('btn-correct').addEventListener('click', function() {
         const text = inputText.value.trim();
@@ -729,238 +807,9 @@
         }
       });
       
-      // פונקציה לתיקון טקסט
-      function correctText(text, style) {
-        // הגדרת מילים להחלפה
-        const wordsToReplace = {
-          'бог': { dash: 'Б-г', hebrew: 'ה\'', hashem: 'Вс-вышний' },
-          'бога': { dash: 'Б-га', hebrew: 'ה\'', hashem: 'Вс-вышнего' },
-          'богу': { dash: 'Б-гу', hebrew: 'ה\'', hashem: 'Вс-вышнему' },
-          'богом': { dash: 'Б-гом', hebrew: 'ה\'', hashem: 'Вс-вышним' },
-          'боге': { dash: 'Б-ге', hebrew: 'ה\'', hashem: 'Вс-вышнем' },
-          'боже': { dash: 'Б-же', hebrew: 'ה\'', hashem: 'Вс-вышний' },
-          
-          'господь': { dash: 'Г-сподь', hebrew: 'ה\'', hashem: 'а-Шем' },
-          'господа': { dash: 'Г-спода', hebrew: 'ה\'', hashem: 'а-Шема' },
-          'господу': { dash: 'Г-споду', hebrew: 'ה\'', hashem: 'а-Шему' },
-          'господом': { dash: 'Г-сподом', hebrew: 'ה\'', hashem: 'а-Шемом' },
-          'господе': { dash: 'Г-споде', hebrew: 'ה\'', hashem: 'а-Шеме' },
-          
-          'всевышний': { dash: 'Вс-вышний', hebrew: 'ה\'', hashem: 'Вс-вышний' },
-          'всевышнего': { dash: 'Вс-вышнего', hebrew: 'ה\'', hashem: 'Вс-вышнего' },
-          'всевышнему': { dash: 'Вс-вышнему', hebrew: 'ה\'', hashem: 'Вс-вышнему' },
-          'всевышним': { dash: 'Вс-вышним', hebrew: 'ה\'', hashem: 'Вс-вышним' },
-          'всевышнем': { dash: 'Вс-вышнем', hebrew: 'ה\'', hashem: 'Вс-вышнем' },
-          
-          'адонай': { dash: 'А-донай', hebrew: 'ה\'', hashem: 'а-Шем' },
-          
-          'творец': { dash: 'Тв-рец', hebrew: 'ה\'', hashem: 'Тв-рец' },
-          'творца': { dash: 'Тв-рца', hebrew: 'ה\'', hashem: 'Тв-рца' },
-          'творцу': { dash: 'Тв-рцу', hebrew: 'ה\'', hashem: 'Тв-рцу' },
-          'творцом': { dash: 'Тв-рцом', hebrew: 'ה\'', hashem: 'Тв-рцом' },
-          'творце': { dash: 'Тв-рце', hebrew: 'ה\'', hashem: 'Тв-рце' }
-        };
-        
-        // סטטיסטיקות
-        const stats = {
-          total: 0,
-          bog: 0,
-          gospod: 0,
-          other: 0
-        };
-        
-        // עיבוד הטקסט
-       let processedText = text;
-       let htmlResult = text;
-       
-       // רשימת מילים להחלפה - עם התאמה לאותיות גדולות וקטנות
-       Object.keys(wordsToReplace).forEach(word => {
-         const replacement = wordsToReplace[word][style];
-         
-         // ביטוי רגולרי לחיפוש המילה בטקסט - עם התחשבות בגבולות מילה
-         const regex = new RegExp(`\\b${word}\\b`, 'gi');
-         
-         // ספירת המופעים
-         const matches = processedText.match(regex);
-         if (matches) {
-           const count = matches.length;
-           stats.total += count;
-           
-           // עדכון סטטיסטיקות לפי סוג
-           if (word.startsWith('бог') || word === 'боже') {
-             stats.bog += count;
-           } else if (word.startsWith('господ')) {
-             stats.gospod += count;
-           } else {
-             stats.other += count;
-           }
-         }
-         
-         // החלפה בטקסט הרגיל
-         processedText = processedText.replace(regex, replacement);
-         
-         // החלפה בטקסט HTML עם הדגשה
-         htmlResult = htmlResult.replace(regex, match => {
-           // שמירה על אות ראשונה גדולה אם המקור עם אות גדולה
-           let finalReplacement = replacement;
-           if (match.charAt(0) === match.charAt(0).toUpperCase()) {
-             finalReplacement = finalReplacement.charAt(0).toUpperCase() + finalReplacement.slice(1);
-           }
-           
-           return `<span class="highlight">${finalReplacement}</span>`;
-         });
-       });
-       
-       return {
-         text: processedText,
-         html: htmlResult,
-         stats: stats
-       };
-     }
-     
-     // פונקציה לשמירה בהיסטוריה
-     function saveToHistory(originalText, correctedText, count, style) {
-       // אין טעם לשמור תיקון ללא שינויים
-       if (count === 0) {
-         return;
-       }
-       
-       // קבלת היסטוריה קיימת
-       let history = JSON.parse(localStorage.getItem('correctionHistory') || '[]');
-       
-       // הגבלת היסטוריה ל-10 פריטים
-       if (history.length >= 10) {
-         history.pop(); // הסרת הפריט הישן ביותר
-       }
-       
-       // חיתוך הטקסט המקורי אם הוא ארוך מדי
-       const shortOriginal = originalText.length > 50 ? 
-         originalText.substring(0, 50) + '...' : originalText;
-       
-       // יצירת פריט היסטוריה חדש
-       const historyItem = {
-         id: Date.now(), // מזהה ייחודי
-         original: originalText,
-         corrected: correctedText,
-         count: count,
-         style: style,
-         shortText: shortOriginal,
-         timestamp: new Date().toISOString()
-       };
-       
-       // הוספה להיסטוריה
-       history.unshift(historyItem);
-       
-       // שמירה בלוקל סטוראג'
-       localStorage.setItem('correctionHistory', JSON.stringify(history));
-       
-       // עדכון ממשק ההיסטוריה
-       updateHistoryUI();
-     }
-     
-     // פונקציה לעדכון ממשק ההיסטוריה
-     function updateHistoryUI() {
-       // קבלת היסטוריה מהלוקל סטוראג'
-       const history = JSON.parse(localStorage.getItem('correctionHistory') || '[]');
-       
-       // ניקוי מיכל ההיסטוריה
-       historyContainer.innerHTML = '';
-       
-       if (history.length === 0) {
-         // אין היסטוריה
-         historyContainer.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-light);">История пуста</div>';
-         return;
-       }
-       
-       // יצירת אלמנטים להיסטוריה
-       history.forEach(item => {
-         const timeAgo = formatTimeAgo(new Date(item.timestamp));
-         
-         const historyItem = document.createElement('div');
-         historyItem.className = 'history-item';
-         historyItem.innerHTML = `
-           <div class="history-info">
-             <div class="history-text">${item.shortText}</div>
-             <div class="history-meta">
-               <span>Исправлено: ${item.count}</span> • <span>${timeAgo}</span>
-             </div>
-           </div>
-           <div class="history-action">
-             <button class="button button-secondary" style="padding: 6px 10px; font-size: 13px;">Загрузить</button>
-           </div>
-         `;
-         
-         // הוספת אירוע לחיצה לטעינת טקסט מההיסטוריה
-         historyItem.querySelector('button').addEventListener('click', function() {
-           inputText.value = item.original;
-           
-           // בחירת סגנון התיקון המתאים
-           document.querySelectorAll('input[name="correction-style"]').forEach(radio => {
-             if (radio.value === item.style) {
-               radio.checked = true;
-             }
-           });
-           
-           // הפעלת כפתור התיקון
-           document.getElementById('btn-correct').click();
-         });
-         
-         historyContainer.appendChild(historyItem);
-       });
-     }
-     
-     // פונקציה להצגת התראות
-     function showNotification(message, type = 'success') {
-       notification.textContent = message;
-       notification.className = `notification ${type === 'warning' ? 'warning' : 'success'} show`;
-       
-       setTimeout(() => {
-         notification.className = 'notification';
-       }, 3000);
-     }
-     
-     // פונקציה להמרת זמן לפורמט "לפני X דקות/שעות וכו'"
-     function formatTimeAgo(date) {
-       const now = new Date();
-       const diffInSeconds = Math.floor((now - date) / 1000);
-       
-       if (diffInSeconds < 60) {
-         return 'только что';
-       } else if (diffInSeconds < 3600) {
-         const minutes = Math.floor(diffInSeconds / 60);
-         return `${minutes} ${getCorrectWordForm(minutes, 'минуту', 'минуты', 'минут')} назад`;
-       } else if (diffInSeconds < 86400) {
-         const hours = Math.floor(diffInSeconds / 3600);
-         return `${hours} ${getCorrectWordForm(hours, 'час', 'часа', 'часов')} назад`;
-       } else {
-         const days = Math.floor(diffInSeconds / 86400);
-         return `${days} ${getCorrectWordForm(days, 'день', 'дня', 'дней')} назад`;
-       }
-     }
-     
-     // פונקציה לבחירת צורת המילה הנכונה ברוסית לפי המספר
-     function getCorrectWordForm(number, form1, form2, form5) {
-       number = Math.abs(number) % 100;
-       const lastDigit = number % 10;
-       
-       if (number > 10 && number < 20) {
-         return form5;
-       }
-       
-       if (lastDigit === 1) {
-         return form1;
-       }
-       
-       if (lastDigit >= 2 && lastDigit <= 4) {
-         return form2;
-       }
-       
-       return form5;
-     }
-     
-     // טעינת ההיסטוריה בעת טעינת הדף
-     updateHistoryUI();
-   });
- </script>
+      // טעינת ההיסטוריה בעת טעינת הדף
+      updateHistoryUI();
+    });
+  </script>
 </body>
 </html>
